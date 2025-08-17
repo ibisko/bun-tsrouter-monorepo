@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development tsup"
+    "dev": "NODE_ENV=development tsup",
+    "start": ""
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "dependencies": {
     "@packages/utils": "workspace:^",
     "date-fns": "^4.1.0",
-    "fastify": "^5.5.0"
+    "fastify": "^5.5.0",
+    "yaml": "^2.8.1"
   }
 }
