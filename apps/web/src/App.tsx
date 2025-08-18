@@ -1,11 +1,17 @@
 import { Button } from '@packages/ui';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
-import { sleep } from '@packages/utils';
+import { appRouter } from './api';
 
 function App() {
   const onClick = async () => {
-    await sleep(1000);
+    try {
+      const res = await appRouter.demo.aa.get({ id: 12, text: '21' });
+      // const res = await appRouter.aa.bb.cc.post({ id: 12, text: '21' });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -1,8 +1,9 @@
 {
-  "name": "server",
+  "name": "@apps/server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "types": "./dist/main.d.ts",
   "scripts": {
     "dev": "NODE_ENV=development tsup",
     "start": ""
@@ -11,9 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cors": "^11.1.0",
     "@packages/utils": "workspace:^",
     "date-fns": "^4.1.0",
     "fastify": "^5.5.0",
+    "got": "^14.4.7",
     "yaml": "^2.8.1"
   }
 }

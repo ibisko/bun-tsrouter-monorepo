@@ -1,26 +1,26 @@
 import { parse } from 'yaml';
 import path from 'path';
 import fs from 'fs';
+import { getServerDirPath } from '@/utils/path.js';
 
 // 常量文件配置
-const yamlConfigFolder = path.resolve(__dirname, '..', 'config');
+const yamlConfigFolder = path.resolve(getServerDirPath(), 'config');
 
 // 私有环境变量
 class Config {
   port: number = 0;
 
-  constructor() {
+  loadDefaultConfig() {
     // 加载配置文件
-    const env = parse(this.readYamlConfig('base.yaml'));
-    const inheritEnv = parse(this.readYamlConfig(`${process.env.NODE_ENV}.yaml`));
+    const env = parse(this.#readYamlConfig('base.yaml'));
+    const inheritEnv = parse(this.#readYamlConfig(`${process.env.NODE_ENV}.yaml`));
     Object.assign(env, inheritEnv);
-    console.log(env);
-
-    // 异步加载其他配置
-    // sqlite
+    this.port = env.port;
   }
 
-  readYamlConfig(filename: string) {
+  async loadSqliteConfig() {}
+
+  #readYamlConfig(filename: string) {
     const filePath = path.join(yamlConfigFolder, filename);
     if (!fs.existsSync(filePath)) throw new Error(`配置文件不存在 appps/server/config/${filename}`);
     return fs.readFileSync(filePath, 'utf8');

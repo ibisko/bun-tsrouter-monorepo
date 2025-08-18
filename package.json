@@ -2,7 +2,9 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev:web": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter web dev"
+    "dev": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter @apps/web --filter @apps/server dev",
+    "dev:web": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter @apps/web dev",
+    "dev:server": "pnpm --parallel --color --filter @packages/utils --filter server dev"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +14,8 @@
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "zod": "^4.0.17"
   }
 }

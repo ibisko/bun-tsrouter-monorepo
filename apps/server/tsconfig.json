@@ -2,11 +2,12 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "moduleResolution": "nodenext",
         "esModuleInterop": true,
         "strict": true,
         "outDir": "dist",
         "skipLibCheck": true,
+        "baseUrl": "./",
         "paths": {
             "@/*": [
                 "./src/*"
