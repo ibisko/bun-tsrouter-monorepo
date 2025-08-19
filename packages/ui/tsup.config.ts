@@ -10,9 +10,6 @@ export default defineConfig(options => ({
   watch: ['src'],
   ...options,
   async onSuccess() {
-    // spawnSync(
-    //   "npx",
-    //   "tailwindcss -i ./src/styles/global.css -o ./dist/index.css".split(/\s+/),
-    // );
+    spawnSync('npx', '@tailwindcss/cli -i ./src/styles/global.css -o ./dist/index.css'.split(/\s+/));
   },
 }));

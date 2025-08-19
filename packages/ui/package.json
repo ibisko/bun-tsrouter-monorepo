@@ -12,6 +12,7 @@
     "dev": "tsup"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.12",
     "@types/react": "^19.1.10"
   },
   "dependencies": {
