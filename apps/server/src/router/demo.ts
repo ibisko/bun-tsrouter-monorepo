@@ -1,6 +1,6 @@
-import { demoService, zodDemoSchema } from '@/services/demo/index.js';
+import { demoService, zodDemoSchema } from '@/services/demo/index';
 import { FastifyInstance } from 'fastify';
-import { createRouter, procedure } from './demoTrpc.js';
+import { createRouter, procedure } from './demoTrpc';
 
 export const demorouter = {
   demo: {

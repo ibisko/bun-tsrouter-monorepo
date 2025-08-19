@@ -1,8 +1,18 @@
+# 使用方式
+
+1. 在主项目切一个分支如 base-template 仅做保存模版代码
+2. 之后的分支都可以从 base-template 切出来
+3. base-template 不做修改，只用来同步
+
+
+# Feature
+
 - [x] @apps/web
 - [x] @apps/server
 - [x] @packages/utils
 - [x] @packages/ui
 - [x] tailwindcss
+- [x] react-router-dom
 
 - [ ] prisma sqlite
 - [ ] 构建脚本

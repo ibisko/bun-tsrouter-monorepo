@@ -1,10 +1,10 @@
 import path from 'path';
 import fastify from 'fastify';
-import config from './common/config.js';
+import config from './common/config';
 import cors from '@fastify/cors';
-import { demoAppRouter, demorouter } from './router/demo.js';
-import { getServerDirPath } from './utils/path.js';
-import type { ReplaceSpecificLeaf } from './router/demoTrpc.js';
+import { demoAppRouter, demorouter } from './router/demo';
+import { getServerDirPath } from './utils/path';
+import type { ReplaceSpecificLeaf } from './router/demoTrpc';
 
 // import { sleep } from '@packages/utils';
 // import { format } from 'date-fns';

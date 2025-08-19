@@ -1,6 +1,6 @@
 import z from 'zod';
 import type { FastifyInstance } from 'fastify';
-import { wrapperService } from '@/common/routerWrapper.js';
+import { wrapperService } from '@/common/routerWrapper';
 
 class CreateGetRouter<T, R> {
   constructor(readonly zodSchema: T, readonly service: (param: z.output<T>) => R) {}

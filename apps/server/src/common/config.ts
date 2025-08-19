@@ -1,7 +1,7 @@
 import { parse } from 'yaml';
 import path from 'path';
 import fs from 'fs';
-import { getServerDirPath } from '@/utils/path.js';
+import { getServerDirPath } from '@/utils/path';
 
 // 常量文件配置
 const yamlConfigFolder = path.resolve(getServerDirPath(), 'config');
