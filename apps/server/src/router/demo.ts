@@ -3,7 +3,9 @@ import { FastifyInstance } from 'fastify';
 import { createRouter, procedure } from './demoTrpc.js';
 
 export const demorouter = {
-  demo: { aa: procedure.get(zodDemoSchema, demoService) },
+  demo: {
+    aa: procedure.get(zodDemoSchema, demoService),
+  },
   aa: {
     bb: {
       cc: procedure.post(zodDemoSchema, demoService),

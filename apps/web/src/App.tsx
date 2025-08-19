@@ -6,8 +6,8 @@ import { appRouter } from './api';
 function App() {
   const onClick = async () => {
     try {
-      const res = await appRouter.demo.aa.get({ id: 12, text: '21' });
-      // const res = await appRouter.aa.bb.cc.post({ id: 12, text: '21' });
+      // const res = await appRouter.demo.aa.get({ id: 12, text: '21' });
+      const res = await appRouter.aa.bb.cc.post({ id: 12, text: '21' });
       console.log(res);
     } catch (error) {
       console.log(error);
