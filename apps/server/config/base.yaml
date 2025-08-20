@@ -1,2 +1,7 @@
 port: 5773
-test_2: 3333a
+
+# OSS 配置
+OSS_REGION: ''
+OSS_ACCESSKEYID: ''
+OSS_ACCESSKEYSECRET: ''
+OSS_BUCKET: ''
