@@ -7,7 +7,7 @@ export const demorouter = {
     aa: procedure.get(zodDemoSchema, demoService),
   },
   aa: {
-    bb: {
+    post: {
       cc: procedure.post(zodDemoSchema, demoService),
     },
   },

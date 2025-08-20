@@ -4,7 +4,7 @@ import config from './common/config';
 import cors from '@fastify/cors';
 import { demoAppRouter, demorouter } from './router/demo';
 import { getServerDirPath } from './utils/path';
-import type { ReplaceSpecificLeaf } from './router/demoTrpc';
+import type { ReplaceSpecificLeaf, Action } from './router/demoTrpc';
 
 // import { sleep } from '@packages/utils';
 // import { format } from 'date-fns';
@@ -55,3 +55,4 @@ async function main() {
 main();
 
 export type AppRouter = ReplaceSpecificLeaf<typeof demorouter>;
+export type { Action };

@@ -1,16 +1,36 @@
 import { Button } from '@packages/ui';
 import reactLogo from '@/assets/react.svg';
 import viteLogo from '/vite.svg';
-import { appRouter } from '@/api';
+import { Api, ApiResponseError } from '@/api';
 import { useNavigate } from 'react-router-dom';
+
+
 
 const HomePage = () => {
   const navigate = useNavigate();
 
+  const testDemoProxy = async () => {
+    try {
+      // console.log(await Api.aa.post.cc({ id: 12, text: '323' }));
+      console.log(await Api.aa.post.cc.post({ id: 12, text: '323' }));
+      // console.log(await Api.aa.post.cc.post({ id: 12 }));
+      // console.log(await Api.aa.post.cc.post({ id: 12, text: 12 }));
+      // console.log(await Api.aa.post({ id: 12, text: '21' }));
+    } catch (error) {
+      console.log(error);
+      
+      // if (error instanceof ApiResponseError) {
+      //   console.log(error.response);
+      // }
+    }
+    // console.log(Api.aa.post.cc({ id: 12, text: '21' }));
+    // console.log(Api.aa.post.cc);
+  };
+
   const fetchDemo = async () => {
     try {
-      // const res = await appRouter.demo.aa.get({ id: 12, text: '21' });
-      const res = await appRouter.aa.bb.cc.post({ id: 12, text: '21' });
+      const res = await Api.demo.aa.get({ id: 12, text: '21' });
+      // const res = await Api.aa.bb.cc.post({ id: 12, text: '21' });
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -33,6 +53,9 @@ const HomePage = () => {
         <div className="flex gap-1">
           <Button className="" onClick={fetchDemo}>
             fetch demo get
+          </Button>
+          <Button className="" onClick={testDemoProxy}>
+            test demo proxy
           </Button>
         </div>
       </div>
