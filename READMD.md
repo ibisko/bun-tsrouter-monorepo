@@ -17,7 +17,7 @@
 - [ ] prisma sqlite
 - [ ] 构建脚本
 - [ ] git webhook 部署更新
-- [ ] 状态管理 valtio
+- [x] 状态管理 valtio
 - [ ] 多个 oss 对接
     - oss 数据备份
 - [ ] server 采用 esmodule 对于 *.js 如何更好处理
@@ -26,6 +26,7 @@
 
 - [ ] 鉴权
     - [ ] 登录
+    - [ ] jwt刷新
     - [ ] service 入参 uid 字段
         - 设想参考函数参数装饰器，从第二参数传入，前端隐藏第二参数
 - [ ] vitest 测试框架

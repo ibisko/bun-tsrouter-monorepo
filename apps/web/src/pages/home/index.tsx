@@ -4,8 +4,6 @@ import viteLogo from '/vite.svg';
 import { Api, ApiResponseError } from '@/api';
 import { useNavigate } from 'react-router-dom';
 
-
-
 const HomePage = () => {
   const navigate = useNavigate();
 
@@ -17,11 +15,9 @@ const HomePage = () => {
       // console.log(await Api.aa.post.cc.post({ id: 12, text: 12 }));
       // console.log(await Api.aa.post({ id: 12, text: '21' }));
     } catch (error) {
-      console.log(error);
-      
-      // if (error instanceof ApiResponseError) {
-      //   console.log(error.response);
-      // }
+      if (error instanceof ApiResponseError) {
+        console.log(error.response);
+      }
     }
     // console.log(Api.aa.post.cc({ id: 12, text: '21' }));
     // console.log(Api.aa.post.cc);
