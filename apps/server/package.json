@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^11.1.0",
+    "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
     "date-fns": "^4.1.0",
     "fastify": "^5.5.0",

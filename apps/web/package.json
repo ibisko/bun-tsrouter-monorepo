@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@packages/tsrouter": "workspace:^",
     "@packages/ui": "workspace:^",
     "@packages/utils": "workspace:^",
     "react": "^19.1.0",

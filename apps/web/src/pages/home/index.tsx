@@ -1,32 +1,22 @@
 import { Button } from '@packages/ui';
 import reactLogo from '@/assets/react.svg';
 import viteLogo from '/vite.svg';
-import { Api, ApiResponseError } from '@/api';
+import { Api } from '@/api';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   const testDemoProxy = async () => {
-    try {
-      // console.log(await Api.aa.post.cc({ id: 12, text: '323' }));
-      console.log(await Api.aa.post.cc.post({ id: 12, text: '323' }));
-      // console.log(await Api.aa.post.cc.post({ id: 12 }));
-      // console.log(await Api.aa.post.cc.post({ id: 12, text: 12 }));
-      // console.log(await Api.aa.post({ id: 12, text: '21' }));
-    } catch (error) {
-      if (error instanceof ApiResponseError) {
-        console.log(error.response);
-      }
-    }
-    // console.log(Api.aa.post.cc({ id: 12, text: '21' }));
-    // console.log(Api.aa.post.cc);
+    const sse = Api.sse.sse({ jfklsd: 12, KJKFD: 'fsdfds' });
+    await sse(data => {
+      console.log('LKDSK:', data);
+    });
   };
 
   const fetchDemo = async () => {
     try {
       const res = await Api.demo.aa.get({ id: 12, text: '21' });
-      // const res = await Api.aa.bb.cc.post({ id: 12, text: '21' });
       console.log(res);
     } catch (error) {
       console.log(error);

@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "strict": true,
+        "outDir": "dist",
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "./*"
+            ],
+        }
+    },
+    "include": [
+        "src-client",
+        "src-server"
+    ]
+}

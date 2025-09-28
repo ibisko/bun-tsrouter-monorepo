@@ -1,0 +1,29 @@
+{
+  "name": "@packages/tsrouter",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./client": {
+      "types": "./dist/client/main.d.ts",
+      "import": "./dist/client/main.js"
+    },
+    "./server": {
+      "types": "./dist/server/main.d.ts",
+      "import": "./dist/server/main.js",
+      "require": "./dist/server/main.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "fastify": "^5.5.0"
+  },
+  "dependencies": {
+    "@packages/utils": "workspace:^"
+  }
+}

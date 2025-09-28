@@ -1,11 +1,26 @@
+import { sleep } from '@packages/utils';
 import z from 'zod';
 
 export const zodDemoSchema = z.object({
-  id: z.number({ error: '没有id' }),
+  id: z.coerce.number({ error: '没有id' }),
   text: z.string({ error: '没有text' }),
 });
 
 export const demoService = async (param: z.output<typeof zodDemoSchema>) => {
   // throw new Error('测试');
   return { id: param.id, text: param.text, msg: 'demoservice' };
+};
+
+export const zodDemoSSEService = z.object({
+  jfklsd: z.coerce.number(),
+  KJKFD: z.string(),
+});
+
+export const demosseService = async (param: z.output<typeof zodDemoSSEService>, write: (data: any) => void) => {
+  console.log('demosseService.param', param);
+
+  for (let i = 0; i < 5; i++) {
+    await sleep(1e3);
+    write(`i>: ${i}eee`);
+  }
 };

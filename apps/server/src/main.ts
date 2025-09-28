@@ -2,15 +2,10 @@ import path from 'path';
 import fastify from 'fastify';
 import config from './common/config';
 import cors from '@fastify/cors';
-import { demoAppRouter, demorouter } from './router/demo';
 import { getServerDirPath } from './utils/path';
-import type { ReplaceSpecificLeaf, Action } from './router/demoTrpc';
-
-// import { sleep } from '@packages/utils';
-// import { format } from 'date-fns';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
+import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
+import z from 'zod';
+export type { AppRouter } from './router/tsrouter';
 
 async function main() {
   // 载入基本配置
@@ -20,9 +15,6 @@ async function main() {
   // 初始化 fastify
   const app = fastify({
     logger: {
-      // timestamp() {
-      //   return `,"time":"${format(new Date(), 'yyyy/MM/dd hh:mm:ss')}"`;
-      // },
       formatters: {
         level(label) {
           return { level: label };
@@ -31,16 +23,23 @@ async function main() {
           return {};
         },
       },
-      // file: path.join(__dirname, '../../../', 'logs', `${format(new Date(), 'yyyy-MM-dd_hh:mm:ss')}.log`),
       file: path.join(getServerDirPath(), '../../', 'logs', `dev.log`),
     },
     trustProxy: true, // 信任Nginx代理，拿到用户ip
   });
 
   app.register(cors, { origin: '*' });
-  app.register(demoAppRouter, { prefix: 'api' });
+  app.register(mainAuthRouter, { prefix: 'api' });
+  app.register(mainWhiteListRouter, { prefix: 'api' });
 
-  // app.log.info('start');
+  // 错误拦截
+  app.setErrorHandler((error: any, req, reply) => {
+    if (error instanceof z.ZodError) {
+      return reply.status(400).send({ msg: z.prettifyError(error) });
+    }
+    reply.status(400).send();
+  });
+
   try {
     await app.listen({
       port: config.port,
@@ -53,6 +52,3 @@ async function main() {
   }
 }
 main();
-
-export type AppRouter = ReplaceSpecificLeaf<typeof demorouter>;
-export type { Action };

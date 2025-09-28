@@ -2,7 +2,7 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter @apps/web --filter @apps/server dev",
+    "dev": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter @apps/web --filter @apps/server --filter @packages/tsrouter dev",
     "dev:web": "pnpm --parallel --color --filter @packages/utils --filter @packages/ui --filter @apps/web dev",
     "dev:server": "pnpm --parallel --color --filter @packages/utils --filter server dev"
   },
@@ -10,12 +10,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^24.0.14",
     "tsup": "^8.5.0",
     "tsx": "^4.20.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
+    "nanoid": "^5.1.6",
     "zod": "^4.0.17"
   }
 }
