@@ -4,7 +4,7 @@ import { createRouter, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter
 
 const mainAuthRouterTree = {
   demo: {
-    aa: procedure.get(zodDemoSchema, demoService),
+    $aa: procedure.get(zodDemoSchema, demoService),
   },
   aa: {
     post: {
