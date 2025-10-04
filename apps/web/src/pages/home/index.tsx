@@ -16,7 +16,9 @@ const HomePage = () => {
 
   const fetchDemo = async () => {
     try {
-      const res = await Api.demo.djsklfjlksd.get({ id: 12, text: '21' });
+      // const res = await Api.demo.djsklfjlksd.get({ id: 12, text: '21' });
+      // const res = await Api.aa.post.CCEmp.post();
+      const res = await Api.aa.post.cc.post({ id: 12, text: 'sdklfls' });
       console.log(res);
     } catch (error) {
       console.log(error);

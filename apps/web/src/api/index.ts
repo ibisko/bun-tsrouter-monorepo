@@ -1,7 +1,6 @@
 import { authStore } from '@/stores/admin';
 import type { AppRouter } from '@apps/server';
 import { createAppRouter, TsRouter } from '@packages/tsrouter/client';
-import type { ReplaceSpecificLeaf } from '@packages/tsrouter/server';
 
 const ins = new TsRouter({
   baseUrl: 'http://localhost:5773',
@@ -25,6 +24,4 @@ const ins = new TsRouter({
   },
 });
 
-// export const Api = createAppRouter(ins) as AppRouter;
-export const Api = createAppRouter(ins) as ReplaceSpecificLeaf<AppRouter>;
-
+export const Api = createAppRouter(ins) as AppRouter;

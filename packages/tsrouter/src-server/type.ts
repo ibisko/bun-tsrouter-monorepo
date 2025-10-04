@@ -1,4 +1,4 @@
-import z from 'zod';
+import z, { ZodObject } from 'zod';
 import { RouterServer } from './core';
 
 export type WriteFunc = {
@@ -8,30 +8,37 @@ export type WriteFunc = {
   (data: string, event: string): void;
 };
 
-type Method = 'get' | 'post' | 'sse';
+export type Method = 'get' | 'post' | 'sse' | 'patch' | 'put' | 'delete';
 
-type SseHandler<T> = {
-  (params: z.output<T>, options?: any): (callback: (data: string) => void) => Promise<void>;
-};
-type StandardHandler<T, R> = {
-  (params: z.output<T>, options?: any): Promise<R>;
-};
-type ProcedureDef<M extends Method, T = any, R = any> = {
+type SseHandler<T> = T extends ZodObject
+  ? (params: z.output<T>, options?: any) => (callback: (data: string) => void) => Promise<void>
+  : (options?: any) => (callback: (data: string) => void) => Promise<void>;
+
+type StandardHandler<T, R> = T extends ZodObject
+  ? (params: z.output<T>, options?: any) => Promise<R>
+  : (options?: any) => Promise<R>;
+
+type ProcedureDef<M extends Method, T extends ZodObject | Function = any, R = any> = {
   Method?: M;
   param?: z.output<T>;
   return?: R;
   func?: Lowercase<M> extends `${string}sse` ? SseHandler<T> : StandardHandler<T, R>;
 };
 
-export type RegisterableProcedure<M extends Method = Method, T = any, R = any> = ProcedureDef<M, T, R> & {
+export type RegisterableProcedure<
+  M extends Method = Method,
+  T extends ZodObject | Function = any,
+  R = any,
+> = ProcedureDef<M, T, R> & {
   (rs: RouterServer, path: string[]): void;
 };
 
 // prettier-ignore
-export type ReplaceSpecificLeaf<T> = 
-  keyof T extends `$${string}` ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
+export type ReplaceSpecificLeaf<T> = NonNullable<
+  keyof T extends `$${string}`    ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
   T extends ProcedureDef<infer M> ? { [K in Lowercase<M>]: NonNullable<T["func"]> } :
-  IsPlainObject<T> extends true ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } : T;
+  IsPlainObject<T> extends true   ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } : T
+>;
 
 // 判断是否为 普通对象, 排除数组/函数/基本数据类型
 type IsPlainObject<T> = T extends object ? (T extends readonly any[] ? false : true) : false;

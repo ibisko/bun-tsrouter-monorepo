@@ -10,6 +10,9 @@ export const demoService = async (param: z.output<typeof zodDemoSchema>) => {
   // throw new Error('测试');
   return { id: param.id, text: param.text, msg: 'demoservice' };
 };
+export const demoServiceEmp = async () => {
+  return { id: 1, text: 'empty', msg: 'demoserviceEmp!' };
+};
 
 export const zodDemoSSEService = z.object({
   jfklsd: z.coerce.number(),
@@ -17,8 +20,13 @@ export const zodDemoSSEService = z.object({
 });
 
 export const demosseService = async (param: z.output<typeof zodDemoSSEService>, write: (data: any) => void) => {
-  console.log('demosseService.param', param);
+  for (let i = 0; i < 5; i++) {
+    await sleep(1e3);
+    write(`i>: ${i}eee`);
+  }
+};
 
+export const demosseServiceEmp = async (write: (data: any) => void) => {
   for (let i = 0; i < 5; i++) {
     await sleep(1e3);
     write(`i>: ${i}eee`);

@@ -1,7 +1,20 @@
 import { watchdog } from '@packages/utils';
 import z, { ZodObject } from 'zod';
 import type { FastifyInstance } from 'fastify';
-import { WriteFunc } from './type';
+import { Method, WriteFunc } from './type';
+import { kebabCase } from 'lodash-es';
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    customData: {};
+  }
+}
+
+type RestApiBaseParam = {
+  path: string | string[];
+  zodSchema?: ZodObject;
+  service: (param: any, optional?: any) => Promise<any>;
+};
 
 export class RouterServer {
   fastify: FastifyInstance;
@@ -13,7 +26,17 @@ export class RouterServer {
     if (typeof path === 'string') {
       return path;
     }
-    return '/' + path.join('/');
+    return (
+      '/' +
+      path
+        .map(item => {
+          if (item.startsWith(':')) {
+            return item;
+          }
+          return kebabCase(item);
+        })
+        .join('/')
+    );
   };
 
   parseZodSchema<T extends ZodObject>(zodSchema: T, param: unknown) {
@@ -24,37 +47,53 @@ export class RouterServer {
     return resparse.data as z.output<T>;
   }
 
-  get<T extends ZodObject, R>(path: string | string[], zodSchema: T, service: (param: z.output<T>) => Promise<R>) {
+  #restApi({
+    method,
+    path,
+    zodSchema,
+    service,
+  }: RestApiBaseParam & {
+    method: Exclude<Method, 'sse'>;
+  }) {
     const url = this.#getPath(path);
-    this.fastify.get(url, async (request, reply) => {
-      console.log('request.params:', request.params);
-      // todo 需要将 request.params 传入到 service 第二参数中
-      const param = this.parseZodSchema(zodSchema, request.query);
-      // todo 第二参数
-      const response = await service(param);
+    this.fastify[method](url, async (request, reply) => {
+      let response;
+      if (zodSchema) {
+        console.log('request.body:', request.body);
+        const param = this.parseZodSchema(zodSchema, method === 'get' ? request.query : request.body);
+        response = await service(param, request.customData);
+      } else {
+        response = await service(request.customData);
+      }
       reply.send(response);
     });
   }
 
-  post<T extends ZodObject, R>(path: string | string[], zodSchema: T, service: (param: z.output<T>) => Promise<R>) {
-    const url = this.#getPath(path);
-    this.fastify.post(url, async (request, reply) => {
-      const param = this.parseZodSchema(zodSchema, request.body);
-      // todo 第二参数
-      const response = await service(param);
-      reply.send(response);
-    });
-  }
+  get = (param: RestApiBaseParam) => this.#restApi({ method: 'get', ...param });
+  post = (param: RestApiBaseParam) => this.#restApi({ method: 'post', ...param });
+  patch = (param: RestApiBaseParam) => this.#restApi({ method: 'patch', ...param });
+  put = (param: RestApiBaseParam) => this.#restApi({ method: 'put', ...param });
+  delete = (param: RestApiBaseParam) => this.#restApi({ method: 'delete', ...param });
 
-  sse<T extends ZodObject, R>(
-    path: string | string[],
-    zodSchema: T,
-    service: (param: z.output<T>, write: WriteFunc) => Promise<R>,
-  ) {
+  sse({
+    path,
+    zodSchema,
+    service,
+  }: {
+    path: string | string[];
+    zodSchema?: ZodObject;
+    service: any;
+    // service: {
+    //   (param: any, write: WriteFunc, optional: any): Promise<any>;
+    //   (write: WriteFunc, optional: any): Promise<any>;
+    // };
+  }) {
     const url = this.#getPath(path);
-    console.log('sse url:', url);
     this.fastify.get(url, async (request, reply) => {
-      const param = this.parseZodSchema(zodSchema, request.query);
+      let param = null;
+      if (zodSchema) {
+        param = this.parseZodSchema(zodSchema, request.query);
+      }
       reply.raw.setHeader('access-control-allow-origin', '*');
       reply.raw.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
       reply.raw.setHeader('Connection', 'keep-alive');
@@ -73,7 +112,8 @@ export class RouterServer {
         });
 
         let id = 0;
-        service(param, (data, event?: string) => {
+
+        const callback: WriteFunc = (data, event?: string) => {
           fead();
           const msg = [`id: ${id}`, `data: ${data}`];
           if (event) {
@@ -81,12 +121,14 @@ export class RouterServer {
           }
           reply.raw.write(msg.join('\n') + '\n\n');
           id++;
-        })
-          // .then(resolve)
-          .then(r => {
-            resolve(r);
-          })
-          .catch(resolve);
+        };
+        let response;
+        if (param) {
+          response = service(param, callback, request.customData);
+        } else {
+          response = service(callback, request.customData);
+        }
+        response.then(resolve).catch(resolve);
       });
 
       fead(true);
