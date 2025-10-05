@@ -24,3 +24,24 @@ export const parseUrl = ({ baseUrl, path, query, prefix }: ParseUrlParams) => {
   }
   return url.href;
 };
+
+export const appendHeaders = (headers: Headers, record?: HeadersInit) => {
+  if (!record) return;
+  if (record instanceof Headers) {
+    headers.forEach((val, key) => headers.append(key, val));
+  } else {
+    Object.entries(record).forEach(([key, val]) => headers.set(key, val));
+  }
+};
+
+export class RefreshSuccess extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+  }
+}
+
+export class RefreshFailed extends Error {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+  }
+}

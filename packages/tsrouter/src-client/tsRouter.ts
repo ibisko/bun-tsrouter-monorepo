@@ -1,9 +1,9 @@
 import { createRecursiveProxy, retryHandle } from '@packages/utils';
-import { parseUrl } from '@/utils/index';
-import { MethodOptions, RefreshFailed, RefreshSuccess, RestApiParams, TsRouterOptions } from './type';
-import * as _ from 'lodash-es';
+import { appendHeaders, parseUrl, RefreshFailed, RefreshSuccess } from './utils';
+import type { MethodOptions, RestApiParams, TsRouterOptions } from './type';
 
 // todo formData xhr 流式上传
+// todo post 提交form表单资源，流式上传
 export class TsRouter {
   readonly baseUrl: string;
   readonly prefix?: string;
@@ -22,34 +22,16 @@ export class TsRouter {
     this.refreshToken = options.refreshToken;
   }
 
-  #getPath = (path: string | string[], query?: Record<string, string>) =>
-    parseUrl({ baseUrl: this.baseUrl, prefix: this.prefix, path, query });
-
-  #appendHeaders(headers: Headers, record?: HeadersInit) {
-    if (!record) return;
-    if (record instanceof Headers) {
-      headers.forEach((val, key) => headers.append(key, val));
-    } else {
-      Object.entries(record).forEach(([key, val]) => headers.set(key, val));
-    }
-  }
-
-  /** 如果正在刷新，暂时阻塞所有的请求 */
-  #interceptDuringRefresh() {
-    if (!this.isRefreshing) return;
-    return new Promise((resolve, reject) => this.interceptDuringRefreshResolves.push({ resolve, reject }));
-  }
-
   async #restApi({ method, path, query, body, options = {} }: RestApiParams) {
     const headers = new Headers(this.headers);
-    this.#appendHeaders(headers, options.headers);
+    appendHeaders(headers, options.headers);
     if (!headers.has('authorization')) {
-      this.#appendHeaders(headers, {
+      appendHeaders(headers, {
         Authorization: `Bearer ${''}`,
       });
     }
     if (body) {
-      this.#appendHeaders(headers, {
+      appendHeaders(headers, {
         'Content-Type': 'application/json',
       });
     }
@@ -65,65 +47,12 @@ export class TsRouter {
       setTimeout(() => controller.abort(), options.timeout ?? this.timeout);
     }
 
-    const response = await fetch(this.#getPath(path, query), {
+    const url = parseUrl({ baseUrl: this.baseUrl, prefix: this.prefix, path, query });
+    const response = await fetch(url, {
       method,
       headers: headers,
-      /**
-       * ```ts
-       * const controller = new AbortController();
-       * fetch('/api', { signal: controller.signal });
-       * controller.abort(); // 取消请求
-       * ```
-       */
       signal: signal,
-
-      /**
-       *  GET、HEAD、SSE 请求不能包含 body
-       */
       body: ['get', 'sse', 'head'].includes(method) ? undefined : JSON.stringify(body),
-
-      /**
-       * 携带 cookies 凭证
-       * - omit (默认)绝不发送或接收任何凭证
-       * - same-origin 仅在请求同源 URL 时发送凭证
-       * - include 总是发送凭证，即使跨域
-       */
-      // credentials: 'omit'
-
-      /**
-       * 控制请求与浏览器缓存的交互方式。
-       * - default
-       * - force-cache
-       * - no-cache
-       * - no-store
-       * - only-if-cached
-       * - reload
-       */
-      // cache:
-
-      /**
-       * 指定是否允许跨域请求。
-       * - cors (默认)允许跨域请求。
-       * - same-origin 只允许同源请求。
-       * - no-cors 允许跨域，但只能使用简单的请求方法和头。
-       */
-      // mode:
-
-      /**
-       * 指定如何处理重定向响应。
-       * - follow (默认)自动跟随重定向。
-       * - error 如果遇到重定向，则抛出错误。
-       * - manual 手动处理重定向。
-       */
-      // redirect:
-
-      /** 指示请求在页面卸载后是否继续执行（用于发送埋点数据等） */
-      // keepalive:
-
-      /**
-       * integrity主要用于 CDN 资源校验​​。
-       */
-      // integrity:
     });
 
     if (!response.ok) {
@@ -151,7 +80,6 @@ export class TsRouter {
   get(path: string | string[], query: Record<string, string>, options: Omit<MethodOptions, 'query'>) {
     return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'get', path, query, options }));
   }
-  // todo post 提交form表单资源，流式上传
   post(path: string | string[], body: any, options: MethodOptions) {
     return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'post', path, body, options }));
   }
@@ -215,20 +143,6 @@ export class TsRouter {
       this.#warpperRefreshTokenCatch(() => this.#sse(path, query, options)(callback));
   }
 
-  async #refreshTokenHandle() {
-    this.isRefreshing = true;
-    try {
-      await retryHandle(this.refreshToken);
-      this.interceptDuringRefreshResolves.forEach(item => item.resolve());
-      this.isRefreshing = false;
-      throw new RefreshSuccess();
-    } catch (error) {
-      this.interceptDuringRefreshResolves.forEach(item => item.reject(new RefreshFailed()));
-      this.isRefreshing = false;
-      throw new RefreshFailed();
-    }
-  }
-
   async #warpperRefreshTokenCatch(callback: () => Promise<Response | void>) {
     do {
       try {
@@ -249,9 +163,29 @@ export class TsRouter {
       }
     } while (true);
   }
+
+  /** 如果正在刷新，暂时阻塞所有的请求 */
+  #interceptDuringRefresh() {
+    if (!this.isRefreshing) return;
+    return new Promise((resolve, reject) => this.interceptDuringRefreshResolves.push({ resolve, reject }));
+  }
+
+  async #refreshTokenHandle() {
+    this.isRefreshing = true;
+    try {
+      await retryHandle(this.refreshToken);
+      this.interceptDuringRefreshResolves.forEach(item => item.resolve());
+      this.isRefreshing = false;
+      throw new RefreshSuccess();
+    } catch (error) {
+      this.interceptDuringRefreshResolves.forEach(item => item.reject(new RefreshFailed()));
+      this.isRefreshing = false;
+      throw new RefreshFailed();
+    }
+  }
 }
 
-// new TsRouter().
+// new TsRouter()
 
 export const createAppRouter = <T>(tsRouter: TsRouter) => {
   return createRecursiveProxy<T, string>({

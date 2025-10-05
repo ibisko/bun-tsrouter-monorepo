@@ -27,12 +27,12 @@ const createSseMethod =
   <M extends 'sse'>(method: M) =>
   <T extends ZodObject | Function = any, R = any>(
     zodSchema: T,
-    ...service: T extends Function ? [] : [(param: z.output<T>, write: WriteFunc, optional?: any) => Promise<R>]
+    ...service: T extends Function ? [] : [(param: any, write: WriteFunc, optional?: any) => Promise<R>]
   ) => {
     let _zodSchema = undefined;
     let _service;
     if (typeof zodSchema === 'function') {
-      _service = zodSchema as (param: z.output<T>, optional?: any) => Promise<R>;
+      _service = zodSchema as (write: WriteFunc, optional?: any) => Promise<R>;
     } else {
       _zodSchema = zodSchema;
       _service = service[0]!;

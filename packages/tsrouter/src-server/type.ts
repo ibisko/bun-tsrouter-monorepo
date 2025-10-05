@@ -43,3 +43,9 @@ export type ReplaceSpecificLeaf<T> = NonNullable<
 
 // 判断是否为 普通对象, 排除数组/函数/基本数据类型
 type IsPlainObject<T> = T extends object ? (T extends readonly any[] ? false : true) : false;
+
+export type RestApiBaseParam = {
+  path: string | string[];
+  zodSchema?: ZodObject;
+  service: (param: any, optional?: any) => Promise<any>;
+};

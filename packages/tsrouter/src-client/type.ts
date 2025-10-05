@@ -14,18 +14,6 @@ export type MethodOptions = {
   timeout?: number;
 };
 
-export class RefreshSuccess extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-  }
-}
-
-export class RefreshFailed extends Error {
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-  }
-}
-
 export type RestApiParams = {
   method: 'get' | 'post' | 'patch' | 'delete' | 'put';
   path: string | string[];
