@@ -1,5 +1,6 @@
 import z, { ZodObject } from 'zod';
 import { RouterServer } from './core';
+import type { MethodOptions } from '@/src-client/type';
 
 export type WriteFunc = {
   /** 默认 event 是 message */
@@ -11,12 +12,12 @@ export type WriteFunc = {
 export type Method = 'get' | 'post' | 'sse' | 'patch' | 'put' | 'delete';
 
 type SseHandler<T> = T extends ZodObject
-  ? (params: z.output<T>, options?: any) => (callback: (data: string) => void) => Promise<void>
-  : (options?: any) => (callback: (data: string) => void) => Promise<void>;
+  ? (params: z.output<T>, options?: MethodOptions) => (callback: (data: string) => void) => Promise<void>
+  : (options?: MethodOptions) => (callback: (data: string) => void) => Promise<void>;
 
 type StandardHandler<T, R> = T extends ZodObject
-  ? (params: z.output<T>, options?: any) => Promise<R>
-  : (options?: any) => Promise<R>;
+  ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
+  : (options?: MethodOptions) => Promise<R>;
 
 type ProcedureDef<M extends Method, T extends ZodObject | Function = any, R = any> = {
   Method?: M;

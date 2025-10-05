@@ -8,6 +8,7 @@ export const zodDemoSchema = z.object({
 
 export const demoService = async (param: z.output<typeof zodDemoSchema>) => {
   // throw new Error('测试');
+  await sleep(1e3 * 2);
   return { id: param.id, text: param.text, msg: 'demoservice' };
 };
 export const demoServiceEmp = async () => {

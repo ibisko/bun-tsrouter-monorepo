@@ -9,16 +9,24 @@ const HomePage = () => {
 
   const testDemoProxy = async () => {
     const sse = Api.sse.sse({ jfklsd: 12, KJKFD: 'fsdfds' });
-    await sse(data => {
-      console.log('LKDSK:', data);
-    });
+    try {
+      await sse(data => {
+        console.log('LKDSK:', data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchDemo = async () => {
     try {
       // const res = await Api.demo.djsklfjlksd.get({ id: 12, text: '21' });
       // const res = await Api.aa.post.CCEmp.post();
-      const res = await Api.aa.post.cc.post({ id: 12, text: 'sdklfls' });
+      const res = await Api.aa.post.cc.post(
+        { id: 12, text: 'sdklfls' },
+        { headers: { Authorization: 'skdflksdkfkls' } },
+      );
+      // const res = await Api.demo.dskjfslkd.head({ id: 12, text: 'sdklfls' });
       console.log(res);
     } catch (error) {
       console.log(error);

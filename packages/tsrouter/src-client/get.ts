@@ -1,11 +1,14 @@
 import { createRecursiveProxy, retryHandle } from '@packages/utils';
 import { parseUrl } from '@/utils/index';
 import { MethodOptions, RefreshFailed, RefreshSuccess, RestApiParams, TsRouterOptions } from './type';
+import * as _ from 'lodash-es';
 
 // todo formData xhr 流式上传
 export class TsRouter {
   readonly baseUrl: string;
   readonly prefix?: string;
+  readonly timeout?: number;
+  readonly headers: HeadersInit;
   refreshToken: (abort: () => void) => Promise<void>;
 
   isRefreshing = false;
@@ -14,33 +17,57 @@ export class TsRouter {
   constructor(options: TsRouterOptions) {
     this.baseUrl = options.baseUrl;
     this.prefix = options.prefix;
+    this.headers = options.headers ??= {};
+    this.timeout = options.timeout;
     this.refreshToken = options.refreshToken;
   }
 
   #getPath = (path: string | string[], query?: Record<string, string>) =>
     parseUrl({ baseUrl: this.baseUrl, prefix: this.prefix, path, query });
 
-  interceptDuringRefresh() {
+  #appendHeaders(headers: Headers, record?: HeadersInit) {
+    if (!record) return;
+    if (record instanceof Headers) {
+      headers.forEach((val, key) => headers.append(key, val));
+    } else {
+      Object.entries(record).forEach(([key, val]) => headers.set(key, val));
+    }
+  }
+
+  /** 如果正在刷新，暂时阻塞所有的请求 */
+  #interceptDuringRefresh() {
     if (!this.isRefreshing) return;
     return new Promise((resolve, reject) => this.interceptDuringRefreshResolves.push({ resolve, reject }));
   }
 
   async #restApi({ method, path, query, body, options = {} }: RestApiParams) {
-    options.headers ??= {};
-    const headers = Object.assign(options.headers, {
-      // todo token
-      Authorization: `Bearer ${''}`,
-      // todo token 可以不带，options 里怎么配置
-    });
+    const headers = new Headers(this.headers);
+    this.#appendHeaders(headers, options.headers);
+    if (!headers.has('authorization')) {
+      this.#appendHeaders(headers, {
+        Authorization: `Bearer ${''}`,
+      });
+    }
     if (body) {
-      Object.assign(headers, {
+      this.#appendHeaders(headers, {
         'Content-Type': 'application/json',
       });
     }
 
+    // 超时中断
+    const controller = new AbortController();
+    const signals = [controller.signal];
+    if (options.signal) {
+      signals.push(options.signal);
+    }
+    const signal = AbortSignal.any(signals);
+    if (this.timeout || options.timeout) {
+      setTimeout(() => controller.abort(), options.timeout ?? this.timeout);
+    }
+
     const response = await fetch(this.#getPath(path, query), {
       method,
-      headers,
+      headers: headers,
       /**
        * ```ts
        * const controller = new AbortController();
@@ -48,13 +75,12 @@ export class TsRouter {
        * controller.abort(); // 取消请求
        * ```
        */
-      signal: options.signal,
+      signal: signal,
 
       /**
        *  GET、HEAD、SSE 请求不能包含 body
        */
-      // todo Head 请求
-      body: ['get', 'sse'].includes(method) ? undefined : JSON.stringify(body),
+      body: ['get', 'sse', 'head'].includes(method) ? undefined : JSON.stringify(body),
 
       /**
        * 携带 cookies 凭证
@@ -139,29 +165,17 @@ export class TsRouter {
     return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'delete', path, body, options }));
   }
 
-  // todo 设计并实现sse
-  #sse(
-    path: string | string[],
-    query: Record<string, string>,
-    options: MethodOptions = {
-      headers: {},
-    },
-  ) {
+  #sse(path: string | string[], query: Record<string, string>, options: MethodOptions) {
     return async (callback: (data: any) => void) => {
       options.headers ??= {};
+      options.headers = new Headers(options.headers);
+      options.headers.append('Accept', 'text/event-stream');
 
       const response = await this.#restApi({
         method: 'get',
-        path: path,
-        query: query,
-        options: {
-          headers: {
-            // 'Content-Type': 'application/json',
-            Accept: 'text/event-stream',
-            // todo token
-            // todo token 可以不带，options 里怎么配置
-          },
-        },
+        path,
+        query,
+        options,
       });
       if (!response) return;
 
@@ -218,9 +232,7 @@ export class TsRouter {
   async #warpperRefreshTokenCatch(callback: () => Promise<Response | void>) {
     do {
       try {
-        // 刷新时，方法入栈
-        await this.interceptDuringRefresh();
-        // return callback();
+        await this.#interceptDuringRefresh();
         const response = await callback();
         try {
           return response?.json();

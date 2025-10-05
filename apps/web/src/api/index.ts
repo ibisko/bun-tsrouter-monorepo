@@ -5,6 +5,7 @@ import { createAppRouter, TsRouter } from '@packages/tsrouter/client';
 const ins = new TsRouter({
   baseUrl: 'http://localhost:5773',
   prefix: '/api',
+  // timeout: 1e3,
   async refreshToken(abort) {
     const response = await fetch('http://localhost:5773/api/auth/refresh-token');
 
