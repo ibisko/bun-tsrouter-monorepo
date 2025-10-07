@@ -138,7 +138,7 @@ export class TsRouter {
     };
   }
 
-  sse(path: string, query: Record<string, string>, options: Omit<MethodOptions, 'query'>) {
+  sse(path: string, query: Record<string, string>, options: Omit<MethodOptions, 'query'> = {}) {
     return async (callback: (data: any) => void) =>
       this.#warpperRefreshTokenCatch(() => this.#sse(path, query, options)(callback));
   }

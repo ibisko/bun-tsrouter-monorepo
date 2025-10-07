@@ -1,7 +1,7 @@
 import { watchdog } from '@packages/utils';
-import z, { ZodObject } from 'zod';
+import { ZodObject } from 'zod';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
-import type { Method, RestApiBaseParam, WriteFunc } from './type';
+import type { Method, RestApiBaseParam, RouterServerOptions, WriteFunc } from './type';
 import { getContext, getPath, parseZodSchema } from './utils';
 
 declare module 'fastify' {
@@ -12,8 +12,10 @@ declare module 'fastify' {
 
 export class RouterServer {
   fastify: FastifyInstance;
-  constructor(fastify: FastifyInstance) {
+  formatLogger: RouterServerOptions['formatLogger'];
+  constructor(fastify: FastifyInstance, options?: RouterServerOptions) {
     this.fastify = fastify;
+    this.formatLogger = options?.formatLogger;
   }
 
   #restApi({
@@ -25,9 +27,18 @@ export class RouterServer {
     method: Exclude<Method, 'sse'>;
   }) {
     const url = getPath(path);
+    const logger = this.fastify.log.child({ method: service.name });
     this.fastify[method](url, async (request, reply) => {
       const ctx = getContext(request);
       let response;
+
+      // 可以在ctx设置日志实例
+      if (this.formatLogger) {
+        ctx.logger = logger.child(this.formatLogger(request, reply));
+      } else {
+        ctx.logger = logger;
+      }
+
       if (zodSchema) {
         console.log('request.body:', request.body);
         const param = parseZodSchema(zodSchema, method === 'get' ? request.query : request.body);
@@ -58,6 +69,7 @@ export class RouterServer {
     };
   }) {
     const url = getPath(path);
+    const logger = this.fastify.log.child({ method: service.name });
     this.fastify.get(url, async (request, reply) => {
       let param = null;
       if (zodSchema) {
@@ -92,6 +104,7 @@ export class RouterServer {
         };
 
         const ctx = getContext(request);
+        ctx.logger = logger;
         let response;
         if (param) {
           response = service(param, callback, ctx);

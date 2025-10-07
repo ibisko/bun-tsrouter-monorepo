@@ -1,6 +1,6 @@
 import z, { ZodObject } from 'zod';
 import { RouterServer } from './core';
-import { Method, RegisterableProcedure, WriteFunc } from './type';
+import { Method, RegisterableProcedure, RouterServerOptions, WriteFunc } from './type';
 import { FastifyInstance } from 'fastify';
 
 const createStandardMethod =
@@ -52,8 +52,9 @@ export const procedure = {
   sse: createSseMethod('sse'),
 };
 
-export const createRouter = (fastify: FastifyInstance, routerTree: any) => {
-  const rs = new RouterServer(fastify);
+// todo 改为对象参数，便于定义扩展
+export const createRouter = (fastify: FastifyInstance, routerTree: any, options?: RouterServerOptions) => {
+  const rs = new RouterServer(fastify, options);
 
   const parseRouter = (router: any, prefix: string[] = []) => {
     for (const [key, value] of Object.entries(router)) {

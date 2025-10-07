@@ -1,6 +1,7 @@
 import z, { ZodObject } from 'zod';
 import { RouterServer } from './core';
 import type { MethodOptions } from '@/src-client/type';
+import type { FastifyBaseLogger, FastifyReply, FastifyRequest } from 'fastify';
 
 export type WriteFunc = {
   /** 默认 event 是 message */
@@ -12,8 +13,8 @@ export type WriteFunc = {
 export type Method = 'get' | 'post' | 'sse' | 'patch' | 'put' | 'delete';
 
 type SseHandler<T> = T extends ZodObject
-  ? (params: z.output<T>, options?: MethodOptions) => (callback: (data: string) => void) => Promise<void>
-  : (options?: MethodOptions) => (callback: (data: string) => void) => Promise<void>;
+  ? (params: z.output<T>, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>
+  : (options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>;
 
 type StandardHandler<T, R> = T extends ZodObject
   ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
@@ -48,4 +49,17 @@ export type RestApiBaseParam = {
   path: string | string[];
   zodSchema?: ZodObject;
   service: (param: any, optional?: any) => Promise<any>;
+};
+
+export type Context<T = {}> = T & {
+  query: Record<string, string>;
+  url: string;
+  ip: string;
+  params: Record<string, string>;
+  /** 日志 */
+  logger: FastifyBaseLogger;
+};
+
+export type RouterServerOptions = {
+  formatLogger?: (request: FastifyRequest, reply: FastifyReply) => Record<string, unknown>;
 };

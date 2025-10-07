@@ -1,6 +1,7 @@
 import { FastifyRequest } from 'fastify';
 import { kebabCase } from 'lodash-es';
 import z, { ZodObject } from 'zod';
+import type { Context } from './type';
 
 export const getPath = (path: string | string[]) => {
   if (typeof path === 'string') {
@@ -33,5 +34,5 @@ export const getContext = (request: FastifyRequest) => {
     url: request.url,
     ip: request.ip,
     params: request.params,
-  });
+  }) as Context;
 };

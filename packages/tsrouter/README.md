@@ -1,3 +1,7 @@
+- [x] 前端可视化单元测试
+- [x] ctx 集成日志
+
+- client 中断 sse 时候，server sse仍在执行
 - 刷新 token
 - 403 等错误码的钩子回调
 - 400 异常抛出的自定义 Error
