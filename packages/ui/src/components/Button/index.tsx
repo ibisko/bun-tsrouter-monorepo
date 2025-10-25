@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn';
 
-interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   children?: React.ReactNode;
 }
