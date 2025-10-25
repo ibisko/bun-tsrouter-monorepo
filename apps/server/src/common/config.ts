@@ -1,30 +1,43 @@
-import { parse } from 'yaml';
+import yaml from 'yaml';
 import path from 'path';
 import fs from 'fs';
-import { getServerDirPath } from '@/utils/path';
+import * as _ from 'lodash-es';
+
+
+console.log("process.cwd():", process.cwd());
 
 // 常量文件配置
-const yamlConfigFolder = path.resolve(getServerDirPath(), 'config');
+const yamlConfigFolder = path.join(process.cwd(), './config');
 
 // 私有环境变量
-class Config {
-  port: number = 0;
+class GlobalConfig {
+  #config = {}; // todo 所有配置放这里去
 
-  loadDefaultConfig() {
-    // 加载配置文件
-    const env = parse(this.#readYamlConfig('base.yaml'));
-    const inheritEnv = parse(this.#readYamlConfig(`${process.env.NODE_ENV}.yaml`));
-    Object.assign(env, inheritEnv);
-    this.port = env.port;
+  get config() {
+    return this.#config;
   }
 
-  async loadSqliteConfig() {}
-
-  #readYamlConfig(filename: string) {
-    const filePath = path.join(yamlConfigFolder, filename);
-    if (!fs.existsSync(filePath)) throw new Error(`配置文件不存在 appps/server/config/${filename}`);
-    return fs.readFileSync(filePath, 'utf8');
+  /** 加载配置文件 */
+  loadDefaultConfig() {
+    const env = yaml.parse(readYamlConfig('base.yaml'));
+    const inheritEnv = yaml.parse(readYamlConfig(`${process.env.NODE_ENV}.yaml`));
+    _.merge(this.config, env, inheritEnv);
   }
 }
 
-export default new Config();
+const readYamlConfig = (filename: string) => {
+  const filePath = path.join(yamlConfigFolder, filename);
+  if (!fs.existsSync(filePath)) throw new Error(`配置文件不存在 ${filePath}`);
+  return fs.readFileSync(filePath, 'utf8');
+};
+
+export const globalConfigInstance = new GlobalConfig();
+
+// todo 定义全局配置
+type Config = {
+  port: number;
+  authSecret: string;
+  refreshAuthSecret: string;
+};
+
+export const config = globalConfigInstance.config as Config;
