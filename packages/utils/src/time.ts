@@ -20,6 +20,8 @@ export const watchdog = (callback: () => void, duration: number) => {
     clearTimeout(timeout);
     if (!stop) {
       timeout = setTimeout(callback, duration);
+    } else {
+      fead.isStop = true
     }
   };
   fead();
@@ -36,4 +38,5 @@ type WatchdogFeed = {
    * ```
    */
   (stop: true): void;
+  isStop?: boolean
 };
