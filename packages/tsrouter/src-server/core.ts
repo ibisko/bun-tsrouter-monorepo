@@ -1,8 +1,9 @@
-import { watchdog } from '@packages/utils';
+import { sleep, watchdog } from '@packages/utils';
 import { ZodObject } from 'zod';
-import type { FastifyInstance, FastifyRequest } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import type { Method, RestApiBaseParam, RouterServerOptions, WriteFunc } from './type';
 import { getContext, getPath, parseZodSchema } from './utils';
+import { ServiceError } from './error';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -29,24 +30,29 @@ export class RouterServer {
     const url = getPath(path);
     const logger = this.fastify.log.child({ method: service.name });
     this.fastify[method](url, async (request, reply) => {
-      const ctx = getContext(request);
-      let response;
-
-      // 可以在ctx设置日志实例
-      if (this.formatLogger) {
-        ctx.logger = logger.child(this.formatLogger(request, reply));
-      } else {
-        ctx.logger = logger;
-      }
-
+      // 参数校验
+      let param = null;
       if (zodSchema) {
-        console.log('request.body:', request.body);
-        const param = parseZodSchema(zodSchema, method === 'get' ? request.query : request.body);
-        response = await service(param, ctx);
-      } else {
-        response = await service(ctx);
+        param = parseZodSchema(zodSchema, method === 'get' ? request.query : request.body);
       }
-      reply.send(response);
+      // 设置日志实例，绑定到 ctx
+      const ctx = getContext(request);
+      ctx.logger = this.formatLogger ? logger.child(this.formatLogger(request, reply)) : logger;
+
+      // 执行 service 捕获异常
+      try {
+        const response = await (param ? service(param, ctx) : service(ctx));
+        reply.send(response);
+      } catch (error) {
+        if (error instanceof ServiceError) {
+          ctx.logger.error(error.format());
+          throw error;
+        }
+        const reason = error instanceof Error ? error.message : error;
+        const serviceError = new ServiceError({ message: '意外异常', reason, isAccident: true });
+        ctx.logger.error(serviceError.format());
+        throw serviceError;
+      }
     });
   }
 
@@ -71,10 +77,15 @@ export class RouterServer {
     const url = getPath(path);
     const logger = this.fastify.log.child({ method: service.name });
     this.fastify.get(url, async (request, reply) => {
+      // 参数校验
       let param = null;
       if (zodSchema) {
         param = parseZodSchema(zodSchema, request.query);
       }
+      // 在ctx设置日志实例
+      const ctx = getContext(request);
+      ctx.logger = this.formatLogger ? logger.child(this.formatLogger(request, reply)) : logger;
+
       reply.raw.setHeader('access-control-allow-origin', '*');
       reply.raw.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
       reply.raw.setHeader('Connection', 'keep-alive');
@@ -86,14 +97,16 @@ export class RouterServer {
         fead();
       }, 1e3 * 15); // 15s 一次发送心跳
 
-      await new Promise(resolve => {
+      await new Promise(async resolve => {
         request.raw.on('close', () => {
+          if (fead.isStop) return;
           resolve(null);
         });
 
         let id = 0;
-
-        const callback: WriteFunc = (data, event?: string) => {
+        // client 中断时候
+        const callback: WriteFunc = async (data, event?: string) => {
+          if (fead.isStop) throw new ServiceError({ message: 'client close' });
           fead();
           const msg = [`id: ${id}`, `data: ${data}`];
           if (event) {
@@ -103,18 +116,27 @@ export class RouterServer {
           id++;
         };
 
-        const ctx = getContext(request);
-        ctx.logger = logger;
-        let response;
-        if (param) {
-          response = service(param, callback, ctx);
-        } else {
-          response = service(callback, ctx);
+        try {
+          await (param ? service(param, callback, ctx) : service(callback, ctx));
+          resolve(null);
+        } catch (error) {
+          // 日志记录
+          let errorInfo;
+          if (error instanceof ServiceError) {
+            errorInfo = error.format();
+          } else {
+            const reason = error instanceof Error ? error.message : error;
+            errorInfo = { message: '意外异常', reason };
+          }
+          ctx.logger.error(errorInfo);
+          await callback(errorInfo.message, 'error');
+          resolve(null);
         }
-        response.then(resolve).catch(resolve);
       });
 
       fead(true);
+      reply.raw.write;
+      await sleep(1e3);
       reply.raw.end();
     });
   }

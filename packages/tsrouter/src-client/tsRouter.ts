@@ -1,6 +1,7 @@
 import { createRecursiveProxy, retryHandle } from '@packages/utils';
 import { appendHeaders, parseUrl, RefreshFailed, RefreshSuccess } from './utils';
 import type { MethodOptions, RestApiParams, TsRouterOptions } from './type';
+import { ResponseError } from './error';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -8,8 +9,10 @@ export class TsRouter {
   readonly baseUrl: string;
   readonly prefix?: string;
   readonly timeout?: number;
-  readonly headers: HeadersInit;
+  // readonly headers: HeadersInit;
+  headers?: () => Headers;
   refreshToken: (abort: () => void) => Promise<void>;
+  onResponseError: (error: unknown) => void;
 
   isRefreshing = false;
   interceptDuringRefreshResolves: { resolve: (val?: unknown) => void; reject: (error: Error) => void }[] = [];
@@ -17,17 +20,20 @@ export class TsRouter {
   constructor(options: TsRouterOptions) {
     this.baseUrl = options.baseUrl;
     this.prefix = options.prefix;
-    this.headers = options.headers ??= {};
+    this.headers = options.headers;
     this.timeout = options.timeout;
     this.refreshToken = options.refreshToken;
+    this.onResponseError = options.onResponseError;
   }
 
   async #restApi({ method, path, query, body, options = {} }: RestApiParams) {
-    const headers = new Headers(this.headers);
+    const headers = this.headers ? this.headers() : new Headers();
+
+    console.log('options.headers:', options.headers);
     appendHeaders(headers, options.headers);
     if (!headers.has('authorization')) {
       appendHeaders(headers, {
-        Authorization: `Bearer ${''}`,
+        Authorization: `Bearer ${'?'}`,
       });
     }
     if (body) {
@@ -60,23 +66,24 @@ export class TsRouter {
       const status = response.status;
       if (status === 400) {
         // todo 后续捕获结果再抛出异常
+        const resdata = await response.json();
+        throw new ResponseError({ message: resdata?.msg, status: 400 });
       } else if (status === 401) {
         // 刷新token续签
         return await this.#refreshTokenHandle();
       } else if (status === 403) {
         // IP已被拉黑
+        throw new ResponseError({ message: 'IP已被拉黑', status: 403 });
       } else if (status === 429) {
         // IP已被限流
-        return;
+        throw new ResponseError({ message: 'IP已被拉黑', status: 429 });
       }
     }
-    if (!response.body) {
-      // todo ...
-      throw new Error('???');
-    }
+
     return response;
   }
 
+  // todo query options 都可以只有一个，怎么办😰
   get(path: string | string[], query: Record<string, string>, options: Omit<MethodOptions, 'query'>) {
     return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'get', path, query, options }));
   }
@@ -156,8 +163,15 @@ export class TsRouter {
       } catch (error) {
         if (error instanceof RefreshSuccess) {
           // 刷新成功，重新执行
+          console.log('刷新成功，重新执行');
           continue;
         }
+
+        // todo 网络断开就等待10s后无限重试，直到离开页面的 abort
+        // todo 离开页面的 abort
+
+        this.onResponseError(error);
+        // todo 触发钩子
         // 刷新失败，抛出异常
         throw error;
       }
@@ -178,6 +192,10 @@ export class TsRouter {
       this.isRefreshing = false;
       throw new RefreshSuccess();
     } catch (error) {
+      if (error instanceof RefreshSuccess) {
+        throw error;
+      }
+
       this.interceptDuringRefreshResolves.forEach(item => item.reject(new RefreshFailed()));
       this.isRefreshing = false;
       throw new RefreshFailed();

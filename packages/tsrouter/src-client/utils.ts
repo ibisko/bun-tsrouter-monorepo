@@ -14,7 +14,7 @@ export const parseUrl = ({ baseUrl, path, query, prefix }: ParseUrlParams) => {
     }
   } else {
     if (prefix) {
-      path.unshift(prefix);
+      path = [prefix, ...path];
     }
     path = path.map(kebabCase).join('/');
   }

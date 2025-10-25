@@ -1,17 +1,41 @@
 - [x] 前端可视化单元测试
 - [x] ctx 集成日志
+- [x] 参数前的请求headers检查拦截
+  - ~~addHook('onRequest')~~
+- ~~参数校验拦截~~
+  - ~~addHook('preValidation')~~
+- [x] services 错误拦截
+- ~~send 返回值包装~~
+  - ~~addHook('onSend')~~
+  - ~~注意 sse 就不要包装~~
+    - ~~怎么判断是sse~~
 
-- client 中断 sse 时候，server sse仍在执行
-- 刷新 token
-- 403 等错误码的钩子回调
-- 400 异常抛出的自定义 Error
+- [x] client 中断 sse 时候，server sse仍在执行
+- [x] 刷新 token
+- client 全局响应错误拦截，便于跳转
+  - 提供预设工具函数，可用于403时跳回到主页
+  - 403 等错误码的钩子回调
+  - 400 异常抛出的自定义 Error
 - xhr formData 流式上传，上传进度
 - fetch 流式下载文件，下载进度
 - socket.io
   - 是否合适封装到 TsRouter
   - 如何设计封装
   - 聊天室调研
-- 如何进行模块化测试？
+- [x] 进行模块化测试
+
+---
+
+# Feature
+
+- [x] 适用于常见的 Json 响应
+- [x] 适用于 SSE 结构化
+- [x] 错误处理
+- todo 网络异常的检查，失败的时候自动重试
+- todo 适用于 ws ?
+- todo 适用于 formData 上传
+- todo 适用于文件流式下载
+- todo 连接池模式，可以设置并发数量
 
 ---
 

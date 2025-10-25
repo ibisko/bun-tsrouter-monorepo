@@ -10,8 +10,7 @@
     },
     "./server": {
       "types": "./dist/server/main.d.ts",
-      "import": "./dist/server/main.js",
-      "require": "./dist/server/main.js"
+      "import": "./dist/server/main.js"
     }
   },
   "scripts": {

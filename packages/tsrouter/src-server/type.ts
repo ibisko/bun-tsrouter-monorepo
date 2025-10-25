@@ -5,20 +5,20 @@ import type { FastifyBaseLogger, FastifyReply, FastifyRequest } from 'fastify';
 
 export type WriteFunc = {
   /** 默认 event 是 message */
-  (data: string): void;
+  (data: string): Promise<void>;
   /** 自定义 event */
-  (data: string, event: string): void;
+  (data: string, event: string): Promise<void>;
 };
 
 export type Method = 'get' | 'post' | 'sse' | 'patch' | 'put' | 'delete';
 
 type SseHandler<T> = T extends ZodObject
   ? (params: z.output<T>, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>
-  : (options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>;
+  : (parmas?: null, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>;
 
 type StandardHandler<T, R> = T extends ZodObject
   ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
-  : (options?: MethodOptions) => Promise<R>;
+  : (parmas?: null, options?: MethodOptions) => Promise<R>;
 
 type ProcedureDef<M extends Method, T extends ZodObject | Function = any, R = any> = {
   Method?: M;
@@ -37,9 +37,9 @@ export type RegisterableProcedure<
 
 // prettier-ignore
 export type ReplaceSpecificLeaf<T> = NonNullable<
-  keyof T extends `$${string}`    ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
+  keyof T extends `$${string}` ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
   T extends ProcedureDef<infer M> ? { [K in Lowercase<M>]: NonNullable<T["func"]> } :
-  IsPlainObject<T> extends true   ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } : T
+  IsPlainObject<T> extends true ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } : T
 >;
 
 // 判断是否为 普通对象, 排除数组/函数/基本数据类型
@@ -51,13 +51,22 @@ export type RestApiBaseParam = {
   service: (param: any, optional?: any) => Promise<any>;
 };
 
+type LoggerErrorParam = {
+  message: string;
+  reason?: unknown;
+  data?: Record<string, unknown>;
+};
+
+type ContextLogger = Record<Exclude<keyof FastifyBaseLogger, 'level' | 'msgPrefix'>, (param: LoggerErrorParam) => void>;
+
 export type Context<T = {}> = T & {
   query: Record<string, string>;
   url: string;
   ip: string;
+  headers: Record<string, string>;
   params: Record<string, string>;
   /** 日志 */
-  logger: FastifyBaseLogger;
+  logger: ContextLogger;
 };
 
 export type RouterServerOptions = {

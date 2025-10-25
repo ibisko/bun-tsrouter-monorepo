@@ -1,9 +1,10 @@
 export type TsRouterOptions = {
   baseUrl: string;
   prefix?: string;
-  headers?: HeadersInit;
+  headers?: () => Headers;
   timeout?: number;
   refreshToken: (abort: () => void) => Promise<void>;
+  onResponseError: (error: unknown) => void;
 };
 
 export type MethodOptions = {
