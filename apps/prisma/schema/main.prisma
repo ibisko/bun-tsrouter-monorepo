@@ -1,0 +1,15 @@
+enum UserRole {
+    ROOT
+    USER
+}
+
+model Users {
+    id       Int      @id @default(autoincrement())
+    account  String   @unique
+    password String
+    role     UserRole // 角色权限
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+}
