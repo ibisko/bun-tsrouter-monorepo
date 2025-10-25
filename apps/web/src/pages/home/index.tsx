@@ -1,74 +1,69 @@
-import { Button } from '@packages/ui';
-import reactLogo from '@/assets/react.svg';
-import viteLogo from '/vite.svg';
-import { Api } from '@/api';
-import { useNavigate } from 'react-router-dom';
+import { Button, cn, FormErrorMessage, FormInput, LoadingDiv } from '@packages/ui';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { userActions } from '@/stores/user';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 const HomePage = () => {
+  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    defaultValues: {
+      // todo 可加载本地记录
+      // account: 'admin',
+      // password: '1DiKmZQG-lAgQMQ23EeCbZbSqiqkbmS_zG6C2Xt96WMmh9tcIReWpMtNkIki3loT',
+      // password: 'bbb234432',
+    },
+  });
+
   const navigate = useNavigate();
 
-  const testDemoProxy = async () => {
-    const sse = Api.sse.sse({ jfklsd: 12, KJKFD: 'fsdfds' });
+  const onSubmit = async (param: LoginFormData) => {
+    setLoading(true);
     try {
-      await sse(data => {
-        console.log('LKDSK:', data);
-      });
+      await userActions.login(param.account, param.password);
+      console.log('跳转');
+      navigate({ to: '/manage/user', replace: true });
     } catch (error) {
-      console.log(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
-  };
-
-  const fetchDemo = async () => {
-    try {
-      // const res = await Api.demo.djsklfjlksd.get({ id: 12, text: '21' });
-      // const res = await Api.aa.post.CCEmp.post();
-      const res = await Api.aa.post.cc.post(
-        { id: 12, text: 'sdklfls' },
-        { headers: { Authorization: 'skdflksdkfkls' } },
-      );
-      // const res = await Api.demo.dskjfslkd.head({ id: 12, text: 'sdklfls' });
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
+    setLoading(false);
   };
 
   return (
-    <div>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="">
-        <div className="font-bold">接口测试</div>
-        <div className="flex gap-1">
-          <Button className="" onClick={fetchDemo}>
-            fetch demo get
-          </Button>
-          <Button className="" onClick={testDemoProxy}>
-            test demo proxy
-          </Button>
-        </div>
-      </div>
+    <LoadingDiv loading={loading} className="h-screen flex justify-center items-center">
+      <div
+        className={cn(
+          'relative flex flex-col justify-center items-center gap-2 sm:p-10 bg-white shadow-lg px-8',
+          'h-screen sm:h-auto sm:rounded-2xl sm:bg-white/95 w-full sm:max-w-[440px]',
+        )}>
+        <form className={cn('mt-4 flex flex-col gap-4 w-full')} onSubmit={handleSubmit(onSubmit)}>
+          <div className="">账号</div>
+          <FormInput name="account" register={register} placeholder="请输入账号" autoComplete="on" />
+          {errors?.account?.type === 'required' && <FormErrorMessage>请输入账号，账号不可为空</FormErrorMessage>}
 
-      <div className="">
-        <div className="font-bold">路由测试</div>
-        <div className="flex gap-1">
-          <Button className="" onClick={() => navigate('/pg1')}>
-            router to PG1
+          <div className="mt-1">密码</div>
+          <FormInput name="password" type="password" register={register} placeholder="请输入密码" autoComplete="on" />
+          {errors?.password?.type === 'required' && <FormErrorMessage>请输入密码，密码不可为空</FormErrorMessage>}
+
+          <Button className="mt-4 py-3 rounded-xl" type="submit">
+            登录
           </Button>
-          <Button className="" onClick={() => navigate('/protected')}>
-            router to protected
-          </Button>
-        </div>
+        </form>
       </div>
-    </div>
+    </LoadingDiv>
   );
 };
 
 export default HomePage;
+
+type LoginFormData = {
+  account: string;
+  password: string;
+};
