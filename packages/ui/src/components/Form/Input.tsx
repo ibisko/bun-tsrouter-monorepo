@@ -1,4 +1,4 @@
-import { cn } from '@packages/ui';
+import { cn } from '@/main';
 import type { FieldPath, FieldValues, UseFormRegister } from 'react-hook-form';
 
 type FormInputProps<T extends FieldValues> = {
