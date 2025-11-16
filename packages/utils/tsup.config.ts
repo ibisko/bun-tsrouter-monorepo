@@ -1,12 +1,31 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from 'tsup';
 
-export default defineConfig((options) => ({
-  entryPoints: ["./src/index.ts"],
-  format: ["esm", "cjs"],
-  watch: true,
-  dts: true,
-  ...options,
-  async onSuccess() {
-    console.log(process.env.SIGN_BUILDSUCCESS);
+export default defineConfig(options => [
+  {
+    ...options,
+    entryPoints: ['./src/index.ts'],
+    outDir: './dist/src',
+    format: ['esm', 'cjs'],
+    watch: true,
+    dts: true,
+    silent: true,
   },
-}));
+  {
+    ...options,
+    entryPoints: ['./src-server/index.ts'],
+    outDir: './dist/server',
+    format: ['esm', 'cjs'],
+    watch: true,
+    dts: true,
+    silent: true,
+  },
+  {
+    ...options,
+    entryPoints: ['./src-server/index.ts'],
+    outDir: './dist/web',
+    format: ['esm', 'cjs'],
+    watch: true,
+    dts: true,
+    silent: true,
+  },
+]);
