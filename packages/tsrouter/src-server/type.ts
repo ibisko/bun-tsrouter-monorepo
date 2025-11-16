@@ -59,7 +59,7 @@ type LoggerErrorParam = {
 
 type ContextLogger = Record<Exclude<keyof FastifyBaseLogger, 'level' | 'msgPrefix'>, (param: LoggerErrorParam) => void>;
 
-export type Context<T = {}> = T & {
+export interface Context {
   query: Record<string, string>;
   url: string;
   ip: string;
@@ -67,7 +67,7 @@ export type Context<T = {}> = T & {
   params: Record<string, string>;
   /** 日志 */
   logger: ContextLogger;
-};
+}
 
 export type RouterServerOptions = {
   formatLogger?: (request: FastifyRequest, reply: FastifyReply) => Record<string, unknown>;

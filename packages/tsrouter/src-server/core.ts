@@ -42,7 +42,7 @@ export class RouterServer {
       // 执行 service 捕获异常
       try {
         const response = await (param ? service(param, ctx) : service(ctx));
-        reply.send(response);
+        reply.send(response ?? { msg: 'success' });
       } catch (error) {
         if (error instanceof ServiceError) {
           ctx.logger.error(error.format());

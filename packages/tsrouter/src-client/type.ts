@@ -18,7 +18,7 @@ export type MethodOptions = {
 export type RestApiParams = {
   method: 'get' | 'post' | 'patch' | 'delete' | 'put';
   path: string | string[];
-  query?: Record<string, string>;
+  query?: Record<string, string> | null;
   body?: any;
   options?: MethodOptions;
 };

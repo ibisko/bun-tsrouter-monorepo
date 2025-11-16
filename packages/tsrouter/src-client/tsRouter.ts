@@ -55,7 +55,7 @@ export class TsRouter {
 
     const url = parseUrl({ baseUrl: this.baseUrl, prefix: this.prefix, path, query });
     const response = await fetch(url, {
-      method,
+      method: method.toUpperCase(),
       headers: headers,
       signal: signal,
       body: ['get', 'sse', 'head'].includes(method) ? undefined : JSON.stringify(body),
@@ -81,23 +81,6 @@ export class TsRouter {
     }
 
     return response;
-  }
-
-  // todo query options 都可以只有一个，怎么办😰
-  get(path: string | string[], query: Record<string, string>, options: Omit<MethodOptions, 'query'>) {
-    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'get', path, query, options }));
-  }
-  post(path: string | string[], body: any, options: MethodOptions) {
-    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'post', path, body, options }));
-  }
-  patch(path: string | string[], body: any, options: MethodOptions) {
-    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'patch', path, body, options }));
-  }
-  put(path: string | string[], body: any, options: MethodOptions) {
-    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'put', path, body, options }));
-  }
-  delete(path: string | string[], body: any, options: MethodOptions) {
-    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'delete', path, body, options }));
   }
 
   #sse(path: string | string[], query: Record<string, string>, options: MethodOptions) {
@@ -145,8 +128,23 @@ export class TsRouter {
     };
   }
 
-  sse(path: string, query: Record<string, string>, options: Omit<MethodOptions, 'query'> = {}) {
-    return async (callback: (data: any) => void) =>
+  get(path: string | string[], query: Record<string, string> | null, options: Omit<MethodOptions, 'query'>) {
+    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'get', path, query, options }));
+  }
+  post(path: string | string[], body: any, options: MethodOptions) {
+    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'post', path, body, options }));
+  }
+  patch(path: string | string[], body: any, options: MethodOptions) {
+    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'patch', path, body, options }));
+  }
+  put(path: string | string[], body: any, options: MethodOptions) {
+    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'put', path, body, options }));
+  }
+  delete(path: string | string[], body: any, options: MethodOptions) {
+    return this.#warpperRefreshTokenCatch(() => this.#restApi({ method: 'delete', path, body, options }));
+  }
+  sse(path: string | string[], query: Record<string, string>, options: Omit<MethodOptions, 'query'> = {}) {
+    return (callback: (data: any) => void) =>
       this.#warpperRefreshTokenCatch(() => this.#sse(path, query, options)(callback));
   }
 
@@ -203,10 +201,8 @@ export class TsRouter {
   }
 }
 
-// new TsRouter()
-
-export const createAppRouter = <T>(tsRouter: TsRouter) => {
-  return createRecursiveProxy<T, string>({
+export const createAppRouter = <T>(tsRouter: TsRouter) =>
+  createRecursiveProxy<T>({
     get: tsRouter.get.bind(tsRouter),
     post: tsRouter.post.bind(tsRouter),
     patch: tsRouter.patch.bind(tsRouter),
@@ -214,4 +210,3 @@ export const createAppRouter = <T>(tsRouter: TsRouter) => {
     delete: tsRouter.delete.bind(tsRouter),
     sse: tsRouter.sse.bind(tsRouter),
   });
-};
