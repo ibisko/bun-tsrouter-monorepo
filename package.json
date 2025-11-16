@@ -2,7 +2,8 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run dev.ts"
+    "dev": "bun run dev.ts",
+    "app": "bun ./scripts/createApp.ts"
   },
   "keywords": [],
   "author": "",

@@ -59,8 +59,6 @@ export const login = async (param: z.output<typeof loginSchema>, ctx: Context) =
 
 /** 刷新凭证 */
 export const refreshToken = async (ctx: Context) => {
-  console.log('refreshToken! ctx:', ctx);
-
   const authorization = ctx?.headers?.authorization;
   if (!authorization) {
     throw new ServiceError({ message: '缺少凭证', reason: '没有 headers.authorization 的越权访问' });
@@ -71,11 +69,6 @@ export const refreshToken = async (ctx: Context) => {
   if (!token) {
     throw new ServiceError({ message: '解析凭证格式错误', data: { authorization } });
   }
-
-  /* console.log({
-    token,
-    refreshAuthSecret: config.refreshAuthSecret,
-  }); */
 
   let detoken;
   try {

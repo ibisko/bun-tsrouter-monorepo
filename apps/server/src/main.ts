@@ -6,7 +6,11 @@ import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyMultipart from '@fastify/multipart';
 import { MiddlewareError, ServiceError, ValidationError } from '@packages/tsrouter/server';
+import { ensurePathExists } from './utils/path';
 export type { AppRouter } from './router/tsrouter';
+// import { Context as BaseContext } from '@packages/tsrouter/server';
+
+const FastifyLogFolder = path.join(process.cwd(), '../../logs');
 
 async function createServer() {
   // 初始化 fastify
@@ -20,7 +24,7 @@ async function createServer() {
           return {};
         },
       },
-      file: path.join(process.cwd(), '../../logs/dev.log'),
+      file: path.join(FastifyLogFolder, 'dev.log'),
     },
     trustProxy: true, // 信任Nginx代理，拿到用户ip
   });
@@ -67,10 +71,7 @@ async function createServer() {
     // 400 service错误
     // 500 gateway才会收到的微服务错误
 
-    if (error instanceof MiddlewareError
-      || error instanceof ValidationError
-      || error instanceof ServiceError
-    ) {
+    if (error instanceof MiddlewareError || error instanceof ValidationError || error instanceof ServiceError) {
       return reply.status(error.status).send({ msg: error.message });
     }
   });
@@ -80,7 +81,7 @@ async function createServer() {
       port: config.port,
       host: '0.0.0.0',
     });
-    console.log("服务已开启", config);
+    console.log('服务已开启', config);
     app.log.info('服务已开启');
   } catch (error) {
     app.log.error(error);
@@ -89,6 +90,10 @@ async function createServer() {
 }
 
 async function main() {
+  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+
+  await ensurePathExists(FastifyLogFolder);
+
   // 载入基本配置
   globalConfigInstance.loadDefaultConfig();
   // 启动服务

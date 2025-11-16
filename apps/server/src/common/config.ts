@@ -1,10 +1,7 @@
 import yaml from 'yaml';
 import path from 'path';
 import fs from 'fs';
-import * as _ from 'lodash-es';
-
-
-console.log("process.cwd():", process.cwd());
+import { merge } from 'lodash-es';
 
 // 常量文件配置
 const yamlConfigFolder = path.join(process.cwd(), './config');
@@ -21,7 +18,7 @@ class GlobalConfig {
   loadDefaultConfig() {
     const env = yaml.parse(readYamlConfig('base.yaml'));
     const inheritEnv = yaml.parse(readYamlConfig(`${process.env.NODE_ENV}.yaml`));
-    _.merge(this.config, env, inheritEnv);
+    merge(this.config, env, inheritEnv);
   }
 }
 

@@ -126,6 +126,8 @@ export class RouterServer {
             errorInfo = error.format();
           } else {
             const reason = error instanceof Error ? error.message : error;
+
+            console.log('意外异常:', reason);
             errorInfo = { message: '意外异常', reason };
           }
           ctx.logger.error(errorInfo);

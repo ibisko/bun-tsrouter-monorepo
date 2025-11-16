@@ -17,6 +17,15 @@
         "typescript": "^5.8.3",
       },
     },
+    "apps/hello": {
+      "name": "hello",
+      "version": "1.0.0",
+      "dependencies": {
+        "@packages/utils": "workspace:^",
+        "got": "^14.4.7",
+        "yaml": "^2.8.1",
+      },
+    },
     "apps/prisma": {
       "name": "@apps/prisma",
       "version": "1.0.0",
@@ -653,6 +662,8 @@
     "graphemer": ["graphemer@1.4.0", "https://registry.npmmirror.com/graphemer/-/graphemer-1.4.0.tgz", {}, "sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag=="],
 
     "has-flag": ["has-flag@4.0.0", "https://registry.npmmirror.com/has-flag/-/has-flag-4.0.0.tgz", {}, "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="],
+
+    "hello": ["hello@workspace:apps/hello"],
 
     "http-cache-semantics": ["http-cache-semantics@4.2.0", "https://registry.npmmirror.com/http-cache-semantics/-/http-cache-semantics-4.2.0.tgz", {}, "sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ=="],
 

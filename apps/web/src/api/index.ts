@@ -46,4 +46,4 @@ const ins = new TsRouter({
   },
 });
 
-export const Api = createAppRouter(ins) as AppRouter;
+export const Api = createAppRouter<AppRouter>(ins);
