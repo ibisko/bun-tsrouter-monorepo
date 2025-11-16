@@ -1,5 +1,6 @@
+import '@packages/ui/styles-global.css';
 import '@packages/ui/styles.css';
-import './styles/global.css';
+
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router/rootRoute.tsx';
 import ReactDOM from 'react-dom/client';

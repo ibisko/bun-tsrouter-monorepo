@@ -1,4 +1,4 @@
-import { cn } from '@/main';
+import { Input } from '../Input';
 import type { FieldPath, FieldValues, UseFormRegister } from 'react-hook-form';
 
 type FormInputProps<T extends FieldValues> = {
@@ -18,10 +18,9 @@ export const FormInput = <T extends FieldValues>({
   register,
 }: FormInputProps<T>) => {
   return (
-    <input
+    <Input
       type={type}
       autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
-      className={cn('flex h-11 w-full rounded-md px-3 py-2 text-sm bg-white', 'border border-gray-300')}
       placeholder={placeholder}
       {...register(name, { required: required })}
     />
