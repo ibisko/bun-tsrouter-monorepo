@@ -1,0 +1,17 @@
+{
+  "name": "unknow",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@packages/utils": "workspace:^",
+    "got": "^14.4.7",
+    "yaml": "^2.8.1"
+  }
+}
