@@ -1,0 +1,14 @@
+[install]
+# 禁用缓存
+cache = false
+# 或者设置缓存过期时间
+cacheLifetime = 0
+
+# 网络配置
+[proxy]
+# 设置超时时间
+timeout = 30000
+
+# 日志级别
+[log]
+level = "debug"

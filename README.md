@@ -1,5 +1,7 @@
 基础模版，仅实现基本功能
 
+专注于单体应用，内网服务
+
 # 使用方式
 
 1. 在主项目切一个分支如 base-template 仅做保存模版代码
@@ -8,6 +10,8 @@
 
 
 # Feature
+
+- [x] shacn
 
 - [x] @apps/web
 - [x] @apps/server
@@ -48,3 +52,9 @@
 
 - [ ] nginx 配置及前端
 - [ ] 证书续期
+
+
+```ts
+import { main } from "bun";
+// 可用于 cli 开发，安装到全局
+```

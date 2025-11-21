@@ -40,8 +40,8 @@ const HomePage = () => {
     <LoadingDiv loading={loading} className="h-screen flex justify-center items-center">
       <div
         className={cn(
-          'relative flex flex-col justify-center items-center gap-2 sm:p-10 bg-white shadow-lg px-8',
-          'h-screen sm:h-auto sm:rounded-2xl sm:bg-white/95 w-full sm:max-w-[440px]',
+          'relative flex flex-col justify-center items-center gap-2 sm:p-10 bg-card shadow-lg px-8',
+          'h-screen sm:h-auto sm:rounded-2xl sm:bg-card/95 w-full sm:max-w-[440px]',
         )}>
         <form className={cn('mt-4 flex flex-col gap-4 w-full')} onSubmit={handleSubmit(onSubmit)}>
           <div className="">账号</div>
@@ -52,7 +52,7 @@ const HomePage = () => {
           <FormInput name="password" type="password" register={register} placeholder="请输入密码" autoComplete="on" />
           {errors?.password?.type === 'required' && <FormErrorMessage>请输入密码，密码不可为空</FormErrorMessage>}
 
-          <Button className="mt-4 py-3 rounded-xl" type="submit">
+          <Button className="mt-4 py-3 rounded-xl" type="submit" variant="destructive">
             登录
           </Button>
         </form>
