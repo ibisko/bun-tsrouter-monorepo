@@ -11,19 +11,7 @@
 
 # Feature
 
-- [x] shacn
-
-- [x] @apps/web
-- [x] @apps/server
-- [x] @packages/utils
-- [x] @packages/ui
-- [x] tailwindcss
-- [x] react-router-dom
-
-- [ ] prisma sqlite
-- [ ] 构建脚本
 - [ ] git webhook 部署更新
-- [x] 状态管理 valtio
 - [ ] ~~多个 oss 对接~~
     - ~~oss 数据备份~~
 - [ ] server 采用 esmodule 对于 *.js 如何更好处理
