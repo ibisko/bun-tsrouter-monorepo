@@ -130,12 +130,12 @@ const generateJwt = ({ flag, userId }: GenerateJwtParam) => {
   // 用来记录某些属性是否有变动
   return {
     token: jwt.sign({ flag, userId }, config.authSecret, {
-      // expiresIn: '1h',
-      expiresIn: '10s',
+      expiresIn: '1h',
+      // expiresIn: '10s',
     }),
     refreshToken: jwt.sign({ flag, userId }, config.refreshAuthSecret, {
-      // expiresIn: '7d',
-      expiresIn: '30s',
+      expiresIn: '7d',
+      // expiresIn: '30s',
     }),
   };
 };
