@@ -1,4 +1,4 @@
-import { Input } from '../Input';
+import { Input } from '../Input/BaseInput';
 import type { FieldPath, FieldValues, UseFormRegister } from 'react-hook-form';
 
 type FormInputProps<T extends FieldValues> = {

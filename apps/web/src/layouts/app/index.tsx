@@ -21,7 +21,8 @@ const MainLayout = () => {
           'sm:scale-100 sm:left-0',
         )}>
         {/* 主面板 */}
-        <div className="relative flex-1 bg-sidebar-accent sm:rounded-2xl overflow-y-auto overflow-x-hidden">
+        {/* <div className="relative flex-1 bg-sidebar-accent sm:rounded-2xl overflow-y-auto overflow-x-hidden"> */}
+        <div className="relative flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </div>
       </div>
@@ -29,6 +30,6 @@ const MainLayout = () => {
   );
 };
 
-export const Route = createLazyRoute('/manage')({
+export const Route = createLazyRoute('/app')({
   component: MainLayout,
 });

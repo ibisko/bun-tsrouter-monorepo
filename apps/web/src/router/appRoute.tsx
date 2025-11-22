@@ -6,16 +6,21 @@ import { RootRoute, createRoute, redirect } from '@tanstack/react-router';
 export const createAppRoute = (rootRoute: RootRoute) => {
   const appRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: '/manage',
+    path: '/app',
     async beforeLoad(ctx) {
       await userActions.initUserInfo();
       // 重定向
-      if (/^\/manage\/?$/.test(ctx.location.pathname)) {
-        throw redirect({ to: '/manage/user', replace: true });
+      if (/^\/app\/?$/.test(ctx.location.pathname)) {
+        throw redirect({ to: '/app/user', replace: true });
       }
     },
     notFoundComponent: () => <div>404 not find</div>,
-  }).lazy(() => import('@/layouts/manage').then(r => r.Route));
+  }).lazy(() => import('@/layouts/app').then(r => r.Route));
+
+  const componentsRoute = createRoute({
+    getParentRoute: () => appRoute,
+    path: '/components',
+  }).lazy(() => import('@/pages/components').then(r => r.Route));
 
   const userRoute = createRoute({
     getParentRoute: () => appRoute,
@@ -27,10 +32,10 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     path: '/log',
     // beforeLoad() {
     //   if (!adminStore.role || !['ROOT', 'ADMIN'].includes(adminStore.role)) {
-    //     throw redirect({ to: '/manage/parent', replace: true });
+    //     throw redirect({ to: '/app/parent', replace: true });
     //   }
     // },
   }).lazy(() => import('@/pages/log').then(r => r.Route));
 
-  return appRoute.addChildren([userRoute, logRoute]);
+  return appRoute.addChildren([componentsRoute, userRoute, logRoute]);
 };

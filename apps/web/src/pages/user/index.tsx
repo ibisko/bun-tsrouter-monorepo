@@ -4,6 +4,6 @@ const UserPage = () => {
   return <div>user page</div>;
 };
 
-export const Route = createLazyRoute('/manage/user')({
+export const Route = createLazyRoute('/app/user')({
   component: UserPage,
 });

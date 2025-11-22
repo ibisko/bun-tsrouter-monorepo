@@ -4,6 +4,6 @@ const LogPage = () => {
   return <div>log page</div>;
 };
 
-export const Route = createLazyRoute('/manage/log')({
+export const Route = createLazyRoute('/app/log')({
   component: LogPage,
 });
