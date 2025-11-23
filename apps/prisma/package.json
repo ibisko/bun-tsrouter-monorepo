@@ -3,20 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
+  "type": "module",
   "exports": {
-    "types": "./generated/client.ts",
-    "import": "./generated/client.js"
+    "./client": {
+      "types": "./generated/client.ts",
+      "import": "./dist/client.js"
+    },
+    "./browser": {
+      "types": "./generated/browser.ts",
+      "import": "./dist/browser.js"
+    }
   },
   "scripts": {
-    "generate": "prisma generate --schema ./schema",
-    "diff": "prisma migrate diff --from-schema-datasource ./schema --to-schema-datamodel ./schema --script > ./diff.sql",
-    "execute": "prisma db execute --schema ./schema --file ./diff.sql"
+    "generate": "prisma generate && tsup",
+    "diff": "prisma migrate diff --from-config-datasource --to-schema ./schema --script -o diff.sql",
+    "execute": "prisma db execute --file diff.sql"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.14.0",
-    "prisma": "^6.14.0"
+    "@prisma/client": "^7.0.0",
+    "prisma": "^7.0.0"
   }
 }

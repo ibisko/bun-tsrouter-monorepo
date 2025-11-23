@@ -1,9 +1,8 @@
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 generator client {
-    provider = "prisma-client-js"
-    output   = "../generated"
+  provider = "prisma-client"
+  output   = "../generated"
 }
