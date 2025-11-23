@@ -37,16 +37,22 @@ function Select({ trigger, triggerIcon, placeholder, options, ...props }: Select
           const keys = Object.keys(item);
           if (keys.includes('label') && keys.includes('value')) {
             const labelItem = item as LableItem;
-            return <SelectItem value={labelItem.value}>{labelItem.label}</SelectItem>;
+            return (
+              <SelectItem value={labelItem.value} key={labelItem.value}>
+                {labelItem.label}
+              </SelectItem>
+            );
           } else if (keys.includes('groupName') && keys.includes('children')) {
             const groupItem = item as GroupItem;
             return (
-              <SelectPrimitive.Group data-slot="select-group">
+              <SelectPrimitive.Group data-slot="select-group" key={groupItem.groupName}>
                 <SelectPrimitive.Label data-slot="select-label" className={cn('text-muted-foreground px-2 py-1.5 text-xs')}>
                   {groupItem.groupName}
                 </SelectPrimitive.Label>
                 {groupItem.children.map(item => (
-                  <SelectItem value={item.value}>{item.label}</SelectItem>
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
                 ))}
               </SelectPrimitive.Group>
             );
