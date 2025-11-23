@@ -21,5 +21,8 @@
   },
   "scripts": {
     "dev": "tsup"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.6"
   }
 }
