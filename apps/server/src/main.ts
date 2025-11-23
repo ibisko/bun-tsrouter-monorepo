@@ -1,6 +1,5 @@
 import path from 'path';
 import fastify from 'fastify';
-import { globalConfigInstance, config } from './common/config';
 import cors from '@fastify/cors';
 import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
 import fastifyRateLimit from '@fastify/rate-limit';
@@ -78,10 +77,10 @@ async function createServer() {
 
   try {
     await app.listen({
-      port: config.port,
+      port: process.env.port,
       host: '0.0.0.0',
     });
-    console.log('服务已开启', config);
+    console.log('服务已开启');
     app.log.info('服务已开启');
   } catch (error) {
     app.log.error(error);
@@ -90,12 +89,7 @@ async function createServer() {
 }
 
 async function main() {
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-
   await ensurePathExists(FastifyLogFolder);
-
-  // 载入基本配置
-  globalConfigInstance.loadDefaultConfig();
   // 启动服务
   await createServer();
 }

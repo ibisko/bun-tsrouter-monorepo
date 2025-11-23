@@ -4,9 +4,8 @@ import { ChildProcess, spawn } from 'child_process';
 let process: ChildProcess;
 
 export default defineConfig(options => ({
-  entryPoints: ['./src/main.ts'],
+  entryPoints: ['./src/main.ts', './src/config.ts'],
   format: ['esm'],
-  // clean: true,
   dts: true,
   ...options,
   watch: ['./src/**/*.ts'],
@@ -15,6 +14,6 @@ export default defineConfig(options => ({
     if (process) {
       process.kill();
     }
-    process = spawn('node', ['./dist/main.js'], { stdio: 'inherit' });
+    process = spawn('node', ['-r', './dist/config.js', './dist/main.js'], { stdio: 'inherit' });
   },
 }));

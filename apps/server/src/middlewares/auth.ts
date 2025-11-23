@@ -1,6 +1,5 @@
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import jwt from 'jsonwebtoken';
-import { config } from '@/common/config';
 import { MiddlewareError } from '@packages/tsrouter/server';
 import { merge } from 'lodash-es';
 import { JwtPayload } from '@/types/jwt';
@@ -43,7 +42,7 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
   }
 
   try {
-    const detoken = jwt.verify(token, config.authSecret) as JwtPayload;
+    const detoken = jwt.verify(token, process.env.authSecret) as JwtPayload;
     req.$customData = merge(req.$customData, {
       userId: detoken.userId,
     });
