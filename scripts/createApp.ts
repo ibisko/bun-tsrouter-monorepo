@@ -36,13 +36,7 @@ async function createApp() {
 
   writePackageJson({ appName, appDir });
 
-  copyFilesToDir(
-    [
-      path.join(__dirname, './libs/createApp', 'tsconfig.json'),
-      path.join(__dirname, './libs/createApp', 'tsup.config.ts'),
-    ],
-    appDir,
-  );
+  copyFilesToDir([path.join(__dirname, './libs/createApp', 'tsconfig.json')], appDir);
   copyFilesToDir([path.join(__dirname, './libs/createApp', 'main.ts')], path.join(appDir, 'src'));
   await new Promise(r => exec('bun i --no-cache', { cwd: appDir }, r));
 }

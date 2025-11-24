@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "tsup"
+    "dev": "bun --watch ./src/main.ts"
   },
   "keywords": [],
   "author": "",
