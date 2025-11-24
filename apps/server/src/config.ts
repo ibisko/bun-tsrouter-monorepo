@@ -3,7 +3,6 @@ import path from 'path';
 
 async function main() {
   config({ path: path.join(process.cwd(), './config/.env') });
-  console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
   if (process.env.NODE_ENV === 'development') {
     config({ path: path.join(process.cwd(), './config/.env.development') });
   } else if (process.env.NODE_ENV === 'production') {

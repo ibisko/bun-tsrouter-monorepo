@@ -5,8 +5,7 @@
   "type": "module",
   "types": "./dist/main.d.ts",
   "scripts": {
-    "dev": "NODE_ENV=development bun --watch -r ./src/config.ts ./src/main.ts",
-    "start": ""
+    "dev": "NODE_ENV=development bun run ./dev.ts"
   },
   "keywords": [],
   "author": "",
