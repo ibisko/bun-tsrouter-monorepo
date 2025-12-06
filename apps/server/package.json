@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "types": "./dist/main.d.ts",
+  "exports": {
+    "./browser": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/browser.js"
+    }
+  },
   "scripts": {
-    "dev": "NODE_ENV=development bun run ./dev.ts"
+    "dev": "NODE_ENV=development bun run ./dev.ts",
+    "generate": "prisma generate",
+    "diff": "prisma migrate diff --from-config-datasource --to-schema ./prisma/schema --script -o diff.sql",
+    "execute": "prisma db execute --file diff.sql"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apps/prisma": "workspace:^",
     "@fastify/cors": "^11.1.0",
     "@fastify/multipart": "^9.2.1",
     "@fastify/rate-limit": "^10.3.0",

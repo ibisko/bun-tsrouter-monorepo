@@ -7,6 +7,7 @@ import fastifyMultipart from '@fastify/multipart';
 import { MiddlewareError, ServiceError, ValidationError } from '@packages/tsrouter/server';
 import { ensurePathExists } from './utils/path';
 export type { AppRouter } from './router/tsrouter';
+export * from 'prisma/generated/browser';
 // import { Context as BaseContext } from '@packages/tsrouter/server';
 
 const FastifyLogFolder = path.join(process.cwd(), '../../logs');

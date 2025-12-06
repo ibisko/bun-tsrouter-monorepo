@@ -1,5 +1,5 @@
 import { userStore } from '@/stores/user';
-import type { AppRouter } from '@apps/server';
+import type { AppRouter } from '@apps/server/browser';
 import { createAppRouter, RefreshFailed, ResponseError, TsRouter } from '@packages/tsrouter/client';
 import { redirect } from '@tanstack/react-router';
 

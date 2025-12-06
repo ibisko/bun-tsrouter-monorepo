@@ -3,9 +3,9 @@ import { Context, ServiceError } from '@packages/tsrouter/server';
 import z from 'zod';
 import jwt from 'jsonwebtoken';
 import prisma from '@/database/prisma';
-import { UserRole } from '@apps/prisma/client';
 import { merge } from 'lodash-es';
 import { JwtPayload } from '@/types/jwt';
+import { UserRole } from 'prisma/generated/enums';
 
 export const loginSchema = z.object({
   account: z.string(),

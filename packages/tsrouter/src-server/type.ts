@@ -10,7 +10,8 @@ export type WriteFunc = {
   (data: string, event: string): Promise<void>;
 };
 
-export type Method = 'get' | 'post' | 'sse' | 'patch' | 'put' | 'delete';
+export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
+type Method = RestApiMethod | 'sse' | 'uploadFile';
 
 type SseHandler<T> = T extends ZodObject
   ? (params: z.output<T>, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>
@@ -24,14 +25,10 @@ type ProcedureDef<M extends Method, T extends ZodObject | Function = any, R = an
   Method?: M;
   param?: z.output<T>;
   return?: R;
-  func?: Lowercase<M> extends `${string}sse` ? SseHandler<T> : StandardHandler<T, R>;
+  func?: M extends 'sse' ? SseHandler<T> : M extends 'uploadFile' ? (formData: FormData) => Promise<void> : StandardHandler<T, R>;
 };
 
-export type RegisterableProcedure<
-  M extends Method = Method,
-  T extends ZodObject | Function = any,
-  R = any,
-> = ProcedureDef<M, T, R> & {
+export type RegisterableProcedure<M extends Method = Method, T extends ZodObject | Function = any, R = any> = ProcedureDef<M, T, R> & {
   (rs: RouterServer, path: string[]): void;
 };
 

@@ -1,8 +1,8 @@
 import { proxy } from 'valtio';
 import type { Nullable } from '@packages/utils';
-import type { UserRole } from '@apps/prisma';
 import { Api } from '@/api';
 import { redirect } from '@tanstack/react-router';
+import type { UserRole } from '@apps/server/browser';
 
 type UserStore = Nullable<{
   token: string;

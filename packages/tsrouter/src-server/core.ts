@@ -1,9 +1,10 @@
 import { sleep, watchdog } from '@packages/utils';
 import { ZodObject } from 'zod';
 import type { FastifyInstance } from 'fastify';
-import type { Method, RestApiBaseParam, RouterServerOptions, WriteFunc } from './type';
+import type { RestApiBaseParam, RestApiMethod, RouterServerOptions, WriteFunc } from './type';
 import { getContext, getPath, parseZodSchema } from './utils';
 import { ServiceError } from './error';
+import { uploadMultipart, UploadMultipartCallback } from './multipart';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -25,7 +26,7 @@ export class RouterServer {
     zodSchema,
     service,
   }: RestApiBaseParam & {
-    method: Exclude<Method, 'sse'>;
+    method: RestApiMethod;
   }) {
     const url = getPath(path);
     const logger = this.fastify.log.child({ method: service.name });
@@ -142,4 +143,9 @@ export class RouterServer {
       reply.raw.end();
     });
   }
+
+  uploadFile = (path: string[], service: UploadMultipartCallback) => {
+    const url = getPath(path);
+    this.fastify.post(url, uploadMultipart(service), () => {});
+  };
 }
