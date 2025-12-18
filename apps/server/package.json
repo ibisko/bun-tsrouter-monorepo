@@ -24,7 +24,6 @@
     "@fastify/rate-limit": "^10.3.0",
     "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
-    "@prisma/adapter-better-sqlite3": "^7.0.0",
     "@prisma/adapter-libsql": "^7.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",

@@ -28,7 +28,6 @@
         "@fastify/rate-limit": "^10.3.0",
         "@packages/tsrouter": "workspace:^",
         "@packages/utils": "workspace:^",
-        "@prisma/adapter-better-sqlite3": "^7.0.0",
         "@prisma/adapter-libsql": "^7.0.0",
         "date-fns": "^4.1.0",
         "dotenv": "^17.2.3",
@@ -319,8 +318,6 @@
     "@parcel/watcher-win32-x64": ["@parcel/watcher-win32-x64@2.5.1", "https://registry.npmmirror.com/@parcel/watcher-win32-x64/-/watcher-win32-x64-2.5.1.tgz", { "os": "win32", "cpu": "x64" }, "sha512-9lHBdJITeNR++EvSQVUcaZoWupyHfXe1jZvGZ06O/5MflPcuPLtEphScIBL+AiCWBO46tDSHzWyD0uDmmZqsgA=="],
 
     "@pinojs/redact": ["@pinojs/redact@0.4.0", "https://registry.npmmirror.com/@pinojs/redact/-/redact-0.4.0.tgz", {}, "sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg=="],
-
-    "@prisma/adapter-better-sqlite3": ["@prisma/adapter-better-sqlite3@7.1.0", "https://registry.npmmirror.com/@prisma/adapter-better-sqlite3/-/adapter-better-sqlite3-7.1.0.tgz", { "dependencies": { "@prisma/driver-adapter-utils": "7.1.0", "better-sqlite3": "^12.4.5" } }, "sha512-Ex4CimAONWMoUrhU27lpGXb4MdX/59qj+4PBTIuPVJLXZfTxSWuU8KowlRtq1w5iE91WiwMgU1KgeBOKJ81nEA=="],
 
     "@prisma/adapter-libsql": ["@prisma/adapter-libsql@7.1.0", "https://registry.npmmirror.com/@prisma/adapter-libsql/-/adapter-libsql-7.1.0.tgz", { "dependencies": { "@libsql/client": "^0.8.1", "@prisma/driver-adapter-utils": "7.1.0", "async-mutex": "0.5.0" } }, "sha512-fTgy+f4CmgIx1/WijwZRUGVc8OAEeld34smrivRCjvLBrjIbENXLBleaefxHvawA0H1vP2OM5MfKk2u079N3iQ=="],
 
