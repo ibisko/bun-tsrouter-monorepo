@@ -8,6 +8,9 @@
       "import": "./dist/src/index.mjs",
       "require": "./dist/src/index.js"
     },
+    "./types": {
+      "types": "./types/main.ts"
+    },
     "./server": {
       "types": "./dist/server/index.d.ts",
       "import": "./dist/server/index.mjs",

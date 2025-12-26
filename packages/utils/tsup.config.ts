@@ -21,7 +21,7 @@ export default defineConfig(options => [
   },
   {
     ...options,
-    entryPoints: ['./src-server/index.ts'],
+    entryPoints: ['./src-web/index.ts'],
     outDir: './dist/web',
     format: ['esm', 'cjs'],
     watch: true,

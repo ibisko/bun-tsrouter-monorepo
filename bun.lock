@@ -6,6 +6,7 @@
       "dependencies": {
         "@prisma/adapter-libsql": "^7.1.0",
         "@prisma/client": "^7.1.0",
+        "date-fns": "^4.1.0",
         "lodash-es": "^4.17.21",
         "prisma": "^7.1.0",
         "zod": "^4.0.17",
