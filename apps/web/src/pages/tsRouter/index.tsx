@@ -1,5 +1,8 @@
+import { createLazyRoute } from '@tanstack/react-router';
 import { RestApi } from './RestApi';
 import { TestSSE } from './TestSSE';
+
+// todo 根据接口返回的信息来动态映射dom接口，以便只在后端写就好了
 
 const TsRouterPage = () => {
   return (
@@ -13,4 +16,6 @@ const TsRouterPage = () => {
   );
 };
 
-export default TsRouterPage;
+export const Route = createLazyRoute('/app/ts-router')({
+  component: TsRouterPage,
+});

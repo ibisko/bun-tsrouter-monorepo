@@ -1,8 +1,9 @@
 import { proxy } from 'valtio';
-import type { Nullable } from '@packages/utils';
 import { Api } from '@/api';
 import { redirect } from '@tanstack/react-router';
 import type { UserRole } from '@apps/server/browser';
+import type { Nullable } from '@packages/utils/types';
+import { cloneDeep } from 'lodash-es';
 
 type UserStore = Nullable<{
   token: string;
@@ -20,7 +21,7 @@ const initialUserStore: UserStore = {
   role: null,
 };
 
-export const userStore = proxy(initialUserStore);
+export const userStore = proxy(cloneDeep(initialUserStore));
 
 const login = async (account: string, password: string) => {
   const response = await Api.auth.login.post({ account, password });
