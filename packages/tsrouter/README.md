@@ -16,8 +16,8 @@
   - 提供预设工具函数，可用于403时跳回到主页
   - 403 等错误码的钩子回调
   - 400 异常抛出的自定义 Error
-- xhr formData 流式上传，上传进度
-- fetch 流式下载文件，下载进度
+- client xhr formData 流式上传，上传进度
+- client fetch 流式下载文件，下载进度
 - socket.io
   - 是否合适封装到 TsRouter
   - 如何设计封装

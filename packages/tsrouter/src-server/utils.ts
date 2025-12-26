@@ -21,7 +21,7 @@ export const getPath = (path: string | string[]) => {
   );
 };
 
-export const parseZodSchema = <T extends ZodObject>(zodSchema: T, param: unknown) => {
+export const parseZodSchema = <T extends ZodObject>(zodSchema: T, param: unknown): z.output<T> => {
   const resparse = z.safeParse(zodSchema, param);
   if (resparse.error) {
     throw new ValidationError(resparse.error);
@@ -31,10 +31,12 @@ export const parseZodSchema = <T extends ZodObject>(zodSchema: T, param: unknown
 
 export const getContext = (request: FastifyRequest) => {
   return Object.assign(request.$customData ?? {}, {
-    query: request.query,
+    reqId: request.id,
     url: request.url,
-    ip: request.ip,
     params: request.params,
     headers: request.headers,
+    ip: request.ip,
+    query: request.query,
+    body: request.body,
   }) as Context;
 };

@@ -1,41 +1,33 @@
 import z, { ZodObject } from 'zod';
-import { RouterServer } from './core';
-import { RegisterableProcedure, RestApiMethod, RouterServerOptions, WriteFunc } from './type';
+import { RegisterableProcedure, RestApiMethod, RestApiService, RouterServerOptions, SseService } from './type';
 import { FastifyInstance } from 'fastify';
 import { UploadMultipartCallback } from './multipart';
+import { RouterServer } from './core/RouterServer';
 
 const createStandardMethod =
   <M extends RestApiMethod>(method: M) =>
-  <T extends ZodObject | Function = any, R = any>(
-    zodSchema: T,
-    ...service: T extends Function ? [] : [(param: z.output<T>, optional?: any) => Promise<R>]
-  ) => {
-    let _zodSchema = undefined;
-    let _service;
-    if (typeof zodSchema === 'function') {
-      _service = zodSchema as (param: z.output<T>, optional?: any) => Promise<R>;
+  <T extends ZodObject | RestApiService = any, R = any>(...args: T extends ZodObject ? [T, RestApiService<T, R>] : [T]) => {
+    let func: RegisterableProcedure<M, T, R>;
+    if (typeof args[0] === 'function') {
+      const service = args[0];
+      func = (rs, path) => rs[method]({ path, zodSchema: undefined, service });
     } else {
-      _zodSchema = zodSchema;
-      _service = service[0]!;
+      const zodSchema = args[0];
+      func = (rs, path) => rs[method]({ path, zodSchema, service: args[1]! });
     }
-    const func: RegisterableProcedure<M, T, R> = (rs, path) => rs[method]({ path, zodSchema: _zodSchema, service: _service });
     func.Method = method;
     return func;
   };
 
-const createSseMethod = <T extends ZodObject | Function = any, R = any>(
-  zodSchema: T,
-  ...service: T extends Function ? [] : [(param: any, write: WriteFunc, optional?: any) => Promise<R>]
-) => {
-  let _zodSchema = undefined;
-  let _service;
-  if (typeof zodSchema === 'function') {
-    _service = zodSchema as (write: WriteFunc, optional?: any) => Promise<R>;
+const createSseMethod = <T extends ZodObject | SseService = any, R = any>(...args: T extends ZodObject ? [T, SseService<T>] : [T]) => {
+  let func: RegisterableProcedure<'sse', T, R>;
+  if (typeof args[0] === 'function') {
+    const service = args[0];
+    func = (rs, path) => rs.sse({ path, zodSchema: undefined, service });
   } else {
-    _zodSchema = zodSchema;
-    _service = service[0]!;
+    const zodSchema = args[0];
+    func = (rs, path) => rs.sse({ path, zodSchema, service: args[1]! });
   }
-  const func: RegisterableProcedure<'sse', T, R> = (rs, path) => rs.sse({ path, zodSchema: _zodSchema, service: _service });
   func.Method = 'sse';
   return func;
 };
@@ -47,17 +39,23 @@ const createUploadFile = (service: UploadMultipartCallback) => {
 };
 
 export const procedure = {
+  // 基础方法
   get: createStandardMethod('get'),
   post: createStandardMethod('post'),
   patch: createStandardMethod('patch'),
   put: createStandardMethod('put'),
   delete: createStandardMethod('delete'),
+  // 扩展方法
   sse: createSseMethod,
   uploadFile: createUploadFile,
 };
 
-// todo 改为对象参数，便于定义扩展
-export const createRouter = (fastify: FastifyInstance, routerTree: any, options?: RouterServerOptions) => {
+type CreateRouterParams = {
+  fastify: FastifyInstance;
+  router: any;
+  options?: RouterServerOptions;
+};
+export const createRouter = ({ fastify, router, options }: CreateRouterParams) => {
   const rs = new RouterServer(fastify, options);
 
   const parseRouter = (router: any, prefix: string[] = []) => {
@@ -74,5 +72,5 @@ export const createRouter = (fastify: FastifyInstance, routerTree: any, options?
       parseRouter(value, _prefix);
     }
   };
-  parseRouter(routerTree);
+  parseRouter(router);
 };
