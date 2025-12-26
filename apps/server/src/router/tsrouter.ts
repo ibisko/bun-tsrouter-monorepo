@@ -1,18 +1,10 @@
-import {
-  demoService,
-  demoServiceEmp,
-  demosseService,
-  demosseServiceEmp,
-  zodDemoSchema,
-  zodDemoSSEService,
-} from '@/services/demo/index';
+import { demoService, demoServiceEmp, demosseService, demosseServiceEmp, zodDemoSchema, zodDemoSSEService } from '@/services/demo/index';
 import { FastifyInstance } from 'fastify';
 import { createRouter, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
-import { sse1, sse1Schema, sse2 } from '@/services/tsRouterTest/sse';
-import { get1, get2, get2Schema } from '@/services/tsRouterTest/rest';
 import { authHook } from '@/middlewares/auth';
 import { login, loginSchema, refreshToken } from '@/services/auth';
 import { getUserInfo } from '@/services/users';
+import { tsRouter } from '@/services/tsRouterTest';
 
 const mainAuthRouterTree = {
   user: {
@@ -28,6 +20,11 @@ const mainAuthRouterTree = {
     },
   },
   sse: procedure.sse(zodDemoSSEService, demosseService),
+  sse1: procedure.sse(zodDemoSSEService, async (param, { write }, optional) => {
+    param.KJKFD;
+    optional;
+    return { running: () => {} };
+  }),
   sseEmp: procedure.sse(demosseServiceEmp),
 };
 
@@ -38,18 +35,13 @@ const mainWhiteListRouterTree = {
   },
 
   test: {
-    tsRouter: {
-      sse1: procedure.sse(sse1Schema, sse1),
-      sse2: procedure.sse(sse2),
-      get1: procedure.get(get1),
-      get2: procedure.get(get2Schema, get2),
-    },
+    tsRouter,
   },
 };
 
 export const mainAuthRouter = (fastify: FastifyInstance) => {
   fastify.addHook('onRequest', authHook);
-  createRouter(fastify, mainAuthRouterTree);
+  createRouter({ fastify, router: mainAuthRouterTree });
 };
 export const mainWhiteListRouter = (fastify: FastifyInstance) => {
   // 黑名单、鉴权，只拿 Headers 里的 authorization
@@ -62,14 +54,9 @@ export const mainWhiteListRouter = (fastify: FastifyInstance) => {
   // todo 返回值包装
   // fastify.addHook('onSend', () => {});
 
-  createRouter(fastify, mainWhiteListRouterTree, {
-    formatLogger: request => ({
-      ip: request.ip,
-      url: request.url,
-      params: request.params,
-      query: request.query,
-      body: request.body,
-    }),
+  createRouter({
+    fastify,
+    router: mainWhiteListRouterTree,
   });
 };
 

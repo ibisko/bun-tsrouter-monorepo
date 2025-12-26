@@ -1,3 +1,4 @@
+import { SseService } from '@packages/tsrouter/server';
 import { sleep } from '@packages/utils';
 import z from 'zod';
 
@@ -20,16 +21,21 @@ export const zodDemoSSEService = z.object({
   KJKFD: z.string(),
 });
 
-export const demosseService = async (param: z.output<typeof zodDemoSSEService>, write: (data: any) => void) => {
+export const demosseService: SseService<typeof zodDemoSSEService> = async (param, { write, signal }) => {
   for (let i = 0; i < 5; i++) {
     await sleep(1e3);
+    signal.throwIfAborted();
     write(`i>: ${i}eee`);
   }
+  return {
+    running() {},
+  };
 };
 
-export const demosseServiceEmp = async (write: (data: any) => void) => {
+export const demosseServiceEmp: SseService = async ({ write, signal }) => {
   for (let i = 0; i < 5; i++) {
     await sleep(1e3);
+    signal.throwIfAborted();
     write(`i>: ${i}eee`);
   }
 };

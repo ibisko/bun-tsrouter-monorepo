@@ -62,6 +62,7 @@ async function createServer() {
       // return reply.code(403).send('已被列入黑名单');
       return reply.code(429).send('限流');
     }
+    console.log('错误拦截到了');
 
     // 403 黑名单
     // 429 限流
