@@ -5,7 +5,7 @@
     "./styles.css": "./dist/index.css",
     "./styles-global.css": "./src/styles/global.css",
     ".": {
-      "types": "./dist/main.d.mts",
+      "types": "./src/main.ts",
       "import": "./dist/main.mjs"
     }
   },

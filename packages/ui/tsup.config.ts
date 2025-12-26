@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 import { spawn, spawnSync } from 'child_process';
 
 export default defineConfig(options => ({
-  entryPoints: ['./src/main.tsx'],
+  entryPoints: ['./src/main.ts'],
   format: ['esm'],
   dts: true,
   external: ['react'],

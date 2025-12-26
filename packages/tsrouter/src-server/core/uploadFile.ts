@@ -7,7 +7,6 @@ import { merge } from 'lodash-es';
 export function uploadFile(this: RouterServerInterface, path: string[], service: UploadMultipartCallback) {
   const url = getPath(path);
   const logger = this.fastify.log.child({ method: service.name });
-  // this.fastify.post(url, uploadMultipart(service), () => {});
   this.fastify.post(
     url,
     {
@@ -33,6 +32,7 @@ export function uploadFile(this: RouterServerInterface, path: string[], service:
           onFile?.(fieldname, stream, filename, transferEncoding, mimeType);
         });
         busboy.on('field', (...params) => {
+          // todo 字段类型zod验证
           onField?.(...params);
         });
         busboy.on('error', async err => {
@@ -41,7 +41,7 @@ export function uploadFile(this: RouterServerInterface, path: string[], service:
         });
         busboy.on('finish', async () => {
           const res = await onFinish?.();
-          // todo 可以追加下载逻辑吧？上传成功后响应的是一个文件下载
+          // todo 尝试上传成功后的响应是下载一个文件
           reply.send(res);
         });
         payload.pipe(busboy);
