@@ -12,8 +12,10 @@ export function uploadFile(this: RouterServerInterface, path: string[], service:
     url,
     {
       preParsing: async (req, reply, payload) => {
-        const ctx = getContext(req);
-        ctx.logger = this.formatLogger ? logger.child(this.formatLogger(req, reply)) : logger;
+        const ctx = getContext(req, logger);
+        if (this.formatLogger) {
+          ctx.logger = ctx.logger.child(this.formatLogger(req, reply));
+        }
         const { setBusboyConfig, onFile, onField, onError, onFinish } = await service(req, reply, ctx);
         const defaultBusboyConfig = {
           headers: {

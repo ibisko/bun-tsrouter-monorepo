@@ -15,8 +15,11 @@ export const restApiMethod =
         param = parseZodSchema(zodSchema, method === 'get' ? request.query : request.body);
       }
       // 设置日志实例，绑定到 ctx
-      const ctx = getContext(request);
-      ctx.logger = _this.formatLogger ? logger.child(_this.formatLogger(request, reply)) : logger;
+      const ctx = getContext(request, logger);
+      console.log('设置日志实例，绑定到 ctx');
+      if (_this.formatLogger) {
+        ctx.logger = ctx.logger.child(_this.formatLogger(request, reply));
+      }
 
       // 执行 service 捕获异常
       try {

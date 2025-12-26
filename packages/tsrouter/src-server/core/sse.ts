@@ -15,8 +15,10 @@ export function sse(this: RouterServerInterface, { path, zodSchema, service }: R
     }
 
     // 在ctx设置日志实例
-    const ctx = getContext(request);
-    ctx.logger = this.formatLogger ? logger.child(this.formatLogger(request, reply)) : logger;
+    const ctx = getContext(request, logger);
+    if (this.formatLogger) {
+      ctx.logger = ctx.logger.child(this.formatLogger(request, reply));
+    }
 
     reply.raw.setHeader('access-control-allow-origin', '*');
     reply.raw.setHeader('Content-Type', 'text/event-stream; charset=utf-8');

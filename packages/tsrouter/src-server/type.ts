@@ -32,7 +32,6 @@ type ContextLogger = Record<Exclude<keyof FastifyBaseLogger, 'level' | 'msgPrefi
   child: FastifyBaseLogger['child'];
 };
 export interface Context {
-  reqId: string;
   query: Record<string, string>;
   url: string;
   ip: string;

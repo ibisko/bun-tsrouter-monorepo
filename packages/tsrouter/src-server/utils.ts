@@ -1,5 +1,5 @@
-import { FastifyRequest } from 'fastify';
-import { kebabCase } from 'lodash-es';
+import { FastifyBaseLogger, FastifyRequest } from 'fastify';
+import { kebabCase, merge } from 'lodash-es';
 import z, { ZodObject } from 'zod';
 import type { Context } from './type';
 import { ValidationError } from './error';
@@ -29,14 +29,21 @@ export const parseZodSchema = <T extends ZodObject>(zodSchema: T, param: unknown
   return resparse.data as z.output<T>;
 };
 
-export const getContext = (request: FastifyRequest) => {
-  return Object.assign(request.$customData ?? {}, {
-    reqId: request.id,
+export const getContext = (request: FastifyRequest, logger: FastifyBaseLogger) => {
+  const optional = {
     url: request.url,
-    params: request.params,
-    headers: request.headers,
+    params: request.params as Record<string, string>,
     ip: request.ip,
-    query: request.query,
+    query: request.query as Record<string, string>,
     body: request.body,
-  }) as Context;
+  };
+  const ctx: Context = {
+    ...optional,
+    headers: request.headers as Record<string, string>,
+    logger: logger.child({
+      reqId: request.id,
+      ...optional,
+    }),
+  };
+  return merge(request.$customData, ctx);
 };
