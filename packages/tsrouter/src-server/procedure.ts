@@ -1,42 +1,7 @@
-import z, { ZodObject } from 'zod';
-import { RegisterableProcedure, RestApiMethod, RestApiService, RouterServerOptions, SseService } from './type';
-import { FastifyInstance } from 'fastify';
-import { UploadMultipartCallback } from './multipart';
-import { RouterServer } from './core/RouterServer';
-
-const createStandardMethod =
-  <M extends RestApiMethod>(method: M) =>
-  <T extends ZodObject | RestApiService = any, R = any>(...args: T extends ZodObject ? [T, RestApiService<T, R>] : [T]) => {
-    let func: RegisterableProcedure<M, T, R>;
-    if (typeof args[0] === 'function') {
-      const service = args[0];
-      func = (rs, path) => rs[method]({ path, zodSchema: undefined, service });
-    } else {
-      const zodSchema = args[0];
-      func = (rs, path) => rs[method]({ path, zodSchema, service: args[1]! });
-    }
-    func.Method = method;
-    return func;
-  };
-
-const createSseMethod = <T extends ZodObject | SseService = any, R = any>(...args: T extends ZodObject ? [T, SseService<T>] : [T]) => {
-  let func: RegisterableProcedure<'sse', T, R>;
-  if (typeof args[0] === 'function') {
-    const service = args[0];
-    func = (rs, path) => rs.sse({ path, zodSchema: undefined, service });
-  } else {
-    const zodSchema = args[0];
-    func = (rs, path) => rs.sse({ path, zodSchema, service: args[1]! });
-  }
-  func.Method = 'sse';
-  return func;
-};
-
-const createUploadFile = (service: UploadMultipartCallback) => {
-  const func: RegisterableProcedure<'uploadFile'> = (rs, path) => rs.uploadFile(path, service);
-  func.Method = 'uploadFile';
-  return func;
-};
+import { getPath } from './utils';
+import { createStandardMethod } from './core/restApi';
+import { Logger } from './logger';
+import { Middleware } from './type';
 
 export const procedure = {
   // 基础方法
@@ -46,31 +11,30 @@ export const procedure = {
   put: createStandardMethod('put'),
   delete: createStandardMethod('delete'),
   // 扩展方法
-  sse: createSseMethod,
-  uploadFile: createUploadFile,
+  // sse: createSseMethod,
+  // uploadFile: createUploadFile,
 };
 
 type CreateRouterParams = {
-  fastify: FastifyInstance;
-  router: any;
-  options?: RouterServerOptions;
+  router: Record<string, unknown>;
+  logger: Logger;
+  middlewares: Middleware[];
+  prefix?: string[];
 };
-export const createRouter = ({ fastify, router, options }: CreateRouterParams) => {
-  const rs = new RouterServer(fastify, options);
-
+export const createRouter = ({ router, logger, middlewares, prefix }: CreateRouterParams) => {
+  const routes: Record<string, Function> = {};
   const parseRouter = (router: any, prefix: string[] = []) => {
-    for (const [key, value] of Object.entries(router)) {
+    for (const [key, func] of Object.entries(router)) {
       const regexp = /^\$(.*)/.exec(key);
       const _prefix = regexp ? prefix.concat(':' + regexp[1]) : prefix.concat(key);
-      if (typeof value === 'function') {
-        const func = value as RegisterableProcedure;
-        if (['get', 'post', 'patch', 'put', 'delete', 'sse', 'uploadFile'].includes(func.Method!)) {
-          func(rs, _prefix);
-          continue;
-        }
+      if (typeof func === 'function') {
+        const url = getPath(_prefix);
+        routes[url] = func(logger, middlewares);
+        continue;
       }
-      parseRouter(value, _prefix);
+      parseRouter(func, _prefix);
     }
   };
-  parseRouter(router);
+  parseRouter(router, prefix);
+  return routes;
 };

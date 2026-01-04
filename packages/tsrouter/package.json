@@ -5,11 +5,11 @@
   "type": "module",
   "exports": {
     "./client": {
-      "types": "./src-client/main.ts",
+      "types": "./dist/client//main.d.ts",
       "import": "./dist/client/main.js"
     },
     "./server": {
-      "types": "./src-server/main.ts",
+      "types": "./dist/server/main.d.ts",
       "import": "./dist/server/main.js"
     }
   },
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@fastify/busboy": "^3.2.0",
-    "@packages/utils": "workspace:^"
+    "@packages/utils": "workspace:^",
+    "fast-json-stringify": "^6.1.1"
   }
 }
