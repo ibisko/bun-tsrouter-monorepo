@@ -1,7 +1,7 @@
 import z from 'zod';
+import type { Func, AwaitedReturn } from '@packages/utils/types';
+import type { ProcedureDef, RestApiMethod, RestApiService, RS, ServiceClass } from '../type';
 import { parseZodSchema, trycatchAndMiddlewaresHandle } from '../utils';
-import type { RegisterableProcedure, RestApiMethod, RestApiService, RS, ServiceClass } from '../type';
-import { Func } from '@packages/utils/types';
 
 class RestApiServiceClass implements ServiceClass {
   method: RestApiMethod;
@@ -11,16 +11,16 @@ class RestApiServiceClass implements ServiceClass {
 
   set(...args: unknown[]): RS {
     let zodSchema: z.ZodObject | undefined;
-    let service: Function;
+    let service: Func;
     if (typeof args[0] !== 'function') {
       zodSchema = args[0] as z.ZodObject;
-      service = args[1] as Function;
+      service = args[1] as Func;
     } else {
-      service = args[0] as Function;
+      service = args[0] as Func;
     }
 
     return trycatchAndMiddlewaresHandle(this.method, service, async (request, server, ctx) => {
-      const param = zodSchema ? parseZodSchema(request, zodSchema) : undefined;
+      const param = zodSchema ? await parseZodSchema(request, zodSchema) : undefined;
       let response;
       if (param) {
         const _service = service as RestApiService<NonNullable<typeof zodSchema>>;
@@ -29,19 +29,22 @@ class RestApiServiceClass implements ServiceClass {
         const _service = service as RestApiService;
         response = await _service(ctx);
       }
-      return new Response(typeof response === 'string' ? response : JSON.stringify(response));
+
+      return new Response(typeof response === 'string' ? response : JSON.stringify(response), {
+        headers: ctx.resHeaders,
+      });
     });
   }
 }
 
 export function createStandardMethod<T extends RestApiMethod>(method: T) {
-  function handle<S extends RestApiService<null> = RestApiService<null>>(service: S): RegisterableProcedure<typeof method, Func, Awaited<ReturnType<S>>>;
-  function handle<T extends z.ZodObject, S extends RestApiService<T>>(
-    schema: T,
-    service: S,
-  ): RegisterableProcedure<typeof method, T, Awaited<ReturnType<S>>>;
-  function handle(...arg1: unknown[]) {
-    return new RestApiServiceClass(method).set(...arg1) as RegisterableProcedure<typeof method>;
-  }
+  const handle: Handle<T> = (...arg1: unknown[]) => {
+    return new RestApiServiceClass(method).set(...arg1) as ProcedureDef<T>;
+  };
   return handle;
 }
+
+type Handle<M extends RestApiMethod> = {
+  <S extends RestApiService>(service: S): ProcedureDef<M, Func, AwaitedReturn<S>>;
+  <T extends z.ZodObject, S extends RestApiService<T>>(schema: T, service: S): ProcedureDef<M, T, AwaitedReturn<S>>;
+};

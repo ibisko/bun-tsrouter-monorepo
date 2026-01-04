@@ -2,6 +2,8 @@ import { getPath } from './utils';
 import { createStandardMethod } from './core/restApi';
 import { Logger } from './logger';
 import { Middleware } from './type';
+import { createSseMethod } from './core/sse';
+import { MaybePromise } from '@packages/utils/types';
 
 export const procedure = {
   // 基础方法
@@ -11,7 +13,7 @@ export const procedure = {
   put: createStandardMethod('put'),
   delete: createStandardMethod('delete'),
   // 扩展方法
-  // sse: createSseMethod,
+  sse: createSseMethod(),
   // uploadFile: createUploadFile,
 };
 
@@ -22,7 +24,7 @@ type CreateRouterParams = {
   prefix?: string[];
 };
 export const createRouter = ({ router, logger, middlewares, prefix }: CreateRouterParams) => {
-  const routes: Record<string, Function> = {};
+  const routes: Record<string, () => MaybePromise<Response>> = {};
   const parseRouter = (router: any, prefix: string[] = []) => {
     for (const [key, func] of Object.entries(router)) {
       const regexp = /^\$(.*)/.exec(key);

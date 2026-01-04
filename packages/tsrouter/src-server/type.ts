@@ -1,10 +1,9 @@
-import z, { ZodObject } from 'zod';
+import z from 'zod';
 import type { MethodOptions } from '@/src-client/type';
 import type { Func, IsPlainObject, MaybePromise } from '@packages/utils/types';
 import { Logger } from './logger';
 
-export type RegisterableProcedure<M extends Method = Method, T extends ZodObject | Func = any, R = any> = ProcedureDef<M, T, R>;
-
+/** 用于 clinet 的 AppRouter */
 export type ReplaceSpecificLeaf<T> = NonNullable<
   // todo $作为前一个路径的函数参数
   // prettier-ignore
@@ -14,26 +13,12 @@ export type ReplaceSpecificLeaf<T> = NonNullable<
                                     T
 >;
 
-// export type RouterServerOptions = {
-//   formatLogger?: (request: FastifyRequest, reply: FastifyReply) => Record<string, unknown>;
-// };
-
-// ========== 上下文 ==========
-
-// type LoggerErrorParam = {
-//   message: string;
-//   reason?: unknown;
-//   data?: Record<string, unknown>;
-// };
-// type ContextLogger = Record<Exclude<keyof FastifyBaseLogger, 'level' | 'msgPrefix'>, (param: LoggerErrorParam) => void> & {
-//   child: FastifyBaseLogger['child'];
-// };
-
 export interface Context {
   url: string;
   // ip: string;
   ip: Bun.SocketAddress | null;
   headers: Bun.BunRequest['headers'];
+  resHeaders: Headers;
   params: Record<string, string>;
   body: Bun.BunRequest['body'];
   /** 日志 */
@@ -45,43 +30,38 @@ export interface Context {
 export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 // prettier-ignore
 type StandardHandler<T, R> =
-  T extends ZodObject ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
-                      : (parmas?: null, options?: MethodOptions) => Promise<R>;
+  T extends z.ZodObject ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
+                        : (parmas?: null, options?: MethodOptions) => Promise<R>;
 
 // prettier-ignore
-export type RestApiService<T extends ZodObject | null = null> =
-  T extends ZodObject ? (param: z.output<T>, ctx: Context) => any :
-                        (ctx: Context) => any;
-
-export type MaybePromiseFunc = () => MaybePromise<void>;
-type SseServiceResponse = {
-  running: MaybePromiseFunc;
-  disconnect?: MaybePromiseFunc;
-  finish?: MaybePromiseFunc;
-};
+export type RestApiService<T extends z.ZodObject | null = null> =
+  T extends z.ZodObject ? (param: z.output<T>, ctx: Context) => any :
+                          (ctx: Context) => any;
 
 // =============== 基础和扩展方法 ===============
 
 export type Method = RestApiMethod | 'sse' | 'uploadFile';
-type ProcedureDef<M extends Method, T extends ZodObject | Func = any, R = any> = {
+
+export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R = any> = {
   Method?: M;
-  param?: z.output<T>;
+  param?: T extends z.ZodObject ? z.output<T> : null;
   return?: R;
   // 单独条件区分，可扩展
   // todo uploadFile需要更完善些
   // prettier-ignore
   func?:
-    M extends 'sse'        ? SseHandler<T> :
-    M extends 'uploadFile' ? (formData: FormData) => Promise<void> :
-                             StandardHandler<T, R>;
+    M extends 'sse'         ? SseHandler<T> :
+    M extends 'uploadFile'  ? (formData: FormData) => Promise<void> :
+    M extends RestApiMethod ? StandardHandler<T, R> :
+                              never;
 };
 
 // =============== 扩展方法SSE ===============
 
 // prettier-ignore
 type SseHandler<T> =
-  T extends ZodObject ? (params: z.output<T>, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>:
-                        (parmas?: null, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>;
+  T extends z.ZodObject ? (params: z.output<T>, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>:
+                          (parmas?: null, options?: MethodOptions) => <K = any>(callback: (data: K) => void) => Promise<void>;
 
 /** sse写消息的方法 */
 export type WriteFunc = {
@@ -92,9 +72,9 @@ export type WriteFunc = {
 };
 
 // prettier-ignore
-export type SseService<T extends ZodObject | null = null> =
-  T extends ZodObject ? (param: z.output<T>, optional: SseServiceOptional) => Promise<void> :
-                        (optional: SseServiceOptional) => Promise<void>;
+export type SseService<T extends z.ZodObject | null = null> =
+  T extends z.ZodObject ? (param: z.output<T>, optional: SseServiceOptional) => MaybePromise<void> :
+                          (optional: SseServiceOptional) => MaybePromise<void>;
 
 type SseServiceOptional = {
   write: WriteFunc;
@@ -109,8 +89,9 @@ export type RS = (
 ) => void;
 
 export interface ServiceClass {
-  method: Method;
+  method: RestApiMethod;
   set(...args: unknown[]): RS;
 }
 
+// todo next()
 export type Middleware = (request: Bun.BunRequest, server: Bun.Server<undefined>, ctx: Context) => MaybePromise<unknown>;

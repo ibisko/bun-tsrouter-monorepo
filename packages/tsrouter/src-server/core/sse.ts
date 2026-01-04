@@ -1,11 +1,12 @@
 import z from 'zod';
 import { parseZodSchema, trycatchAndMiddlewaresHandle } from '../utils';
-import type { Method, RS, ServiceClass, SseService, WriteFunc } from '../type';
+import type { Method, ProcedureDef, RestApiMethod, RS, ServiceClass, SseService, WriteFunc } from '../type';
 import { WatchDog } from '@packages/utils';
 import { ServiceError } from '../error';
+import { AwaitedReturn, Func } from '@packages/utils/types';
 
 class SseServiceClass implements ServiceClass {
-  method: Method = 'sse';
+  method: RestApiMethod = 'get';
 
   set(...args: unknown[]): RS {
     let zodSchema: z.ZodObject | undefined;
@@ -17,10 +18,8 @@ class SseServiceClass implements ServiceClass {
       service = args[0] as Function;
     }
 
-    // todo sse的service需要传入abortSignal参数
     // todo 另外的 yield 实现方案?
     return trycatchAndMiddlewaresHandle(this.method, service, async (request, server, ctx) => {
-      // param: z.output<T>, optional: SseServiceOptional, ctx: Context
       const param = zodSchema ? parseZodSchema(request, zodSchema) : undefined;
       const stream = new ReadableStream({
         async start(controller) {
@@ -65,6 +64,7 @@ class SseServiceClass implements ServiceClass {
             }
 
             watchDog.kill();
+            controller.close();
           } catch (error) {
             // todo 如果是 signal 的抛出就无视
             if (error instanceof ServiceError) {
@@ -87,6 +87,7 @@ class SseServiceClass implements ServiceClass {
           }
         },
       });
+
       return new Response(stream, {
         headers: {
           'access-control-allow-origin': '*',
@@ -101,16 +102,19 @@ class SseServiceClass implements ServiceClass {
 }
 
 export function createSseMethod() {
-  function handle(service: SseService): void;
-  function handle<T extends z.ZodObject>(schema: T, service: SseService<T>): void;
-  function handle(...arg1: unknown[]) {
-    return new SseServiceClass().set(...arg1);
-  }
+  const handle: Handle = (...arg1: unknown[]) => {
+    return new SseServiceClass().set(...arg1) as ProcedureDef<'sse'>;
+  };
   return handle;
 }
 
+type Handle = {
+  <S extends SseService>(service: S): ProcedureDef<'sse', Func, AwaitedReturn<S>>;
+  <T extends z.ZodObject, S extends SseService<T>>(schema: T, service: S): ProcedureDef<'sse', T, AwaitedReturn<S>>;
+};
+
 // import { WatchDog } from '@packages/utils';
-// import { getContext, getPath, parseZodSchema } from '../utils';
+// import { getPath, parseZodSchema } from '../utils';
 // import { ServiceError } from '../error';
 // import type { RouterServerInterface, RouterServerSseParam } from './types';
 // import type { MaybePromiseFunc, SseService, WriteFunc } from '../type';

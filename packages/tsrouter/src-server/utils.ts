@@ -21,14 +21,16 @@ export const getPath = (path: string | string[]) => {
   );
 };
 
-export const parseZodSchema = (request: Bun.BunRequest, zodSchema: z.ZodObject) => {
+export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodObject) => {
   let param;
   if (request.method.toUpperCase() === 'GET') {
     const url = new URL(request.url);
     param = url.searchParams.toJSON();
   } else {
-    param = request.body;
+    param = await request.json();
   }
+  console.log('param:', param);
+
   const resparse = z.safeParse(zodSchema, param);
   if (resparse.error) {
     throw new ValidationError(z.prettifyError(resparse.error));
@@ -36,37 +38,41 @@ export const parseZodSchema = (request: Bun.BunRequest, zodSchema: z.ZodObject) 
   return resparse.data as z.output<typeof zodSchema>;
 };
 
-export const getContext = (request: Bun.BunRequest, server: Bun.Server<undefined>, logger: Logger): Context => {
-  // todo 如何指定reqId
-  // todo request.$customData
-  const reqId = `req-${Logger.reqId}`;
-  Logger.reqId++;
-  logger = logger.child({
-    reqId,
-    req: {
-      method: request.method.toUpperCase(),
-      url: request.url,
-      ip: server.requestIP(request),
-    },
-  });
-  logger.info();
-  return {
-    url: request.url,
-    params: request.params,
-    ip: server.requestIP(request),
-    headers: request.headers,
-    body: request.body,
-    logger,
-  };
-};
-
+// todo 只传 service.name
 export const trycatchAndMiddlewaresHandle = (method: string, service: Function, callback: Middleware): RS => {
   return (logger, middlewares) => {
     logger = logger.child({ func: service.name });
     return {
       [method.toUpperCase()]: async (request: Bun.BunRequest, server: Bun.Server<undefined>) => {
-        const ctx = getContext(request, server, logger);
+        // const ctx = getContext(request, server, logger);
+
+        // todo 如何指定reqId
+        // todo request.$customData
+        const reqId = `req-${Logger.reqId}`;
+        console.log('reqId:', reqId);
+
+        Logger.reqId++;
+        logger = logger.child({
+          reqId,
+          req: {
+            method: request.method.toUpperCase(),
+            url: request.url,
+            ip: server.requestIP(request),
+          },
+        });
+        logger.info();
+        const ctx: Context = {
+          url: request.url,
+          params: request.params,
+          ip: server.requestIP(request),
+          headers: request.headers,
+          resHeaders: new Headers(),
+          body: request.body,
+          logger,
+        };
+
         try {
+          // todo 如何在中间件设置 Headers
           for (const mid of middlewares) {
             await mid(request, server, ctx);
           }
@@ -112,6 +118,17 @@ export const trycatchAndMiddlewaresHandle = (method: string, service: Function, 
             return new Response('未知异常', { status: 500 });
           }
         }
+      },
+      // todo 外部设置？
+      OPTIONS: () => {
+        const headers = new Headers();
+        headers.set('Access-Control-Allow-Origin', '*');
+        headers.set('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+        headers.set('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With, X-Cos-Meta');
+        return new Response(null, {
+          status: 204,
+          headers,
+        });
       },
     };
   };
