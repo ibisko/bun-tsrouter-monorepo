@@ -1,15 +1,13 @@
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import jwt from 'jsonwebtoken';
-import { MiddlewareError } from '@packages/tsrouter/server';
-import { merge } from 'lodash-es';
+import { Middleware, MiddlewareError } from '@packages/tsrouter/server';
 import { JwtPayload } from '@/types/jwt';
 
-export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
-  const authorization = req.headers.authorization;
+export const authHook: Middleware = (req, ctx) => {
+  const authorization = req.headers.get('authorization');
   if (!authorization) {
     throw new MiddlewareError({
       message: '没有凭证',
-      method: 'authJwtDecode',
+      func: 'authJwtDecode',
       status: 400,
     });
   }
@@ -19,7 +17,7 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
   if (!token) {
     throw new MiddlewareError({
       message: '凭证无效',
-      method: 'authJwtDecode',
+      func: 'authJwtDecode',
       status: 400,
       data: {
         authorization,
@@ -33,7 +31,7 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
   } catch (error) {
     throw new MiddlewareError({
       message: '凭证解析失败',
-      method: 'authJwtDecode',
+      func: 'authJwtDecode',
       status: 400,
       data: {
         authorization,
@@ -43,16 +41,15 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
 
   try {
     const detoken = jwt.verify(token, process.env.authSecret) as JwtPayload;
-    req.$customData = merge(req.$customData, {
-      userId: detoken.userId,
-    });
+    ctx.userId = detoken.userId;
+
     // todo 参数设置上下文
     // jwtDecode.admin
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       throw new MiddlewareError({
         message: '凭证已过期，请重新登录',
-        method: 'authJwtDecode',
+        func: 'authJwtDecode',
         status: 401,
         data: {
           jwtError: 'jwt.TokenExpiredError',
@@ -64,7 +61,7 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
       throw new MiddlewareError({
         message: '凭证解析异常',
         reason: '凭证解析异常（一般用于测试）',
-        method: 'authJwtDecode',
+        func: 'authJwtDecode',
         status: 400,
         data: {
           jwtError: 'jwt.JsonWebTokenError',
@@ -78,7 +75,7 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
     throw new MiddlewareError({
       message: '凭证解析异常',
       reason: '意外情况',
-      method: 'authJwtDecode',
+      func: 'authJwtDecode',
       status: 400,
       data: {
         isInstanceofError: error instanceof Error,
@@ -88,5 +85,4 @@ export const authHook = (req: FastifyRequest, reply: FastifyReply, done: HookHan
       },
     });
   }
-  done();
 };
