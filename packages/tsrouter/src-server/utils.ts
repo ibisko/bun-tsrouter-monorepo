@@ -5,20 +5,8 @@ import { MiddlewareError, ServiceError, ValidationError } from './error';
 import { Logger } from './logger';
 
 export const getPath = (path: string | string[]) => {
-  if (typeof path === 'string') {
-    return path;
-  }
-  return (
-    '/' +
-    path
-      .map(item => {
-        if (item.startsWith(':')) {
-          return item;
-        }
-        return kebabCase(item);
-      })
-      .join('/')
-  );
+  if (typeof path === 'string') return path;
+  return '/' + path.map(item => (item.startsWith(':') ? item : kebabCase(item))).join('/');
 };
 
 export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodObject) => {
@@ -29,7 +17,6 @@ export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodOb
   } else {
     param = await request.json();
   }
-  console.log('param:', param);
 
   const resparse = z.safeParse(zodSchema, param);
   if (resparse.error) {
@@ -38,18 +25,12 @@ export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodOb
   return resparse.data as z.output<typeof zodSchema>;
 };
 
-// todo 只传 service.name
-export const trycatchAndMiddlewaresHandle = (method: string, service: Function, callback: Middleware): RS => {
+export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: string, callback: Middleware): RS => {
   return (logger, middlewares) => {
-    logger = logger.child({ func: service.name });
+    logger = logger.child({ func: serviceFuncName });
     return {
       [method.toUpperCase()]: async (request: Bun.BunRequest, server: Bun.Server<undefined>) => {
-        // const ctx = getContext(request, server, logger);
-
-        // todo 如何指定reqId
-        // todo request.$customData
         const reqId = `req-${Logger.reqId}`;
-        console.log('reqId:', reqId);
 
         Logger.reqId++;
         logger = logger.child({
@@ -61,6 +42,7 @@ export const trycatchAndMiddlewaresHandle = (method: string, service: Function, 
           },
         });
         logger.info();
+
         const ctx: Context = {
           url: request.url,
           params: request.params,
@@ -72,12 +54,12 @@ export const trycatchAndMiddlewaresHandle = (method: string, service: Function, 
         };
 
         try {
-          // todo 如何在中间件设置 Headers
           for (const mid of middlewares) {
-            await mid(request, server, ctx);
+            await mid(request, ctx);
           }
+          ctx.logger = ctx.logger.child({ step: 'service' });
           // todo 这里await很重要，需要最小程度复现一下
-          return await callback(request, server, ctx);
+          return await callback(request, ctx);
         } catch (error) {
           if (error instanceof MiddlewareError) {
             ctx.logger.error({

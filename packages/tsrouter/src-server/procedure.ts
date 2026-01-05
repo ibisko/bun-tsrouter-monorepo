@@ -4,6 +4,7 @@ import { Logger } from './logger';
 import { Middleware } from './type';
 import { createSseMethod } from './core/sse';
 import { MaybePromise } from '@packages/utils/types';
+import { createUploadFile } from './core/uploadFile';
 
 export const procedure = {
   // 基础方法
@@ -14,7 +15,7 @@ export const procedure = {
   delete: createStandardMethod('delete'),
   // 扩展方法
   sse: createSseMethod(),
-  // uploadFile: createUploadFile,
+  uploadFile: createUploadFile(),
 };
 
 type CreateRouterParams = {

@@ -1,7 +1,7 @@
 import z from 'zod';
 import type { MethodOptions } from '@/src-client/type';
 import type { Func, IsPlainObject, MaybePromise } from '@packages/utils/types';
-import { Logger } from './logger';
+import type { Logger } from './logger';
 
 /** 用于 clinet 的 AppRouter */
 export type ReplaceSpecificLeaf<T> = NonNullable<
@@ -32,11 +32,6 @@ export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 type StandardHandler<T, R> =
   T extends z.ZodObject ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
                         : (parmas?: null, options?: MethodOptions) => Promise<R>;
-
-// prettier-ignore
-export type RestApiService<T extends z.ZodObject | null = null> =
-  T extends z.ZodObject ? (param: z.output<T>, ctx: Context) => any :
-                          (ctx: Context) => any;
 
 // =============== 基础和扩展方法 ===============
 
@@ -94,4 +89,6 @@ export interface ServiceClass {
 }
 
 // todo next()
-export type Middleware = (request: Bun.BunRequest, server: Bun.Server<undefined>, ctx: Context) => MaybePromise<unknown>;
+export type Middleware = (request: Bun.BunRequest, ctx: Context) => MaybePromise<unknown>;
+
+export type UploadFileService = (formData: FormData, ctx: Context) => MaybePromise<any>;

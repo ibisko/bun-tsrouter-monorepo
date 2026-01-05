@@ -1,13 +1,10 @@
 import z from 'zod';
 import type { Func, AwaitedReturn } from '@packages/utils/types';
-import type { ProcedureDef, RestApiMethod, RestApiService, RS, ServiceClass } from '../type';
+import type { Context, ProcedureDef, RestApiMethod, RS, ServiceClass } from '../type';
 import { parseZodSchema, trycatchAndMiddlewaresHandle } from '../utils';
 
 class RestApiServiceClass implements ServiceClass {
-  method: RestApiMethod;
-  constructor(method: RestApiMethod) {
-    this.method = method;
-  }
+  constructor(readonly method: RestApiMethod) {}
 
   set(...args: unknown[]): RS {
     let zodSchema: z.ZodObject | undefined;
@@ -19,17 +16,16 @@ class RestApiServiceClass implements ServiceClass {
       service = args[0] as Func;
     }
 
-    return trycatchAndMiddlewaresHandle(this.method, service, async (request, server, ctx) => {
+    return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       const param = zodSchema ? await parseZodSchema(request, zodSchema) : undefined;
       let response;
       if (param) {
-        const _service = service as RestApiService<NonNullable<typeof zodSchema>>;
+        const _service = service as HasParamService<NonNullable<typeof zodSchema>>;
         response = await _service(param, ctx);
       } else {
-        const _service = service as RestApiService;
+        const _service = service as NonParamService;
         response = await _service(ctx);
       }
-
       return new Response(typeof response === 'string' ? response : JSON.stringify(response), {
         headers: ctx.resHeaders,
       });
@@ -45,6 +41,9 @@ export function createStandardMethod<T extends RestApiMethod>(method: T) {
 }
 
 type Handle<M extends RestApiMethod> = {
-  <S extends RestApiService>(service: S): ProcedureDef<M, Func, AwaitedReturn<S>>;
-  <T extends z.ZodObject, S extends RestApiService<T>>(schema: T, service: S): ProcedureDef<M, T, AwaitedReturn<S>>;
+  <S extends NonParamService>(service: S): ProcedureDef<M, Func, AwaitedReturn<S>>;
+  <T extends z.ZodObject, S extends HasParamService<T>>(schema: T, service: S): ProcedureDef<M, T, AwaitedReturn<S>>;
 };
+
+type HasParamService<T extends z.ZodObject> = (param: z.output<T>, ctx: Context) => any;
+type NonParamService = (ctx: Context) => any;

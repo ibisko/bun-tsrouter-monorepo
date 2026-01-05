@@ -1,52 +1,21 @@
-import Busboy from '@fastify/busboy';
-import { UploadMultipartCallback } from '../multipart';
-import { getContext, getPath } from '../utils';
-import { RouterServerInterface } from './types';
-import { merge } from 'lodash-es';
+import type { ProcedureDef, RestApiMethod, RS, ServiceClass, UploadFileService } from '../type';
+import { trycatchAndMiddlewaresHandle } from '../utils';
 
-export function uploadFile(this: RouterServerInterface, path: string[], service: UploadMultipartCallback) {
-  const url = getPath(path);
-  const logger = this.fastify.log.child({ method: service.name });
-  this.fastify.post(
-    url,
-    {
-      preParsing: async (req, reply, payload) => {
-        const ctx = getContext(req, logger);
-        if (this.formatLogger) {
-          ctx.logger = ctx.logger.child(this.formatLogger(req, reply));
-        }
-        const { setBusboyConfig, onFile, onField, onError, onFinish } = await service(req, reply, ctx);
-        const defaultBusboyConfig = {
-          headers: {
-            'content-type': req.headers['content-type']!,
-          },
-          // highWaterMark: 5 * 10 ** 6,
-          // limits: {
-          //   // fileSize: 5 * 10 ** 6, // 文件大小限制
-          //   // files: 5, // 文件数量限制
-          //   // fields: 10, // 字段数量限制
-          // },
-        };
-        const busboy = new Busboy(setBusboyConfig ? merge(defaultBusboyConfig, setBusboyConfig(req)) : defaultBusboyConfig);
-        busboy.on('file', (fieldname, stream, filename, transferEncoding, mimeType) => {
-          onFile?.(fieldname, stream, filename, transferEncoding, mimeType);
-        });
-        busboy.on('field', (...params) => {
-          // todo 字段类型zod验证
-          onField?.(...params);
-        });
-        busboy.on('error', async err => {
-          await onError?.(err);
-          reply.status(400).send(err);
-        });
-        busboy.on('finish', async () => {
-          const res = await onFinish?.();
-          // todo 尝试上传成功后的响应是下载一个文件
-          reply.send(res);
-        });
-        payload.pipe(busboy);
-      },
-    },
-    () => {},
-  );
+class UploadFileServiceClass implements ServiceClass {
+  method: RestApiMethod = 'post';
+
+  set(service: UploadFileService): RS {
+    return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
+      const formData = await request.formData();
+      const response = await service(formData, ctx);
+      return new Response(typeof response === 'string' ? response : JSON.stringify(response), { headers: ctx.resHeaders });
+    });
+  }
+}
+
+export function createUploadFile() {
+  const handle = (service: UploadFileService) => {
+    return new UploadFileServiceClass().set(service) as ProcedureDef<'uploadFile'>;
+  };
+  return handle;
 }

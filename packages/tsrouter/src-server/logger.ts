@@ -38,7 +38,6 @@ export class Logger {
           },
         },
       },
-
       step: { type: 'string' },
       func: { type: 'string' },
       msg: { type: 'string' },
@@ -131,7 +130,7 @@ type LoggerOptional = {
 };
 type LoggerLevel = 'error' | 'warn' | 'info' | 'debug' | 'fatal' | 'silent' | 'trace';
 type LoggerErrorParam = {
-  step: 'middleware' | 'validation' | 'service' | 'serviceAccident';
+  step?: 'middleware' | 'validation' | 'service' | 'serviceAccident';
   func?: string;
   msg: string;
   /** 具体原因 */
