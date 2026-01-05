@@ -6,3 +6,8 @@ logs/
 .DS_Store
 
 *.db
+
+__tmp/
+
+
+

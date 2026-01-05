@@ -29,21 +29,11 @@ export const sse2: SseService = async ({ write, signal }) => {
 // 返回步骤执行
 export const sse3: SseService<typeof sse1Schema> = async (param, { write, signal }) => {
   let count = 0;
-  return {
-    running: async () => {
-      for (let i = 0; i < 5; i++) {
-        console.log('sse3 running');
-        await sleep(1e3);
-        signal.throwIfAborted();
-        await write(`count: ${count} id: ${param.id} name: ${param.name}`);
-        count++;
-      }
-    },
-    finish: () => {
-      console.log('finish count:', count);
-    },
-    disconnect: () => {
-      console.log('disconnect count:', count);
-    },
-  };
+  for (let i = 0; i < 5; i++) {
+    console.log('sse3 running');
+    await sleep(1e3);
+    signal.throwIfAborted();
+    await write(`count: ${count} id: ${param.id} name: ${param.name}`);
+    count++;
+  }
 };

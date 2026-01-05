@@ -1,31 +1,19 @@
-import { demoService, demoServiceEmp, demosseService, demosseServiceEmp, zodDemoSchema, zodDemoSSEService } from '@/services/demo/index';
-import { FastifyInstance } from 'fastify';
 import { createRouter, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
-import { authHook } from '@/middlewares/auth';
 import { login, loginSchema, refreshToken } from '@/services/auth';
 import { getUserInfo } from '@/services/users';
 import { tsRouter } from '@/services/tsRouterTest';
+import { logger } from '@/common/logger';
+import { authHook } from '@/middlewares/auth';
+import { uploadFile1 } from '@/services/tsRouterTest/upload';
+import { limitRate } from '@/middlewares/limitRate';
+import { cors } from '@/middlewares/cors';
 
 const mainAuthRouterTree = {
+  /** 用户 */
   user: {
+    /** 用户信息 */
     getUserInfo: procedure.get(getUserInfo),
   },
-  demo: {
-    $aa: procedure.get(zodDemoSchema, demoService),
-  },
-  aa: {
-    post: {
-      cc: procedure.post(zodDemoSchema, demoService),
-      CCEmp: procedure.post(demoServiceEmp),
-    },
-  },
-  sse: procedure.sse(zodDemoSSEService, demosseService),
-  sse1: procedure.sse(zodDemoSSEService, async (param, { write }, optional) => {
-    param.KJKFD;
-    optional;
-    return { running: () => {} };
-  }),
-  sseEmp: procedure.sse(demosseServiceEmp),
 };
 
 const mainWhiteListRouterTree = {
@@ -34,30 +22,27 @@ const mainWhiteListRouterTree = {
     refreshToken: procedure.get(refreshToken),
   },
 
+  upload: {
+    file: procedure.uploadFile(uploadFile1),
+  },
+
   test: {
     tsRouter,
   },
 };
 
-export const mainAuthRouter = (fastify: FastifyInstance) => {
-  fastify.addHook('onRequest', authHook);
-  createRouter({ fastify, router: mainAuthRouterTree });
-};
-export const mainWhiteListRouter = (fastify: FastifyInstance) => {
-  // 黑名单、鉴权，只拿 Headers 里的 authorization
-  // fastify.addHook('onRequest', authHook);
+export const mainAuthRouter = createRouter({
+  prefix: ['api'],
+  logger,
+  middlewares: [limitRate, authHook, cors],
+  router: mainAuthRouterTree,
+});
 
-  // todo service Error 异常捕获
-  // fastify.addHook('onError', () => {s});
-  // todo 如果 onRequest 抛出的异常，后面 onError 能否捕获到？
-
-  // todo 返回值包装
-  // fastify.addHook('onSend', () => {});
-
-  createRouter({
-    fastify,
-    router: mainWhiteListRouterTree,
-  });
-};
+export const mainWhiteListRouter = createRouter({
+  prefix: ['api'],
+  logger,
+  middlewares: [limitRate, cors],
+  router: mainWhiteListRouterTree,
+});
 
 export type AppRouter = ReplaceSpecificLeaf<typeof mainAuthRouterTree & typeof mainWhiteListRouterTree>;

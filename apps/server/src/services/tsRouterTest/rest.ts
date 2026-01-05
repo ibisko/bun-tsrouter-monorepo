@@ -11,7 +11,7 @@ export const get2Schema = z.object({
 });
 
 export const get2 = async (param: z.output<typeof get2Schema>, { logger }: Context) => {
-  logger.error({ message: 'Error日志记录!', data: { id: 12, name: 'duoduo' } });
-  throw new ServiceError({ message: "Test-Service-Error!" })
+  logger.error({ msg: 'Error日志记录!', data: { id: 12, name: 'duoduo' } });
+  throw new ServiceError({ message: 'Test-Service-Error!' });
   return param;
 };
