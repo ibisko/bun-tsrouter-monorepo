@@ -1,24 +1,39 @@
+export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
+// export type Method = RestApiMethod | 'sse' | 'uploadFile';
+
 export type TsRouterOptions = {
   baseUrl: string;
   prefix?: string;
-  headers?: () => Headers;
   timeout?: number;
+  setHeaders?: (headers: Headers) => void;
   refreshToken: (abort: () => void) => Promise<void>;
   onResponseError: (error: unknown) => void;
 };
 
 export type MethodOptions = {
   query?: Record<string, string>;
-  headers?: HeadersInit;
+  headers?: Record<string, string>;
   /** 用于 Controller 中断 */
   signal?: AbortSignal;
   timeout?: number;
 };
 
 export type RestApiParams = {
-  method: 'get' | 'post' | 'patch' | 'delete' | 'put';
+  method: RestApiMethod;
   path: string | string[];
   query?: Record<string, string> | null;
   body?: any;
   options?: MethodOptions;
 };
+
+export abstract class TsRouterClass {
+  abstract baseUrl: string;
+  abstract isRefreshing: boolean;
+  abstract prefix?: string;
+  abstract timeout?: number;
+  abstract interceptDuringRefreshResolves: { resolve: (val?: unknown) => void; reject: (error: Error) => void }[];
+  abstract setHeaders: TsRouterOptions['setHeaders'];
+  abstract refreshToken: TsRouterOptions['refreshToken'];
+  abstract onResponseError: TsRouterOptions['onResponseError'];
+  abstract refreshTokenHandle: () => Promise<void>;
+}

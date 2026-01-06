@@ -58,7 +58,6 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
             await mid(request, ctx);
           }
           ctx.logger = ctx.logger.child({ step: 'service' });
-          // todo 这里await很重要，需要最小程度复现一下
           return await callback(request, ctx);
         } catch (error) {
           if (error instanceof MiddlewareError) {

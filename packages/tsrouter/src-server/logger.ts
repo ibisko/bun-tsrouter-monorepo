@@ -26,7 +26,7 @@ const properties = parseToFastJsonStringify({
 export class Logger {
   private _bindings?: any;
   private _this?: Logger;
-  _cache: any[] = [];
+  _cache: Record<string, any>[] = [];
   private writeStream: fs.WriteStream;
   private stringify: (params: any) => string;
   static reqId = 0;
@@ -47,7 +47,7 @@ export class Logger {
     while (this._cache.length) {
       const item = this._cache.shift();
       // 默认采用 fast-json-stringify 来加速
-      if (item.data) {
+      if (item?.data) {
         data += JSON.stringify(item) + '\n';
       }
       // 当存在data时候，才回退到 JSON.stringify
