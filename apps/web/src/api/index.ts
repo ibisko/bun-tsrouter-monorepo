@@ -6,11 +6,8 @@ import { redirect } from '@tanstack/react-router';
 const ins = new TsRouter({
   baseUrl: 'http://localhost:5773',
   prefix: '/api',
-  // timeout: 1e3,
-  headers: () => {
-    return new Headers({
-      authorization: `Bearer ${userStore.token}`,
-    });
+  setHeaders: headers => {
+    headers.set('authorization', `Bearer ${userStore.token}`);
   },
   async refreshToken(abort) {
     const response = await fetch('http://localhost:5773/api/auth/refresh-token', {

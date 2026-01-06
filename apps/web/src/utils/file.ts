@@ -1,3 +1,5 @@
+import FileHashWorker from '@/utils/fileHash.worker?worker';
+
 export async function selectLocalFiles(accept: string, multiple?: boolean): Promise<FileList | null>;
 export async function selectLocalFiles(multiple: boolean): Promise<FileList | null>;
 export async function selectLocalFiles(accept: string | boolean, multiple = false): Promise<FileList | null> {
@@ -29,11 +31,21 @@ export const readFileTxt = (file: File): Promise<string> =>
   });
 
 /** 文件摘要 SHA-1 */
-export const hashFile = async (file: File) => {
-  const buf = await file.arrayBuffer();
-  const hashBuffer = await window.crypto.subtle.digest('SHA-1', buf);
-  const hashArray = new Uint8Array(hashBuffer);
-  return Array.from(hashArray)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+export const hashFile = async (file: File, algorithm: string = 'SHA-1') => {
+  return new Promise<string>((resolve, reject) => {
+    const worker = new FileHashWorker();
+    worker.onmessage = e => {
+      if (e.data.error) {
+        reject(new Error(e.data.error));
+      } else {
+        resolve(e.data.hash);
+      }
+      worker.terminate();
+    };
+    worker.onerror = error => {
+      reject(error);
+      worker.terminate();
+    };
+    worker.postMessage({ file, algorithm });
+  });
 };

@@ -1,6 +1,7 @@
 import { createLazyRoute } from '@tanstack/react-router';
 import { RestApi } from './RestApi';
 import { TestSSE } from './TestSSE';
+import { UploadFile } from './UploadFile';
 
 // todo 根据接口返回的信息来动态映射dom接口，以便只在后端写就好了
 
@@ -12,6 +13,8 @@ const TsRouterPage = () => {
       <RestApi />
       <div>SSE Api 单元测试</div>
       <TestSSE />
+      <div>Upload 单元测试</div>
+      <UploadFile />
     </div>
   );
 };
