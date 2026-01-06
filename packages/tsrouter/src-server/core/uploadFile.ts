@@ -1,5 +1,6 @@
 import type { ProcedureDef, RestApiMethod, RS, ServiceClass, UploadFileService } from '../type';
-import { trycatchAndMiddlewaresHandle } from '../utils';
+import { responseToString, trycatchAndMiddlewaresHandle } from '../utils';
+import { AwaitedReturn, Func } from '@packages/utils/types';
 
 class UploadFileServiceClass implements ServiceClass {
   method: RestApiMethod = 'post';
@@ -8,14 +9,15 @@ class UploadFileServiceClass implements ServiceClass {
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       const formData = await request.formData();
       const response = await service(formData, ctx);
-      return new Response(typeof response === 'string' ? response : JSON.stringify(response), { headers: ctx.resHeaders });
+      return new Response(responseToString(response), { headers: ctx.resHeaders });
     });
   }
 }
 
+// todo 返回值有类型的
 export function createUploadFile() {
-  const handle = (service: UploadFileService) => {
-    return new UploadFileServiceClass().set(service) as ProcedureDef<'uploadFile'>;
+  const handle = <S extends UploadFileService>(service: S) => {
+    return new UploadFileServiceClass().set(service) as ProcedureDef<'uploadFile', Func, AwaitedReturn<S>>;
   };
   return handle;
 }

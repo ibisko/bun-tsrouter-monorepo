@@ -1,7 +1,7 @@
 import z from 'zod';
 import type { Func, AwaitedReturn } from '@packages/utils/types';
 import type { Context, ProcedureDef, RestApiMethod, RS, ServiceClass } from '../type';
-import { parseZodSchema, trycatchAndMiddlewaresHandle } from '../utils';
+import { parseZodSchema, responseToString, trycatchAndMiddlewaresHandle } from '../utils';
 
 class RestApiServiceClass implements ServiceClass {
   constructor(readonly method: RestApiMethod) {}
@@ -26,9 +26,7 @@ class RestApiServiceClass implements ServiceClass {
         const _service = service as NonParamService;
         response = await _service(ctx);
       }
-      return new Response(typeof response === 'string' ? response : JSON.stringify(response), {
-        headers: ctx.resHeaders,
-      });
+      return new Response(responseToString(response), { headers: ctx.resHeaders });
     });
   }
 }

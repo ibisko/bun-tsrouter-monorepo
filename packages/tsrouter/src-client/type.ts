@@ -1,3 +1,5 @@
+import { MaybePromise } from '@packages/utils/types';
+
 export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 // export type Method = RestApiMethod | 'sse' | 'uploadFile';
 
@@ -5,7 +7,7 @@ export type TsRouterOptions = {
   baseUrl: string;
   prefix?: string;
   timeout?: number;
-  setHeaders?: (headers: Headers) => void;
+  setHeaders?: (headers: Headers) => MaybePromise<void>;
   refreshToken: (abort: () => void) => Promise<void>;
   onResponseError: (error: unknown) => void;
 };

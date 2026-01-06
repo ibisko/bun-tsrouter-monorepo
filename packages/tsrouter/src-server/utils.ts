@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash-es';
+import { kebabCase, merge } from 'lodash-es';
 import z from 'zod';
 import type { Context, Middleware, RS } from './type';
 import { MiddlewareError, ServiceError, ValidationError } from './error';
@@ -43,12 +43,15 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
         });
         logger.info();
 
+        const resHeaders = new Headers();
+        resHeaders.set('Content-Type', 'application/json');
+
         const ctx: Context = {
           url: request.url,
           params: request.params,
           ip: server.requestIP(request),
           headers: request.headers,
-          resHeaders: new Headers(),
+          resHeaders,
           body: request.body,
           logger,
         };
@@ -68,13 +71,13 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
               reason: error.reason,
               data: error.data,
             });
-            return new Response(error.message, { status: error.status });
-          } else if (error instanceof ValidationError) {
-            ctx.logger.error({
-              step: 'validation',
-              msg: error.message,
+            return new Response(error.message, {
+              status: error.status,
+              headers: ctx.resHeaders,
             });
-            return new Response(error.message, { status: 400 });
+          } else if (error instanceof ValidationError) {
+            ctx.logger.error({ step: 'validation', msg: error.message });
+            return new Response(error.message, { status: 400, headers: ctx.resHeaders });
           } else if (error instanceof ServiceError) {
             ctx.logger.error({
               step: 'service',
@@ -82,21 +85,21 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
               reason: error.reason,
               data: error.data,
             });
-            return new Response(error.message, { status: error.status });
+            return new Response(error.message, { status: error.status, headers: ctx.resHeaders });
           } else if (error instanceof Error) {
             ctx.logger.error({
               step: 'serviceAccident',
               msg: error.message,
               data: { stack: error.stack },
             });
-            return new Response(error.message, { status: 500 });
+            return new Response(error.message, { status: 500, headers: ctx.resHeaders });
           } else {
             ctx.logger.error({
               step: 'serviceAccident',
               msg: '未知异常',
               data: { error },
             });
-            return new Response('未知异常', { status: 500 });
+            return new Response('未知异常', { status: 500, headers: ctx.resHeaders });
           }
         }
       },
@@ -106,10 +109,7 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
         headers.set('Access-Control-Allow-Origin', '*');
         headers.set('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
         headers.set('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With, X-Cos-Meta');
-        return new Response(null, {
-          status: 204,
-          headers,
-        });
+        return new Response(null, { status: 204, headers });
       },
     };
   };
@@ -129,3 +129,11 @@ export function parseToFastJsonStringify(obj: Record<string, any>) {
   }
   return res;
 }
+
+export const responseToString = (response: any) => {
+  if (typeof response === 'string') {
+    return response;
+  } else {
+    return JSON.stringify(merge({ msg: 'ok' }, response));
+  }
+};

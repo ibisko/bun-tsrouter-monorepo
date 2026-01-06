@@ -5,15 +5,15 @@ import { parseUrl } from '../utils';
 export async function restApi(this: TsRouterClass, { method, path, query, body, options = {} }: RestApiParams) {
   const headers = options.headers instanceof Headers ? options.headers : new Headers();
   if (this.setHeaders) {
-    this.setHeaders(headers);
+    await this.setHeaders(headers);
   }
 
   if (options.headers) {
-    Object.entries(options.headers).map(([key, value]) => headers.set(key, value));
+    Object.entries(options.headers).map(([key, value]) => {
+      headers.set(key, value);
+    });
   }
-  if (!headers.has('authorization')) {
-    headers.set('authorization', `Bearer ${'?'}`);
-  }
+
   if (body) {
     headers.set('Content-Type', 'application/json');
   }
