@@ -14,7 +14,6 @@ class UploadFileServiceClass implements ServiceClass {
   }
 }
 
-// todo 返回值有类型的
 export function createUploadFile() {
   const handle = <S extends UploadFileService>(service: S) => {
     return new UploadFileServiceClass().set(service) as ProcedureDef<'uploadFile', Func, AwaitedReturn<S>>;

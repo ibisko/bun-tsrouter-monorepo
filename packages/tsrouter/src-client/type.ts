@@ -20,6 +20,10 @@ export type MethodOptions = {
   timeout?: number;
 };
 
+export type UploadMethodOptions = MethodOptions & {
+  onPercent?: (percent: number) => void;
+};
+
 export type RestApiParams = {
   method: RestApiMethod;
   path: string | string[];

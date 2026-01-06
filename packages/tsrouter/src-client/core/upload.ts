@@ -1,8 +1,8 @@
 import { ResponseError } from '../error';
-import { MethodOptions, TsRouterClass } from '../type';
+import type { TsRouterClass, UploadMethodOptions } from '../type';
 import { parseUrl } from '../utils';
 
-export async function upload(this: TsRouterClass, path: string[], formData: FormData, options: MethodOptions = {}) {
+export async function upload(this: TsRouterClass, path: string[], formData: FormData, options: UploadMethodOptions = {}) {
   return new Promise(async (resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const url = parseUrl({
@@ -30,7 +30,7 @@ export async function upload(this: TsRouterClass, path: string[], formData: Form
     xhr.upload.addEventListener('progress', event => {
       if (event.lengthComputable) {
         const percent = ((event.loaded / event.total) * 10000) / 100;
-        console.log({ percent });
+        options.onPercent?.(percent);
       }
     });
     xhr.addEventListener('load', () => {

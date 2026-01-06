@@ -1,5 +1,5 @@
 import z from 'zod';
-import type { MethodOptions } from '@/src-client/type';
+import type { MethodOptions, UploadMethodOptions } from '@/src-client/type';
 import type { Func, IsPlainObject, MaybePromise } from '@packages/utils/types';
 import type { Logger } from './logger';
 
@@ -17,7 +17,7 @@ export interface Context {
   url: string;
   // ip: string;
   ip: Bun.SocketAddress | null;
-  headers: Bun.BunRequest['headers'];
+  headers: Headers;
   resHeaders: Headers;
   params: Record<string, string>;
   body: Bun.BunRequest['body'];
@@ -37,6 +37,7 @@ type StandardHandler<T, R> =
 
 export type Method = RestApiMethod | 'sse' | 'uploadFile';
 
+// todo 移到 client ?
 export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R = any> = {
   Method?: M;
   param?: T extends z.ZodObject ? z.output<T> : null;
@@ -46,7 +47,7 @@ export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R
   // prettier-ignore
   func?:
     M extends 'sse'         ? SseHandler<T> :
-    M extends 'uploadFile'  ? (formData: FormData, options?: MethodOptions) => Promise<R> :
+    M extends 'uploadFile'  ? (formData: FormData, options?: UploadMethodOptions) => Promise<R> :
     M extends RestApiMethod ? StandardHandler<T, R> :
                               never;
 };
