@@ -77,11 +77,7 @@ type SseServiceOptional = {
   ctx: Context;
 };
 
-export type RS = (
-  logger: Logger,
-  middlewares: Middleware[],
-  // todo createRouter 时候传入的中间件：logger，middlewares
-) => void;
+export type RS = (logger: Logger, middlewares: Middleware[]) => void;
 
 export interface ServiceClass {
   method: RestApiMethod;

@@ -1,5 +1,4 @@
 import path from 'path';
-// import os from 'os';
 import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
 import { ensurePathExists } from './utils/path';
 import { merge } from 'lodash-es';
@@ -19,30 +18,21 @@ async function createServer() {
 
   Bun.serve({
     port: process.env.port,
-    hostname: '0.0.0.0',
     routes: merge(mainAuthRouter, mainWhiteListRouter),
+    // hostname: '0.0.0.0',
     // ipv6Only
   });
 
-  // todo 反向代理，需要从 X-Forwarded-For头部获取真实 IP
+  // todo 反向代理，需要从 X-Forwarded-For 头部获取真实 IP
 }
 
 async function main() {
-  // const r = Object.values(os.networkInterfaces())
-  //   .map(item => item)
-  //   .flat()
-  //   .filter(item => item?.family === 'IPv6' && !item.internal)
-  //   .filter(item => !item?.address.startsWith('fe80::'))
-  //   .map(item => ({ address: item?.address, mac: item?.mac }));
-  // console.log(r);
-
   await ensurePathExists(FastifyLogFolder);
   // 启动服务
   await createServer();
 }
 
 main();
-
 
 // todo toad-cache
 // todo @lukeed/ms

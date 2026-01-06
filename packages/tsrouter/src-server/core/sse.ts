@@ -32,10 +32,8 @@ class SseServiceClass implements ServiceClass {
 
           // 断开连接时
           request.signal.addEventListener('abort', async () => {
-            // if (watchDog.isStop) return;
             console.log('连接突然中断');
             watchDog.kill();
-            // reject(new ServiceError({ message: '连接突然中断' }));
           });
 
           let id = 0;
@@ -50,41 +48,59 @@ class SseServiceClass implements ServiceClass {
             id++;
           };
 
+          const optional = {
+            write: callback,
+            signal: request.signal,
+            ctx,
+          };
+
           try {
-            const optional = {
-              write: callback,
-              signal: request.signal,
-              ctx,
-            };
-            // todo 想想 disconnectHandle 还是需要触发
             if (param) {
               await service(param, optional);
             } else {
               await service(optional);
             }
-
-            watchDog.kill();
-            controller.close();
           } catch (error) {
-            // todo 如果是 signal 的抛出就无视
             if (error instanceof ServiceError) {
-              // 处理client的主动断开引起的异常
-              // if (watchDog.isStop) {
-              // ctx.logger.error(error.format());
-              // await finishHandle?.();
-              // return reply;
-              // }
-              // 其他异常直接记录
-              // ctx.logger.error(error.format());
+              ctx.logger.error({
+                step: 'service',
+                msg: error.message,
+                reason: error.reason,
+                data: error.data,
+              });
+              await callback(error.message, 'error');
             } else if (error instanceof Error) {
               if (error.name === 'AbortError') {
-                // reject(new ServiceError({ message: error.message }));
+                ctx.logger.error({
+                  step: 'service',
+                  msg: '中断',
+                  reason: 'sse AbortError',
+                });
               } else {
-                // await callback(error.message, 'error');
-                // reject(new ServiceError({ message: error.message }));
+                ctx.logger.error({
+                  step: 'service',
+                  msg: error.message,
+                  reason: 'sse error',
+                  data: {
+                    stack: error.stack,
+                    name: error.name,
+                    cause: error.cause,
+                  },
+                });
+                await callback(error.message, 'error');
               }
+            } else {
+              ctx.logger.error({
+                step: 'service',
+                msg: '异常',
+                reason: 'sse error no-error',
+                data: { error },
+              });
+              await callback('异常', 'error');
             }
           }
+          watchDog.kill();
+          controller.close();
         },
       });
 

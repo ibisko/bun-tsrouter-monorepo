@@ -115,3 +115,18 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
     };
   };
 };
+
+export function parseToFastJsonStringify(obj: Record<string, any>) {
+  const res: Record<string, any> = {};
+  for (const key in obj) {
+    if (typeof obj[key] === 'string') {
+      res[key] = { type: obj[key] };
+    } else if (typeof obj[key] === 'object') {
+      res[key] = {
+        type: 'object',
+        properties: parseToFastJsonStringify(obj[key]),
+      };
+    }
+  }
+  return res;
+}

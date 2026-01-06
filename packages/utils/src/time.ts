@@ -16,6 +16,7 @@ export class WatchDog {
   }
   /** 喂食，并触发callback */
   feed() {
+    clearTimeout(this.timeout!);
     this.timeout = setTimeout(this.callback, this.duration);
   }
   kill() {

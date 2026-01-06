@@ -1,7 +1,27 @@
 import fs from 'fs';
+import path from 'path';
 import { cloneDeep, merge } from 'lodash-es';
 import fastJson from 'fast-json-stringify';
-import path from 'path';
+import { parseToFastJsonStringify } from './utils';
+
+const properties = parseToFastJsonStringify({
+  lv: 'string',
+  time: 'number',
+  reqId: 'string',
+  req: {
+    method: 'string',
+    url: 'string',
+    ip: {
+      address: 'string',
+      family: 'string',
+      port: 'string',
+    },
+  },
+  step: 'string',
+  func: 'string',
+  msg: 'string',
+  reason: 'string',
+});
 
 export class Logger {
   private _bindings?: any;
@@ -18,32 +38,6 @@ export class Logger {
       encoding: 'utf8',
       flags: 'a',
     });
-
-    const properties: { [key: string]: { type: 'string' | 'number' | 'object'; properties?: {} } } = {
-      lv: { type: 'string' },
-      time: { type: 'number' },
-      reqId: { type: 'string' },
-      req: {
-        type: 'object',
-        properties: {
-          method: { type: 'string' },
-          url: { type: 'string' },
-          ip: {
-            type: 'object',
-            properties: {
-              address: { type: 'string' },
-              family: { type: 'string' },
-              port: { type: 'string' },
-            },
-          },
-        },
-      },
-      step: { type: 'string' },
-      func: { type: 'string' },
-      msg: { type: 'string' },
-      reason: { type: 'string' },
-      // data 如果存在就不会走这里
-    };
 
     this.stringify = fastJson({ type: 'object', properties });
   }
@@ -138,22 +132,3 @@ type LoggerErrorParam = {
   /** 挂载参数 */
   data?: Record<string, any>;
 };
-
-// todo 写入基准测试，每秒 20万+ 条日志写入
-/* const lg = new Logger({
-  dirPath: '/Users/nnhu/Projects/base-project-templates/template-monorepo/apps/bun-server/src',
-});
-for (let i = 0; i < 10; i++) {
-  // await sleep(1);
-  lg.child({ name: 'aa', b1: 'AAA' })
-    .child({ a1: '1' })
-    .child({
-      b1: '1',
-      name: '12121',
-      param: {
-        child: { aa: 1 },
-      },
-    })
-    .info({ msg: 'haha', data: { id: 1, name: 32 } });
-  lg.info({ msg: 'jflk' });
-} */
