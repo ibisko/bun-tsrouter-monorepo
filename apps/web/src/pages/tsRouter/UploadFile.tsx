@@ -3,6 +3,7 @@ import { Button, Input } from '@packages/ui';
 import { useRef } from 'react';
 import { ResponseError } from '@packages/tsrouter/client';
 import { hashFile } from '@/utils/file';
+import { TestCard } from './TestCard';
 
 // todo 自动分片上传，自动整合
 export const UploadFile = () => {
@@ -18,7 +19,11 @@ export const UploadFile = () => {
     formData.append('file', file);
 
     try {
-      const res = await Api.test.tsRouter.upload1.uploadFile(formData);
+      const res = await Api.test.tsRouter.upload1.uploadFile(formData, {
+        onPercent(percent) {
+          console.log('上传进度', percent);
+        },
+      });
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -30,15 +35,13 @@ export const UploadFile = () => {
   };
 
   return (
-    <div>
-      <div className="flex gap-4">
-        <Input ref={inputRef} type="file" />
-        <Button onClick={upload}>Upload</Button>
-      </div>
-      <ul>
-        <li>文件&le;5MB 直接单次上传</li>
-        {/* <li>文件&gt;5MB 自动分片上传</li> */}
-      </ul>
+    <div className="flex">
+      <TestCard title="uploadFile(1)" description="文件&le;5MB 直接单次上传">
+        <div className="flex gap-4">
+          <Input ref={inputRef} type="file" />
+          <Button onClick={upload}>Upload</Button>
+        </div>
+      </TestCard>
     </div>
   );
 };

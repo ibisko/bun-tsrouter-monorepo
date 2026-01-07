@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Middleware, MiddlewareError } from '@packages/tsrouter/server';
 import { JwtPayload } from '@/types/jwt';
 
-export const authHook: Middleware = (req, ctx) => {
+export const authMiddleware: Middleware = (req, ctx) => {
   const authorization = req.headers.get('authorization');
   if (!authorization) {
     throw new MiddlewareError({

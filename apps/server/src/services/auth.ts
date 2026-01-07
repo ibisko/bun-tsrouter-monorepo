@@ -12,7 +12,7 @@ export const loginSchema = z.object({
   password: z.string(),
 });
 export const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
-  ctx.logger.info({ message: '用户登录', data: param });
+  ctx.logger.info({ msg: '用户登录', data: param });
   const passwordMd5 = hashString(process.env.authSecret + param.password);
   const count = await prisma.users.count();
   let userInfo;
@@ -58,9 +58,9 @@ export const login = async (param: z.output<typeof loginSchema>, ctx: Context) =
 
 /** 刷新凭证 */
 export const refreshToken = async (ctx: Context) => {
-  const authorization = ctx?.headers?.authorization;
+  const authorization = ctx?.headers?.get('authorization');
   if (!authorization) {
-    throw new ServiceError({ message: '缺少凭证', reason: '没有 headers.authorization 的越权访问' });
+    throw new ServiceError({ message: '缺少凭证', reason: '没有 authorization 的越权访问' });
   }
 
   const regexpToken = /^Bearer (.+)$/.exec(authorization);

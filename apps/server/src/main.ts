@@ -2,6 +2,7 @@ import path from 'path';
 import { merge } from 'lodash-es';
 import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
 import { ensurePathExists } from './utils/path';
+import { limitRateInstance } from './middlewares/limitRate';
 export type { AppRouter } from './router/tsrouter';
 export * from 'prisma/generated/enums';
 
@@ -16,11 +17,13 @@ async function createServer() {
   // 400 service错误
   // 500 gateway才会收到的微服务错误
 
+  await limitRateInstance.init();
+
   Bun.serve({
     port: process.env.port,
     routes: merge(mainAuthRouter, mainWhiteListRouter),
-    maxRequestBodySize: 1024 ** 2 * 5, // 这里设置成5MB，默认是 128MB
-    // maxRequestBodySize: 1024 ** 2 * 5000, // 测试
+    // maxRequestBodySize: 1024 ** 2 * 5, // 这里设置成5MB，默认是 128MB
+    maxRequestBodySize: 1024 ** 2 * 5000, // 测试
     // hostname: '0.0.0.0',
     // ipv6Only
   });

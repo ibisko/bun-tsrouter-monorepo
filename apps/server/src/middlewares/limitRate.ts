@@ -1,65 +1,69 @@
 import { sleep } from 'bun';
 import { type Middleware, MiddlewareError } from '@packages/tsrouter/server';
+import prisma from '@/database/prisma';
+import redis from '@/database/redis';
+import { addBlackList } from '@/services/blackList';
+
+const REDIS_LIMIT_RATE_KEY_PREFIX = 'limit-rate';
 
 /** 限流器 */
 class LimitRate {
-  max = 1000;
-  timeWindow = 1e3 * 60;
-
-  private cacheAddress: { [k: string]: number[] } = {};
-  private blackAddress: string[] = [];
+  max = +process.env.LIMIT_RATE_MAX || 1000;
+  timeWindow = +process.env.LIMIT_RATE_TIME_WINDOW || 1e3 * 60;
+  blackList: string[] = [];
 
   constructor() {
     this.autoReleaseCache();
   }
 
-  recordAddress(address?: string) {
-    if (!address) return;
+  async init() {
+    const blackLists = await prisma.blackList.findMany({ select: { ip: true }, where: { deleted_at: null } });
+    this.blackList = blackLists.map(item => item.ip);
+  }
 
-    if (this.blackAddress.includes(address)) {
+  async recordAddress(ip?: string) {
+    if (!ip) {
+      throw new MiddlewareError({ message: 'ip no find!', status: 400, func: 'LimitRate' });
+    }
+    if (ip in this.blackList) {
       throw new MiddlewareError({ message: '已被列入黑名单', status: 403, func: 'LimitRate' });
     }
 
     const timestamp = new Date().getTime();
-    if (address in this.cacheAddress) {
-      if (this.cacheAddress[address].length > this.max) {
-        throw new MiddlewareError({ message: '限流', status: 429, func: 'LimitRate' });
-      }
-
-      this.cacheAddress[address].push(timestamp);
-    } else {
-      this.cacheAddress[address] = [timestamp];
-    }
+    const limitRateKey = `${REDIS_LIMIT_RATE_KEY_PREFIX}:${ip}`;
+    const count = await redis.zcard(limitRateKey);
 
     // 检查超出数量
-    if (this.cacheAddress[address].length > this.max) {
+    if (count > this.max) {
       // 可以将被限流就加入黑名单
-      this.blackAddress.push(address);
-      throw new MiddlewareError({ message: '限流', status: 429, func: 'LimitRate' });
+      await addBlackList(ip);
+      await redis.zremrangebyscore(limitRateKey, 0, timestamp);
+      throw new MiddlewareError({ message: 'limit-rate!', status: 429, func: 'LimitRate' });
+    } else {
+      await redis.zadd(limitRateKey, timestamp, timestamp);
     }
   }
 
   private async autoReleaseCache(): Promise<void> {
     const timestamp = new Date().getTime();
-    const addressList = Object.keys(this.cacheAddress);
+    const ips = await redis.keys(`${REDIS_LIMIT_RATE_KEY_PREFIX}:*`);
 
-    for (const address of addressList) {
-      this.cacheAddress[address] = this.cacheAddress[address].filter(item => item + this.timeWindow > timestamp);
-      if (this.cacheAddress[address].length === 0) {
-        delete this.cacheAddress[address];
-      }
+    for (const ip of ips) {
+      const limitRateKey = `${REDIS_LIMIT_RATE_KEY_PREFIX}:${ip}`;
+      await redis.zremrangebyscore(limitRateKey, 0, timestamp - this.timeWindow);
     }
-    if (addressList.length) {
+
+    if (ips.length) {
       await sleep(1e3);
     } else {
-      await sleep(this.timeWindow);
+      await sleep(this.timeWindow / 2);
     }
     return this.autoReleaseCache();
   }
 }
 
-const lr = new LimitRate();
+export const limitRateInstance = new LimitRate();
 
-export const limitRate: Middleware = (_, ctx) => {
-  lr.recordAddress(ctx.ip?.address);
+export const limitRateMiddleware: Middleware = (_, ctx) => {
+  limitRateInstance.recordAddress(ctx.ip?.address);
 };

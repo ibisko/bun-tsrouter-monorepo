@@ -3,10 +3,10 @@ import { login, loginSchema, refreshToken } from '@/services/auth';
 import { getUserInfo } from '@/services/users';
 import { tsRouter } from '@/services/tsRouterTest';
 import { logger } from '@/common/logger';
-import { authHook } from '@/middlewares/auth';
+import { authMiddleware } from '@/middlewares/auth';
 import { uploadFile1 } from '@/services/tsRouterTest/upload';
-import { limitRate } from '@/middlewares/limitRate';
-import { cors } from '@/middlewares/cors';
+import { limitRateMiddleware } from '@/middlewares/limitRate';
+import { corsMiddleware } from '@/middlewares/cors';
 
 const mainAuthRouterTree = {
   /** 用户 */
@@ -34,14 +34,14 @@ const mainWhiteListRouterTree = {
 export const mainAuthRouter = createRouter({
   prefix: ['api'],
   logger,
-  middlewares: [limitRate, authHook, cors],
+  middlewares: [limitRateMiddleware, authMiddleware, corsMiddleware],
   router: mainAuthRouterTree,
 });
 
 export const mainWhiteListRouter = createRouter({
   prefix: ['api'],
   logger,
-  middlewares: [limitRate, cors],
+  middlewares: [limitRateMiddleware, corsMiddleware],
   router: mainWhiteListRouterTree,
 });
 

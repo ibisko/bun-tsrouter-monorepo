@@ -6,7 +6,7 @@ import { TestCard } from './TestCard';
 export const TestSSE = () => {
   return (
     <div className="flex flex-wrap gap-2">
-      {/* <TestCard title="Test-SSE (sse1)" description="有参数">
+      <TestCard title="Test-SSE (sse1)" description="有参数">
         <ModuleSSE1
           sse={Api.test.tsRouter.sse1.sse({ id: 12, name: 'huhuhu' })}
           rule={(data, index) => {
@@ -34,7 +34,7 @@ export const TestSSE = () => {
             }
           }}
         />
-      </TestCard> */}
+      </TestCard>
 
       <TestCard title="Test-SSE (sse3)" description="结构化返回">
         <ModuleSSE1

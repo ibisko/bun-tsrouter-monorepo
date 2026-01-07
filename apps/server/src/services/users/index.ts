@@ -2,7 +2,7 @@ import { Context, ServiceError } from '@packages/tsrouter/server';
 import prisma from '@/database/prisma';
 
 export const getUserInfo = async (ctx: Context) => {
-  const authorization = ctx.headers.authorization;
+  const authorization = ctx.headers.get('authorization');
   console.log('authorization:', authorization);
 
   const userInfo = await prisma.users.findFirst({
