@@ -1,4 +1,5 @@
 顾及己见的 monorepo 模板
+
 有意思的在 `./packages/tsrouter` 对 `Bun.Server` routers 的封装，参考了 `trpc`、`elysia`。
 
 # 环境
@@ -13,10 +14,15 @@
 - redis
   - 端口密码在 `apps/server/.env` 进行修改
 
-# 初始化
+# Quick Start
+
+首次初始化
 
 ```sh
-# prisma
+# 安装依赖
+bun i
+
+# 初始化 prisma
 cd ./app/server
 bun generate
 bun execture
@@ -24,7 +30,7 @@ bun diff
 bun execture
 ```
 
-# 启动
+启动
 
 ```sh
 # 在项目根目录运行
@@ -32,7 +38,7 @@ bun dev
 # 首次执行可能失败，重新运行即可
 ```
 
-# Feature
+# Feature Todo
 
 - [ ] 单元测试、集成测试
 - [ ] git webhook 部署
