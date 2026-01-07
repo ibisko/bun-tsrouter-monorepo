@@ -1,12 +1,36 @@
-基础模版，仅实现基本功能
+顾及己见的 monorepo 模板
+有意思的在 `./packages/tsrouter` 对 `Bun.Server` routers 的封装，参考了 `trpc`、`elysia`。
 
-专注于单体应用，内网服务
+# 环境
 
-# 使用方式
+- Bun 运行环境
 
-1. 在主项目切一个分支如 base-template 仅做保存模版代码
-2. 之后的分支都可以从 base-template 切出来
-3. base-template 不做修改，只用来同步
+  ```sh
+  # https://bun.com/
+  curl -fsSL https://bun.sh/install | bash
+  ```
+
+- redis
+  - 端口密码在 `apps/server/.env` 进行修改
+
+# 初始化
+
+```sh
+# prisma
+cd ./app/server
+bun generate
+bun execture
+bun diff
+bun execture
+```
+
+# 启动
+
+```sh
+# 在项目根目录运行
+bun dev
+# 首次执行可能失败，重新运行即可
+```
 
 # Feature
 
@@ -15,34 +39,5 @@
 - [ ] 集群 linux 复用同个端口
 - [ ] 更新策略，如何处理和新增服务
 - [ ] UI 多元主题色
-- [x] ~~多个 oss 对接~~
-  - ~~oss 数据备份~~
-- [x] ~~server 采用 esmodule 对于 \*.js 如何更好处理~~
-
-# 后端
-
-- [x] 鉴权
-  - [x] 登录
-  - [x] jwt 刷新
-  - [x] service 入参 uid 字段
-    - 设想参考函数参数装饰器，从第二参数传入，前端隐藏第二参数
-- [ ] vitest 测试框架
-
-## 请求
-
-- [x] 类似 trpc 封装
-  - [ ] 流式上传
-  - [ ] 流式响应 (chat 流式返回例子)
-  - [ ] 流式下载
-- [ ] socket.io
-- [ ] SSE 服务端事件
-
-# 运维
-
-- [ ] nginx 配置及前端
-- [ ] 证书续期
-
-```ts
-import { main } from 'bun';
-// 可用于 cli 开发，安装到全局
-```
+- [ ] `vitest` 测试框架
+- [ ] `socket.io`
