@@ -15,3 +15,11 @@ export const fsEnsureMkdir = async (...paths: string[]) => {
     }),
   );
 };
+
+export const hashFile = (file: File, algorithm: Bun.SupportedCryptoAlgorithms = 'sha1') => {
+  const hashBuffer = Bun.CryptoHasher.hash(algorithm, file);
+  const hashArray = new Uint8Array(hashBuffer);
+  return Array.from(hashArray)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+};

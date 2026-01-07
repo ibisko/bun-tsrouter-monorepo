@@ -18,7 +18,6 @@ class SseServiceClass implements ServiceClass {
       service = args[0] as Function;
     }
 
-    // todo 另外的 yield 实现方案?
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       const param = zodSchema ? parseZodSchema(request, zodSchema) : undefined;
       const stream = new ReadableStream({
