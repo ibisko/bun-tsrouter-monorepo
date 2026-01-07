@@ -36,32 +36,32 @@ export type UsersSumAggregateOutputType = {
 
 export type UsersMinAggregateOutputType = {
   id: number | null
+  created_at: Date | null
+  updated_at: Date | null
+  deleted_at: Date | null
   account: string | null
   password: string | null
   role: $Enums.UserRole | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
 }
 
 export type UsersMaxAggregateOutputType = {
   id: number | null
+  created_at: Date | null
+  updated_at: Date | null
+  deleted_at: Date | null
   account: string | null
   password: string | null
   role: $Enums.UserRole | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
 }
 
 export type UsersCountAggregateOutputType = {
   id: number
+  created_at: number
+  updated_at: number
+  deleted_at: number
   account: number
   password: number
   role: number
-  createdAt: number
-  updatedAt: number
-  deletedAt: number
   _all: number
 }
 
@@ -76,32 +76,32 @@ export type UsersSumAggregateInputType = {
 
 export type UsersMinAggregateInputType = {
   id?: true
+  created_at?: true
+  updated_at?: true
+  deleted_at?: true
   account?: true
   password?: true
   role?: true
-  createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
 }
 
 export type UsersMaxAggregateInputType = {
   id?: true
+  created_at?: true
+  updated_at?: true
+  deleted_at?: true
   account?: true
   password?: true
   role?: true
-  createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
 }
 
 export type UsersCountAggregateInputType = {
   id?: true
+  created_at?: true
+  updated_at?: true
+  deleted_at?: true
   account?: true
   password?: true
   role?: true
-  createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
   _all?: true
 }
 
@@ -193,12 +193,12 @@ export type UsersGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type UsersGroupByOutputType = {
   id: number
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date | null
   account: string
   password: string
   role: $Enums.UserRole
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
   _count: UsersCountAggregateOutputType | null
   _avg: UsersAvgAggregateOutputType | null
   _sum: UsersSumAggregateOutputType | null
@@ -226,22 +226,22 @@ export type UsersWhereInput = {
   OR?: Prisma.UsersWhereInput[]
   NOT?: Prisma.UsersWhereInput | Prisma.UsersWhereInput[]
   id?: Prisma.IntFilter<"Users"> | number
+  created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  deleted_at?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
   account?: Prisma.StringFilter<"Users"> | string
   password?: Prisma.StringFilter<"Users"> | string
   role?: Prisma.EnumUserRoleFilter<"Users"> | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFilter<"Users"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Users"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
 }
 
 export type UsersOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  deleted_at?: Prisma.SortOrderInput | Prisma.SortOrder
   account?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type UsersWhereUniqueInput = Prisma.AtLeast<{
@@ -250,21 +250,21 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UsersWhereInput | Prisma.UsersWhereInput[]
   OR?: Prisma.UsersWhereInput[]
   NOT?: Prisma.UsersWhereInput | Prisma.UsersWhereInput[]
+  created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  deleted_at?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
   password?: Prisma.StringFilter<"Users"> | string
   role?: Prisma.EnumUserRoleFilter<"Users"> | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFilter<"Users"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Users"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
 }, "id" | "account">
 
 export type UsersOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  deleted_at?: Prisma.SortOrderInput | Prisma.SortOrder
   account?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UsersCountOrderByAggregateInput
   _avg?: Prisma.UsersAvgOrderByAggregateInput
   _max?: Prisma.UsersMaxOrderByAggregateInput
@@ -277,89 +277,89 @@ export type UsersScalarWhereWithAggregatesInput = {
   OR?: Prisma.UsersScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UsersScalarWhereWithAggregatesInput | Prisma.UsersScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Users"> | number
+  created_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
+  deleted_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Users"> | Date | string | null
   account?: Prisma.StringWithAggregatesFilter<"Users"> | string
   password?: Prisma.StringWithAggregatesFilter<"Users"> | string
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"Users"> | $Enums.UserRole
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Users"> | Date | string | null
 }
 
 export type UsersCreateInput = {
+  created_at?: Date | string
+  updated_at?: Date | string
+  deleted_at?: Date | string | null
   account: string
   password: string
   role: $Enums.UserRole
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type UsersUncheckedCreateInput = {
   id?: number
+  created_at?: Date | string
+  updated_at?: Date | string
+  deleted_at?: Date | string | null
   account: string
   password: string
   role: $Enums.UserRole
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type UsersUpdateInput = {
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deleted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UsersUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deleted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UsersCreateManyInput = {
   id?: number
+  created_at?: Date | string
+  updated_at?: Date | string
+  deleted_at?: Date | string | null
   account: string
   password: string
   role: $Enums.UserRole
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type UsersUpdateManyMutationInput = {
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deleted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UsersUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deleted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UsersCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  deleted_at?: Prisma.SortOrder
   account?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type UsersAvgOrderByAggregateInput = {
@@ -368,34 +368,26 @@ export type UsersAvgOrderByAggregateInput = {
 
 export type UsersMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  deleted_at?: Prisma.SortOrder
   account?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type UsersMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  deleted_at?: Prisma.SortOrder
   account?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type UsersSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-}
-
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type EnumUserRoleFieldUpdateOperationsInput = {
-  set?: $Enums.UserRole
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -404,6 +396,14 @@ export type DateTimeFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type StringFieldUpdateOperationsInput = {
+  set?: string
+}
+
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -418,57 +418,57 @@ export type IntFieldUpdateOperationsInput = {
 
 export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  deleted_at?: boolean
   account?: boolean
   password?: boolean
   role?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type UsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  deleted_at?: boolean
   account?: boolean
   password?: boolean
   role?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  deleted_at?: boolean
   account?: boolean
   password?: boolean
   role?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type UsersSelectScalar = {
   id?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  deleted_at?: boolean
   account?: boolean
   password?: boolean
   role?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
 }
 
-export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "account" | "password" | "role" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["users"]>
+export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "created_at" | "updated_at" | "deleted_at" | "account" | "password" | "role", ExtArgs["result"]["users"]>
 
 export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Users"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    created_at: Date
+    updated_at: Date
+    deleted_at: Date | null
     account: string
     password: string
     role: $Enums.UserRole
-    createdAt: Date
-    updatedAt: Date
-    deletedAt: Date | null
   }, ExtArgs["result"]["users"]>
   composites: {}
 }
@@ -893,12 +893,12 @@ export interface Prisma__UsersClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface UsersFieldRefs {
   readonly id: Prisma.FieldRef<"Users", 'Int'>
+  readonly created_at: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly updated_at: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly deleted_at: Prisma.FieldRef<"Users", 'DateTime'>
   readonly account: Prisma.FieldRef<"Users", 'String'>
   readonly password: Prisma.FieldRef<"Users", 'String'>
   readonly role: Prisma.FieldRef<"Users", 'UserRole'>
-  readonly createdAt: Prisma.FieldRef<"Users", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Users", 'DateTime'>
-  readonly deletedAt: Prisma.FieldRef<"Users", 'DateTime'>
 }
     
 

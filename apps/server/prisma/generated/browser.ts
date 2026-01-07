@@ -22,3 +22,8 @@ export * from './enums';
  * 
  */
 export type Users = Prisma.UsersModel
+/**
+ * Model BlackList
+ * 
+ */
+export type BlackList = Prisma.BlackListModel
