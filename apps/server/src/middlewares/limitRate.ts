@@ -3,17 +3,16 @@ import { type Middleware, MiddlewareError } from '@packages/tsrouter/server';
 import prisma from '@/database/prisma';
 import redis from '@/database/redis';
 import { addBlackList } from '@/services/blackList';
+import { REDIS_KEY } from '@/common/enums';
 
-const REDIS_LIMIT_RATE_KEY_PREFIX = 'limit-rate';
-
-/** 限流器 */
+/** 限流中间件 */
 class LimitRate {
   max = +process.env.LIMIT_RATE_MAX || 1000;
   timeWindow = +process.env.LIMIT_RATE_TIME_WINDOW || 1e3 * 60;
   blackList: string[] = [];
 
   constructor() {
-    this.autoReleaseCache();
+    this.runLoop();
   }
 
   async init() {
@@ -30,7 +29,7 @@ class LimitRate {
     }
 
     const timestamp = new Date().getTime();
-    const limitRateKey = `${REDIS_LIMIT_RATE_KEY_PREFIX}:${ip}`;
+    const limitRateKey = `${REDIS_KEY.LIMIT_RATE}:${ip}`;
     const count = await redis.zcard(limitRateKey);
 
     // 检查超出数量
@@ -44,12 +43,12 @@ class LimitRate {
     }
   }
 
-  private async autoReleaseCache(): Promise<void> {
+  private async runLoop(): Promise<void> {
     const timestamp = new Date().getTime();
-    const ips = await redis.keys(`${REDIS_LIMIT_RATE_KEY_PREFIX}:*`);
+    const ips = await redis.keys(`${REDIS_KEY.LIMIT_RATE}:*`);
 
     for (const ip of ips) {
-      const limitRateKey = `${REDIS_LIMIT_RATE_KEY_PREFIX}:${ip}`;
+      const limitRateKey = `${REDIS_KEY.LIMIT_RATE}:${ip}`;
       await redis.zremrangebyscore(limitRateKey, 0, timestamp - this.timeWindow);
     }
 
@@ -58,7 +57,7 @@ class LimitRate {
     } else {
       await sleep(this.timeWindow / 2);
     }
-    return this.autoReleaseCache();
+    return this.runLoop();
   }
 }
 

@@ -13,7 +13,6 @@ export type Undefinedable<T> = {
   [K in keyof T]?: T[K];
 };
 
-export type MaybePromise<T> = Promise<T> | T;
 export type Func = (...args: any) => any;
 export type AwaitedReturn<T extends Func> = Awaited<ReturnType<T>>;
 

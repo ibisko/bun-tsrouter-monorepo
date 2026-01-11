@@ -1,17 +1,16 @@
-import { createRouter, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
+import { createRouter, Logger, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
 import { login, loginSchema, refreshToken } from '@/services/auth';
 import { getUserInfo } from '@/services/users';
 import { tsRouter } from '@/services/tsRouterTest';
-import { logger } from '@/common/logger';
 import { authMiddleware } from '@/middlewares/auth';
 import { uploadFile1 } from '@/services/tsRouterTest/upload';
 import { limitRateMiddleware } from '@/middlewares/limitRate';
 import { corsMiddleware } from '@/middlewares/cors';
 
+export const logger = new Logger();
+
 const mainAuthRouterTree = {
-  /** 用户 */
   user: {
-    /** 用户信息 */
     getUserInfo: procedure.get(getUserInfo),
   },
 };
@@ -27,7 +26,7 @@ const mainWhiteListRouterTree = {
   },
 
   test: {
-    tsRouter,
+    tsRouter: tsRouter,
   },
 };
 

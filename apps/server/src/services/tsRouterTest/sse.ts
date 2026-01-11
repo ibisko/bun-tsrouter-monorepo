@@ -26,10 +26,13 @@ export const sse2 = procedure.sse(async ({ write, signal }) => {
   }
 });
 
-// 返回步骤执行
+/** 返回步骤执行 */ 
 export const sse3 = procedure.sse(sse1Schema, async (param, { write, signal }) => {
+  signal.addEventListener('abort', () => {
+    console.log('sse3 abort!');
+  });
   let count = 0;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 3; i++) {
     console.log('sse3 running');
     await write(`count: ${count} id: ${param.id} name: ${param.name}`);
     count++;

@@ -1,4 +1,5 @@
 import prisma from '@/database/prisma';
+import { limitRateInstance } from '@/middlewares/limitRate';
 import { Context } from '@packages/tsrouter/server';
 import z from 'zod';
 
@@ -11,6 +12,7 @@ export const addBlackList = async (ip: string) => {
   } else {
     await prisma.blackList.create({ data: { ip } });
   }
+  limitRateInstance.blackList.push(ip);
 };
 
 export const addBlackListService = async ({ ip }: z.output<typeof addBlackListSchema>, ctx: Context) => {

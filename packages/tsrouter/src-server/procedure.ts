@@ -3,8 +3,8 @@ import { createStandardMethod } from './core/restApi';
 import { Logger } from './logger';
 import { Middleware } from './type';
 import { createSseMethod } from './core/sse';
-import { MaybePromise } from '@packages/utils/types';
 import { createUploadFile } from './core/uploadFile';
+import { MaybePromise } from 'bun';
 
 export const procedure = {
   // 基础方法

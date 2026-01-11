@@ -1,7 +1,8 @@
 import z from 'zod';
 import type { MethodOptions, UploadMethodOptions } from '@/src-client/type';
-import type { Func, IsPlainObject, MaybePromise } from '@packages/utils/types';
+import type { Func, IsPlainObject } from '@packages/utils/types';
 import type { Logger } from './logger';
+import { MaybePromise } from 'bun';
 
 /** 用于 clinet 的 AppRouter */
 export type ReplaceSpecificLeaf<T> = NonNullable<

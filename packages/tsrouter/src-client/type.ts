@@ -1,7 +1,6 @@
-import { MaybePromise } from '@packages/utils/types';
+import { MaybePromise } from "bun";
 
 export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
-// export type Method = RestApiMethod | 'sse' | 'uploadFile';
 
 export type TsRouterOptions = {
   baseUrl: string;

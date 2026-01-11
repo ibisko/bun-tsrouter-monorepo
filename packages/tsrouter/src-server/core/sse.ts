@@ -31,7 +31,6 @@ class SseServiceClass implements ServiceClass {
 
           // 断开连接时
           request.signal.addEventListener('abort', async () => {
-            console.log('连接突然中断');
             watchDog.kill();
           });
 

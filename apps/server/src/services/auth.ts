@@ -29,7 +29,7 @@ export const login = async (param: z.output<typeof loginSchema>, ctx: Context) =
     userInfo = await prisma.users.findFirst({
       where: {
         account: param.account,
-        deletedAt: null,
+        deleted_at: null,
       },
     });
     if (!userInfo) {
@@ -90,7 +90,7 @@ export const refreshToken = async (ctx: Context) => {
   const userInfo = await prisma.users.findFirst({
     where: {
       id: detoken.userId,
-      deletedAt: null,
+      deleted_at: null,
     },
   });
   if (!userInfo) {

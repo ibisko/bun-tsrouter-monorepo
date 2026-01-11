@@ -19,11 +19,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "fastify": "^5.5.0"
-  },
+  "devDependencies": {},
   "dependencies": {
-    "@fastify/busboy": "^3.2.0",
     "@packages/utils": "workspace:^",
     "fast-json-stringify": "^6.1.1"
   }

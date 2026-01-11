@@ -1,8 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import { cloneDeep, merge } from 'lodash-es';
 import fastJson from 'fast-json-stringify';
 import { parseToFastJsonStringify } from './utils';
+import { MaybePromise } from 'bun';
 
 const properties = parseToFastJsonStringify({
   lv: 'string',
@@ -23,69 +22,38 @@ const properties = parseToFastJsonStringify({
   reason: 'string',
 });
 
+type LoggerOptions = {
+  stdout?: Stdout;
+};
+type Stdout = (data: string) => MaybePromise<void>;
+
 export class Logger {
   private _bindings?: any;
   private _this?: Logger;
-  _cache: Record<string, any>[] = [];
-  private writeStream: fs.WriteStream;
-  private stringify: (params: any) => string;
+  private stringify = fastJson({ type: 'object', properties });
   static reqId = 0;
+  stdout: Stdout = console.log;
 
-  constructor({ mainFilename, dirPath }: LoggerOptional) {
-    this.writeStream = fs.createWriteStream(path.join(dirPath, mainFilename || 'main.log'), {
-      // 日志通常是小而频繁的写入，小缓冲区减少内存占用
-      highWaterMark: 1024 * 4, // 4kb
-      encoding: 'utf8',
-      flags: 'a',
-    });
-
-    this.stringify = fastJson({ type: 'object', properties });
-  }
-
-  private async asyncWrite(): Promise<void> {
-    let data = '';
-    while (this._cache.length) {
-      const item = this._cache.shift();
-      // 默认采用 fast-json-stringify 来加速
-      if (item?.data) {
-        data += JSON.stringify(item) + '\n';
-      }
-      // 当存在data时候，才回退到 JSON.stringify
-      else {
-        data += this.stringify(item) + '\n';
-      }
-    }
-    // 批量写入
-    await new Promise((resolve, reject) =>
-      this.writeStream.write(data, err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(null);
-        }
-      }),
-    );
-    // todo 日志体积、时间间隔（每天，占用空间）
-    if (this._cache.length) {
-      return this.asyncWrite();
+  constructor(options?: LoggerOptions) {
+    if (options?.stdout) {
+      this.stdout = options.stdout;
     }
   }
 
-  private isWriting = false;
-  private async push(params: Record<string, any>) {
-    this._cache.push(params);
-    if (this.isWriting) return;
-    this.isWriting = true;
-    await this.asyncWrite();
-    this.isWriting = false;
+  private output(params: Record<string, any>) {
+    if ('data' in params) {
+      this.stdout(JSON.stringify(params));
+    } else {
+      this.stdout(this.stringify(params));
+    }
   }
 
   private createLogger(lv: LoggerLevel, params?: LoggerErrorParam) {
     const defaultMeta = { time: new Date().getTime(), lv };
     if (this._bindings) {
-      this._this!.push(merge(defaultMeta, this._bindings, params));
+      this._this!.output(merge(defaultMeta, this._bindings, params));
     } else {
-      this.push(merge(defaultMeta, params));
+      this.output(merge(defaultMeta, params));
     }
   }
 
@@ -118,10 +86,7 @@ export class Logger {
     return this.createLogger('trace', cloneDeep(params));
   }
 }
-type LoggerOptional = {
-  dirPath: string;
-  mainFilename?: string;
-};
+
 type LoggerLevel = 'error' | 'warn' | 'info' | 'debug' | 'fatal' | 'silent' | 'trace';
 type LoggerErrorParam = {
   step?: 'middleware' | 'validation' | 'service' | 'serviceAccident';
