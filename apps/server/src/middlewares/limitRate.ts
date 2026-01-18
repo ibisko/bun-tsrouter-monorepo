@@ -9,7 +9,7 @@ import { REDIS_KEY } from '@/common/enums';
 class LimitRate {
   max = +process.env.LIMIT_RATE_MAX || 1000;
   timeWindow = +process.env.LIMIT_RATE_TIME_WINDOW || 1e3 * 60;
-  blackList: string[] = [];
+  blackList = new Set();
 
   constructor() {
     this.runLoop();
@@ -17,14 +17,14 @@ class LimitRate {
 
   async init() {
     const blackLists = await prisma.blackList.findMany({ select: { ip: true }, where: { deleted_at: null } });
-    this.blackList = blackLists.map(item => item.ip);
+    blackLists.forEach(item => this.blackList.add(item.ip));
   }
 
   async recordAddress(ip?: string) {
     if (!ip) {
       throw new MiddlewareError({ message: 'ip no find!', status: 400, func: 'LimitRate' });
     }
-    if (ip in this.blackList) {
+    if (this.blackList.has(ip)) {
       throw new MiddlewareError({ message: '已被列入黑名单', status: 403, func: 'LimitRate' });
     }
 
