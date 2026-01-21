@@ -133,7 +133,11 @@ export function parseToFastJsonStringify(obj: Record<string, any>) {
 export const responseToString = (response: any) => {
   if (typeof response === 'string') {
     return response;
+  } else if (response instanceof ReadableStream) {
+    return response;
+  } else if (response === undefined) {
+    return JSON.stringify({ msg: 'ok' });
   } else {
-    return JSON.stringify(merge({ msg: 'ok' }, response));
+    return JSON.stringify(response);
   }
 };

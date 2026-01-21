@@ -7,10 +7,10 @@ type RetryHandleOptions = {
  * 默认重试 3 次，每次间隔 3s
  * ```ts
  * // 使用例子
- * await retryHandle(() => this.#getCredential())
+ * await retryHandle(() => this.getCredential())
  *
  * // 注意别这样写
- * await retryHandle(this.#getCredential) // this 会丢失
+ * await retryHandle(this.getCredential) // this 会丢失
  * ```
  */
 export const retryHandle = <T>(fn: (abort: () => void) => Promise<T> | T, options?: RetryHandleOptions) => {
