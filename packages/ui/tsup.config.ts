@@ -4,7 +4,7 @@ import { spawn, spawnSync } from 'child_process';
 export default defineConfig(options => ({
   entryPoints: ['./src/main.ts'],
   format: ['esm'],
-  dts: true,
+  // dts: true,
   external: ['react'],
   // silent: true,
   watch: ['src'],

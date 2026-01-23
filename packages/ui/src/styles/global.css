@@ -3,7 +3,7 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('../fonts/851手写杂字体.ttf');
+  src: url('../fonts/LXGWWenKaiMono-Medium.ttf');
 }
 
 @custom-variant dark (&:is(.dark *));

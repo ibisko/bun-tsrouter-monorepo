@@ -5,6 +5,9 @@ export * from './components/Card';
 export * from './components/Code';
 export * from './components/Select';
 export * from './components/Input';
+export * from './components/Table';
+export * from './components/Descriptions';
+export * from './components/Dialog';
 
 export * from './utils/cn';
 

@@ -1,28 +1,43 @@
 import { Input } from '../Input/BaseInput';
-import type { FieldPath, FieldValues, UseFormRegister } from 'react-hook-form';
+import { Control, Controller, RegisterOptions, type FieldErrors } from 'react-hook-form';
 
-type FormInputProps<T extends FieldValues> = {
-  name: FieldPath<T>;
-  register: UseFormRegister<T>;
+type FormInputProps<T extends Record<string, any>> = {
+  defaultValue?: any;
+  field: keyof T;
+  control: Control<T, any, T>;
+  rules?: Omit<RegisterOptions<T, any>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>;
   placeholder?: string;
   type?: 'text' | 'password';
   autoComplete?: 'on' | 'off';
-  required?: boolean;
 };
-export const FormInput = <T extends FieldValues>({
-  name,
+export const FormInput = <T extends Record<string, any>>({
+  defaultValue,
+  field,
+  control,
   placeholder,
   type = 'text',
   autoComplete = 'off',
-  required = true,
-  register,
+  rules,
 }: FormInputProps<T>) => {
   return (
-    <Input
-      type={type}
-      autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
-      placeholder={placeholder}
-      {...register(name, { required: required })}
-    />
+    <>
+      <Controller
+        name={field as any}
+        control={control}
+        rules={rules}
+        render={({ field, fieldState }) => (
+          <>
+            <Input
+              type={type}
+              autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
+              placeholder={placeholder}
+              defaultValue={defaultValue}
+              {...field}
+            />
+            <div>{fieldState.error?.message}</div>
+          </>
+        )}
+      />
+    </>
   );
 };
