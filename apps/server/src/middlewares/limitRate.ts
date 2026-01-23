@@ -47,8 +47,7 @@ class LimitRate {
     const timestamp = new Date().getTime();
     const ips = await redis.keys(`${REDIS_KEY.LIMIT_RATE}:*`);
 
-    for (const ip of ips) {
-      const limitRateKey = `${REDIS_KEY.LIMIT_RATE}:${ip}`;
+    for (const limitRateKey of ips) {
       await redis.zremrangebyscore(limitRateKey, 0, timestamp - this.timeWindow);
     }
 
