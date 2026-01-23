@@ -19,7 +19,9 @@
   "dependencies": {
     "@prisma/adapter-libsql": "^7.1.0",
     "@prisma/client": "^7.1.0",
+    "axios": "^1.13.2",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "lodash-es": "^4.17.21",
     "prisma": "^7.1.0",
     "zod": "^4.0.17"

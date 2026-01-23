@@ -16,10 +16,19 @@ export const fsEnsureMkdir = async (...paths: string[]) => {
   );
 };
 
-export const hashFile = (file: File, algorithm: Bun.SupportedCryptoAlgorithms = 'sha1') => {
-  const hashBuffer = Bun.CryptoHasher.hash(algorithm, file);
-  const hashArray = new Uint8Array(hashBuffer);
-  return Array.from(hashArray)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+export const hashFile = async (
+  file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike,
+  algorithm: Bun.SupportedCryptoAlgorithms = 'sha1',
+) => {
+  let buffer;
+  if (typeof file === 'string') {
+    file = Bun.file(file);
+    buffer = await file.arrayBuffer();
+  } else if (file instanceof Blob) {
+    // Bun.BunFile
+    buffer = await file.arrayBuffer();
+  } else {
+    buffer = file;
+  }
+  return Bun.CryptoHasher.hash(algorithm, buffer).toHex();
 };
