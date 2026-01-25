@@ -1,4 +1,4 @@
-import { Button, cn, FormErrorMessage, FormInput, LoadingDiv, PasswordInput } from '@packages/ui';
+import { Button, cn, Form, LoadingDiv } from '@packages/ui';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { userActions } from '@/stores/user';
@@ -7,16 +7,10 @@ import { toast } from 'sonner';
 
 const HomePage = () => {
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const { control, handleSubmit } = useForm<LoginFormData>({
     defaultValues: {
-      // todo 可加载本地记录
-      // account: 'admin',
-      // password: '1DiKmZQG-lAgQMQ23EeCbZbSqiqkbmS_zG6C2Xt96WMmh9tcIReWpMtNkIki3loT',
-      // password: 'bbb234432',
+      account: '',
+      password: '',
     },
   });
 
@@ -40,23 +34,31 @@ const HomePage = () => {
     <LoadingDiv loading={loading} className="h-screen flex justify-center items-center">
       <div
         className={cn(
-          'relative flex flex-col justify-center items-center gap-2 sm:p-10 bg-card shadow-lg px-8',
-          'h-screen sm:h-auto sm:rounded-2xl sm:bg-card/95 w-full sm:max-w-[440px]',
+          'relative flex flex-col justify-center items-center gap-2 shadow-lg',
+          'max-sm:px-8 sm:p-10',
+          'max-sm:bg-card sm:bg-card/95',
+          'max-sm:w-full sm:w-[440px]',
+          'max-sm:h-full sm:h-auto',
+          'sm:rounded-2xl',
         )}>
         <div className="text-xl">登录后台管理系统</div>
-        <form className={cn('flex flex-col gap-2 w-full')} onSubmit={handleSubmit(onSubmit)}>
+        <div className={cn('flex flex-col gap-2 w-full')}>
           <div className="mt-3">账号</div>
-          <FormInput name="account" register={register} placeholder="请输入账号" autoComplete="on" />
-          {errors?.account?.type === 'required' && <FormErrorMessage>请输入账号，账号不可为空</FormErrorMessage>}
+          <Form.Input name="account" control={control} placeholder="请输入账号" autoComplete="on" rules={{ required: '请输入账号，账号不可为空' }} />
 
           <div className="mt-3">密码</div>
-          <PasswordInput placeholder="请输入密码" autoComplete="on" {...register('password', { required: true })} />
-          {errors?.password?.type === 'required' && <FormErrorMessage>请输入密码，密码不可为空</FormErrorMessage>}
+          <Form.PasswordInput
+            name="password"
+            placeholder="请输入密码"
+            autoComplete="on"
+            control={control}
+            rules={{ required: '请输入密码，密码不可为空' }}
+          />
 
-          <Button className="mt-4 py-3 rounded-xl" type="submit">
+          <Button className="mt-4 py-3 rounded-xl" onClick={handleSubmit(onSubmit)}>
             登录
           </Button>
-        </form>
+        </div>
       </div>
     </LoadingDiv>
   );

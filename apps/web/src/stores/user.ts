@@ -3,6 +3,7 @@ import { Api } from '@/api';
 import { redirect } from '@tanstack/react-router';
 import type { UserRole } from '@apps/server/browser';
 import type { Nullable } from '@packages/utils/types';
+import { hashString } from '@packages/utils/web';
 import { cloneDeep } from 'lodash-es';
 
 type UserStore = Nullable<{
@@ -24,6 +25,7 @@ const initialUserStore: UserStore = {
 export const userStore = proxy(cloneDeep(initialUserStore));
 
 const login = async (account: string, password: string) => {
+  password = await hashString(password);
   const response = await Api.auth.login.post({ account, password });
   userStore.token = response.token;
   userStore.refreshToken = response.refreshToken;

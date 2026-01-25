@@ -1,17 +1,25 @@
 import { cn } from '@/main';
 import type { Columns } from './type';
 
-type TableProps = {
+type TableProps<T extends Record<string, any>> = {
   className?: string;
   thClassName?: string;
   tdClassName?: string;
   /** 默认是id */
   primaryKey?: string;
-  data?: Record<string, any>[];
-  columns: Columns[];
+  data?: T[];
+  columns: Columns<T>[];
   onRowClick?: (data: any) => void;
 };
-export const Table = ({ className, thClassName, tdClassName, primaryKey = 'id', data, columns, onRowClick }: TableProps) => {
+export const Table = <T extends Record<string, any> = any>({
+  className,
+  thClassName,
+  tdClassName,
+  primaryKey = 'id',
+  data,
+  columns,
+  onRowClick,
+}: TableProps<T>) => {
   return (
     <div className={cn('rounded overflow-auto', className)}>
       <table className={cn('text-center')}>
@@ -23,7 +31,7 @@ export const Table = ({ className, thClassName, tdClassName, primaryKey = 'id', 
                 style={{
                   [column.fixed || 'left']: column.fixed ? `${column.stickyOffset}px` : 'auto',
                 }}
-                key={column.dataIndex}>
+                key={column.dataIndex as string}>
                 <div className={cn('p-2 text-nowrap', thClassName)} style={{ width: column.width !== undefined ? `${column.width}px` : 'auto' }}>
                   {column.tilte}
                 </div>
@@ -42,7 +50,7 @@ export const Table = ({ className, thClassName, tdClassName, primaryKey = 'id', 
                     style={{
                       [column.fixed || 'left']: column.fixed ? `${column.stickyOffset}px` : 'auto',
                     }}
-                    key={column.dataIndex}>
+                    key={column.dataIndex as string}>
                     <div className={cn('p-2', tdClassName)}>{column.render ? column.render(item) : item[column.dataIndex]}</div>
                   </td>
                 );

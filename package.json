@@ -2,13 +2,15 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run dev.ts",
+    "dev": "bun run ./scripts/dev.ts",
+    "init": "bun run ./scripts/init.ts",
     "app": "bun ./scripts/createApp.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@swc/core": "^1.15.10",
     "@types/bun": "latest",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^24.0.14",

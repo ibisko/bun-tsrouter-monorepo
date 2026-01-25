@@ -1,8 +1,8 @@
-export type Columns = {
+export type Columns<T> = {
   tilte: string;
-  dataIndex: string;
+  dataIndex: keyof T;
   width?: number;
   fixed?: 'left' | 'right';
   stickyOffset?: number;
-  render?: (data: any) => React.ReactNode;
+  render?: (data: T) => React.ReactNode;
 };

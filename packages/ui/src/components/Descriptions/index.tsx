@@ -24,7 +24,8 @@ export const Descriptions = ({ className, thClassName, data, hideLine, thWidth }
   );
 };
 
-type DescriptionsData = {
+export type DescriptionsData = {
+  id: string | number;
   title: string;
   value: React.ReactNode;
 };

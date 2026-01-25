@@ -14,7 +14,8 @@
     }
   },
   "scripts": {
-    "dev": "tsup"
+    "dev": "tsup",
+    "build": "bun tsup --config ./tsup.config.build.ts"
   },
   "keywords": [],
   "author": "",

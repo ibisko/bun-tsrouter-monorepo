@@ -23,7 +23,8 @@
     }
   },
   "scripts": {
-    "dev": "tsup"
+    "dev": "tsup",
+    "build": "bun tsup --config ./tsup.config.build.ts"
   },
   "dependencies": {
     "nanoid": "^5.1.6"

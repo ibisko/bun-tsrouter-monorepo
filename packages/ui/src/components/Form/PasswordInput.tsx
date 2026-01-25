@@ -1,7 +1,8 @@
 import { Control, Controller, RegisterOptions } from 'react-hook-form';
 import { Input } from '../Input/BaseInput';
+import { PasswordInput } from '../Input';
 
-type FormInputProps<T extends Record<string, any>> = {
+type FormPasswordInputProps<T extends Record<string, any>> = {
   defaultValue?: any;
   name: keyof T;
   control: Control<T, any, T>;
@@ -10,15 +11,14 @@ type FormInputProps<T extends Record<string, any>> = {
   type?: 'text' | 'password';
   autoComplete?: 'on' | 'off';
 };
-export const FormInput = <T extends Record<string, any>>({
-  defaultValue,
+export const FormPasswordInput = <T extends Record<string, any>>({
   name,
   control,
   placeholder,
   type = 'text',
   autoComplete = 'off',
   rules,
-}: FormInputProps<T>) => {
+}: FormPasswordInputProps<T>) => {
   return (
     <Controller
       name={name}
@@ -26,11 +26,9 @@ export const FormInput = <T extends Record<string, any>>({
       rules={rules}
       render={({ field, fieldState }) => (
         <>
-          <Input
-            type={type}
+          <PasswordInput
             autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
             placeholder={placeholder}
-            defaultValue={defaultValue}
             {...field}
           />
           <div>{fieldState.error?.message}</div>
