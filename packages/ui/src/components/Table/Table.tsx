@@ -13,13 +13,18 @@ type TableProps = {
 };
 export const Table = ({ className, thClassName, tdClassName, primaryKey = 'id', data, columns, onRowClick }: TableProps) => {
   return (
-    <div className={cn('relative rounded p-2 shadow overflow-auto', className)}>
+    <div className={cn('rounded overflow-auto', className)}>
       <table className={cn('text-center')}>
         <thead>
           <tr className="border-b">
             {columns.map(column => (
-              <th key={column.dataIndex}>
-                <div className={cn('p-2 pt-0 text-nowrap', thClassName)} style={{ width: column.width !== undefined ? `${column.width}px` : 'auto' }}>
+              <th
+                className={cn('bg-foreground/10 backdrop-blur-xs', column.fixed ? 'sticky' : 'relative')}
+                style={{
+                  [column.fixed || 'left']: column.fixed ? `${column.stickyOffset}px` : 'auto',
+                }}
+                key={column.dataIndex}>
+                <div className={cn('p-2 text-nowrap', thClassName)} style={{ width: column.width !== undefined ? `${column.width}px` : 'auto' }}>
                   {column.tilte}
                 </div>
               </th>
@@ -29,10 +34,15 @@ export const Table = ({ className, thClassName, tdClassName, primaryKey = 'id', 
 
         <tbody className="">
           {data?.map(item => (
-            <tr className={cn('border-b')} onClick={() => onRowClick?.(item)} key={item[primaryKey]}>
+            <tr className={cn('relative border-b group')} onClick={() => onRowClick?.(item)} key={item[primaryKey]}>
               {columns.map(column => {
                 return (
-                  <td key={column.dataIndex}>
+                  <td
+                    className={cn('group-hover:bg-foreground/5 backdrop-blur-xs', column.fixed ? 'sticky' : 'relative')}
+                    style={{
+                      [column.fixed || 'left']: column.fixed ? `${column.stickyOffset}px` : 'auto',
+                    }}
+                    key={column.dataIndex}>
                     <div className={cn('p-2', tdClassName)}>{column.render ? column.render(item) : item[column.dataIndex]}</div>
                   </td>
                 );

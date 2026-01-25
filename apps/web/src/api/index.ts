@@ -4,13 +4,14 @@ import { createAppRouter, RefreshFailed, ResponseError, TsRouter } from '@packag
 import { redirect } from '@tanstack/react-router';
 
 const ins = new TsRouter({
-  baseUrl: 'http://localhost:5773',
+  baseUrl: import.meta.env.VITE_BASE_URL!,
   prefix: '/api',
   setHeaders: headers => {
     headers.set('authorization', `Bearer ${userStore.token}`);
   },
   async refreshToken(abort) {
-    const response = await fetch('http://localhost:5773/api/auth/refresh-token', {
+    const url = new URL('/api/auth/refresh-token', import.meta.env.VITE_BASE_URL);
+    const response = await fetch(url.href, {
       headers: {
         authorization: `Bearer ${userStore.refreshToken}`,
       },
@@ -33,10 +34,11 @@ const ins = new TsRouter({
     localStorage.setItem('refreshToken', data.refreshToken);
   },
   onResponseError(error) {
-    if (error instanceof ResponseError) {
-      console.log('ResponseError', error.message, error.status);
-      throw redirect({ to: '/', replace: true });
-    } else if (error instanceof RefreshFailed) {
+    // if (error instanceof ResponseError) {
+    //   console.log('ResponseError', error.message, error.status);
+    //   throw redirect({ to: '/', replace: true });
+    // } else
+    if (error instanceof RefreshFailed) {
       console.log('刷新失败');
       throw redirect({ to: '/', replace: true });
     }
