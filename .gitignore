@@ -5,5 +5,5 @@ logs/
 
 .DS_Store
 
-*.db
-*.sql
+**/*.db
+**/*.sql
