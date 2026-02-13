@@ -2,8 +2,7 @@ export declare global {
   namespace NodeJS {
     interface ProcessEnv {
       port: string;
-      REDIS_PORT: string;
-      REDIS_PASSWORD: string;
+      REDIS_URL: string;
       DATABASE_URL: string;
       authSecret: string;
       refreshAuthSecret: string;
