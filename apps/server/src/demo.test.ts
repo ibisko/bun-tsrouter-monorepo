@@ -7,7 +7,7 @@ import Redis from 'ioredis';
   // const IP = '192.168.0.1';
   const IP = '192.168.0.2';
   const KEY = `limit-rate:${IP}`;
-  const timestamp = new Date().getTime();
+  const timestamp = Date.now();
 
   const res = await redis.keys('limit-rate:*');
   console.log(res);

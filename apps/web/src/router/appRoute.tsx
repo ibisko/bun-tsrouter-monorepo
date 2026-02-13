@@ -9,7 +9,7 @@ export const createAppRoute = (rootRoute: RootRoute) => {
       await userActions.initUserInfo();
       // 重定向
       if (/^\/app\/?$/.test(ctx.location.pathname)) {
-        throw redirect({ to: '/app/user', replace: true });
+        throw redirect({ to: '/app/ts-router', replace: true });
       }
     },
     notFoundComponent: () => <div>404 not find</div>,

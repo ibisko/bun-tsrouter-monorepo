@@ -49,7 +49,7 @@ export class Logger {
   }
 
   private createLogger(lv: LoggerLevel, params?: LoggerErrorParam) {
-    const defaultMeta = { time: new Date().getTime(), lv };
+    const defaultMeta = { time: Date.now(), lv };
     if (this._bindings) {
       this._this!.output(merge(defaultMeta, this._bindings, params));
     } else {

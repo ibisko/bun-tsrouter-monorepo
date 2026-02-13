@@ -28,7 +28,7 @@ class LimitRate {
       throw new MiddlewareError({ message: '已被列入黑名单', status: 403, func: 'LimitRate' });
     }
 
-    const timestamp = new Date().getTime();
+    const timestamp = Date.now();
     const limitRateKey = `${REDIS_KEY.LIMIT_RATE}:${ip}`;
     const count = await redis.zcard(limitRateKey);
 
@@ -44,7 +44,7 @@ class LimitRate {
   }
 
   private async runLoop(): Promise<void> {
-    const timestamp = new Date().getTime();
+    const timestamp = Date.now();
     const ips = await redis.keys(`${REDIS_KEY.LIMIT_RATE}:*`);
 
     for (const limitRateKey of ips) {

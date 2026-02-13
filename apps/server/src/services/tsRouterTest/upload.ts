@@ -12,7 +12,11 @@ export const uploadFile1 = async (formData: FormData) => {
     throw new ServiceError({ message: '缺少file' });
   }
 
-  const checkHash = hashFile(file, 'sha1');
+  console.log(file);
+  console.log(`file.type: "${file.type}"`);
+  console.log(`file.size: "${file.size}"`);
+
+  const checkHash = await hashFile(file, 'sha1');
   if (checkHash !== hash) {
     throw new ServiceError({ message: '文件hash不相同', data: { hash, checkHash } });
   }

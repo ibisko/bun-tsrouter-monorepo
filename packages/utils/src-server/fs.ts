@@ -17,7 +17,7 @@ export const fsEnsureMkdir = async (...paths: string[]) => {
 };
 
 export const hashFile = async (
-  file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike,
+  file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike | File,
   algorithm: Bun.SupportedCryptoAlgorithms = 'sha1',
 ) => {
   let buffer;
