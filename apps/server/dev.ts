@@ -1,7 +1,7 @@
 import { build } from 'tsup';
 
 Bun.spawn({
-  cmd: ['bun', '--watch', '-r', './src/config.ts', './src/main.ts'],
+  cmd: ['bun', 'run', './src/main.ts'],
   stdio: ['ignore', 'inherit', 'inherit'],
   env: process.env,
 });

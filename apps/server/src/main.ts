@@ -1,6 +1,6 @@
 import { merge } from 'lodash-es';
 import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
-import { limitRateInstance } from './middlewares/limitRate';
+import { initLimitRate } from './middlewares/limitRate';
 export type { AppRouter } from './router/tsrouter';
 export * from 'prisma/generated/enums';
 
@@ -14,7 +14,7 @@ async function createServer() {
   // 500 gateway才会收到的微服务错误
 
   // 初始化限流中间件，黑名单到内存
-  await limitRateInstance.init();
+  await initLimitRate();
 
   const server = Bun.serve({
     port: process.env.port,

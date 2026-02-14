@@ -1,5 +1,5 @@
 import prisma from '@/database/prisma';
-import { limitRateInstance } from '@/middlewares/limitRate';
+import { limitRate } from '@/middlewares/limitRate';
 import { Context } from '@packages/tsrouter/server';
 import z from 'zod';
 
@@ -11,7 +11,7 @@ export const addBlackList = async (ip: string) => {
     create: { ip },
     update: { deleted_at: null },
   });
-  limitRateInstance.blackList.add(ip);
+  limitRate.blackList.add(ip);
 };
 
 export const addBlackListService = async ({ ip }: z.output<typeof addBlackListSchema>, ctx: Context) => {
@@ -25,5 +25,5 @@ export const deleteBlackList = async ({ ip }: z.output<typeof addBlackListSchema
     where: { ip },
     data: { deleted_at: new Date() },
   });
-  limitRateInstance.blackList.delete(ip);
+  limitRate.blackList.delete(ip);
 };

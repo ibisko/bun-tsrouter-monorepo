@@ -21,7 +21,6 @@
   "dependencies": {
     "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
-    "@prisma/adapter-libsql": "^7.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "got": "^14.4.7",

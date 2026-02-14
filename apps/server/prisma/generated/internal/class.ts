@@ -17,18 +17,26 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.1.0",
-  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
+  "clientVersion": "7.4.0",
+  "engineVersion": "ab56fe763f921d033a6c195e7ddeb3e255bdbb57",
   "activeProvider": "sqlite",
   "inlineSchema": "enum UserRole {\n  ROOT\n  USER\n}\n\nmodel Users {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  account  String   @unique\n  password String\n  role     UserRole // 角色权限\n}\n\nmodel BlackList {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  ip     String  @unique\n  remark String?\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
     "types": {}
+  },
+  "parameterizationSchema": {
+    "strings": [],
+    "graph": ""
   }
 }
 
 config.runtimeDataModel = JSON.parse("{\"models\":{\"Users\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deleted_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"account\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"}],\"dbName\":null},\"BlackList\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deleted_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"remark\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.parameterizationSchema = {
+  strings: JSON.parse("[\"where\",\"Users.findUnique\",\"Users.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"Users.findFirst\",\"Users.findFirstOrThrow\",\"Users.findMany\",\"data\",\"Users.createOne\",\"Users.createMany\",\"Users.createManyAndReturn\",\"Users.updateOne\",\"Users.updateMany\",\"Users.updateManyAndReturn\",\"create\",\"update\",\"Users.upsertOne\",\"Users.deleteOne\",\"Users.deleteMany\",\"having\",\"_count\",\"_avg\",\"_sum\",\"_min\",\"_max\",\"Users.groupBy\",\"Users.aggregate\",\"BlackList.findUnique\",\"BlackList.findUniqueOrThrow\",\"BlackList.findFirst\",\"BlackList.findFirstOrThrow\",\"BlackList.findMany\",\"BlackList.createOne\",\"BlackList.createMany\",\"BlackList.createManyAndReturn\",\"BlackList.updateOne\",\"BlackList.updateMany\",\"BlackList.updateManyAndReturn\",\"BlackList.upsertOne\",\"BlackList.deleteOne\",\"BlackList.deleteMany\",\"BlackList.groupBy\",\"BlackList.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"created_at\",\"updated_at\",\"deleted_at\",\"ip\",\"remark\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"contains\",\"startsWith\",\"endsWith\",\"not\",\"account\",\"password\",\"UserRole\",\"role\",\"set\",\"increment\",\"decrement\",\"multiply\",\"divide\"]"),
+  graph: "YRUgCiwAAE8AMC0AAAQAEC4AAE8AMC8CAAAAATBAAEcAITFAAEcAITJAAEgAIUABAAAAAUEBAEkAIUMAAFBDIgEAAAABACABAAAAAQAgCiwAAE8AMC0AAAQAEC4AAE8AMC8CAEYAITBAAEcAITFAAEcAITJAAEgAIUABAEkAIUEBAEkAIUMAAFBDIgEyAABRACADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAHLwIAAAABMEAAAAABMUAAAAABMkAAAAABQAEAAAABQQEAAAABQwAAAEMCAQgAAAkAIAcvAgAAAAEwQAAAAAExQAAAAAEyQAAAAAFAAQAAAAFBAQAAAAFDAAAAQwIBCAAACwAwAQgAAAsAMAcvAgBbACEwQABXACExQABXACEyQABYACFAAQBZACFBAQBZACFDAABhQyICAAAAAQAgCAAADgAgBy8CAFsAITBAAFcAITFAAFcAITJAAFgAIUABAFkAIUEBAFkAIUMAAGFDIgIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgBhUAAFwAIBYAAF0AIBcAAGAAIBgAAF8AIBkAAF4AIDIAAFEAIAosAABLADAtAAAXABAuAABLADAvAgA0ACEwQAA1ACExQAA1ACEyQAA2ACFAAQA3ACFBAQA3ACFDAABMQyIDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAksAABFADAtAAAdABAuAABFADAvAgAAAAEwQABHACExQABHACEyQABIACEzAQAAAAE0AQBKACEBAAAAGgAgAQAAABoAIAksAABFADAtAAAdABAuAABFADAvAgBGACEwQABHACExQABHACEyQABIACEzAQBJACE0AQBKACECMgAAUQAgNAAAUQAgAwAAAB0AIAMAAB4AMAQAABoAIAMAAAAdACADAAAeADAEAAAaACADAAAAHQAgAwAAHgAwBAAAGgAgBi8CAAAAATBAAAAAATFAAAAAATJAAAAAATMBAAAAATQBAAAAAQEIAAAiACAGLwIAAAABMEAAAAABMUAAAAABMkAAAAABMwEAAAABNAEAAAABAQgAACQAMAEIAAAkADAGLwIAWwAhMEAAVwAhMUAAVwAhMkAAWAAhMwEAWQAhNAEAWgAhAgAAABoAIAgAACcAIAYvAgBbACEwQABXACExQABXACEyQABYACEzAQBZACE0AQBaACECAAAAHQAgCAAAKQAgAgAAAB0AIAgAACkAIAMAAAAaACAPAAAiACAQAAAnACABAAAAGgAgAQAAAB0AIAcVAABSACAWAABTACAXAABWACAYAABVACAZAABUACAyAABRACA0AABRACAJLAAAMwAwLQAAMAAQLgAAMwAwLwIANAAhMEAANQAhMUAANQAhMkAANgAhMwEANwAhNAEAOAAhAwAAAB0AIAMAAC8AMBQAADAAIAMAAAAdACADAAAeADAEAAAaACAJLAAAMwAwLQAAMAAQLgAAMwAwLwIANAAhMEAANQAhMUAANQAhMkAANgAhMwEANwAhNAEAOAAhDRUAAD0AIBYAAEQAIBcAAD0AIBgAAD0AIBkAAD0AIDUCAAAAATYCAAAABDcCAAAABDgCAAAAATkCAAAAAToCAAAAATsCAAAAAT8CAEMAIQsVAAA9ACAYAABCACAZAABCACA1QAAAAAE2QAAAAAQ3QAAAAAQ4QAAAAAE5QAAAAAE6QAAAAAE7QAAAAAE_QABBACELFQAAOgAgGAAAQAAgGQAAQAAgNUAAAAABNkAAAAAFN0AAAAAFOEAAAAABOUAAAAABOkAAAAABO0AAAAABP0AAPwAhDhUAAD0AIBgAAD4AIBkAAD4AIDUBAAAAATYBAAAABDcBAAAABDgBAAAAATkBAAAAAToBAAAAATsBAAAAATwBAAAAAT0BAAAAAT4BAAAAAT8BADwAIQ4VAAA6ACAYAAA7ACAZAAA7ACA1AQAAAAE2AQAAAAU3AQAAAAU4AQAAAAE5AQAAAAE6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQAAAAE_AQA5ACEOFQAAOgAgGAAAOwAgGQAAOwAgNQEAAAABNgEAAAAFNwEAAAAFOAEAAAABOQEAAAABOgEAAAABOwEAAAABPAEAAAABPQEAAAABPgEAAAABPwEAOQAhCDUCAAAAATYCAAAABTcCAAAABTgCAAAAATkCAAAAAToCAAAAATsCAAAAAT8CADoAIQs1AQAAAAE2AQAAAAU3AQAAAAU4AQAAAAE5AQAAAAE6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQAAAAE_AQA7ACEOFQAAPQAgGAAAPgAgGQAAPgAgNQEAAAABNgEAAAAENwEAAAAEOAEAAAABOQEAAAABOgEAAAABOwEAAAABPAEAAAABPQEAAAABPgEAAAABPwEAPAAhCDUCAAAAATYCAAAABDcCAAAABDgCAAAAATkCAAAAAToCAAAAATsCAAAAAT8CAD0AIQs1AQAAAAE2AQAAAAQ3AQAAAAQ4AQAAAAE5AQAAAAE6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQAAAAE_AQA-ACELFQAAOgAgGAAAQAAgGQAAQAAgNUAAAAABNkAAAAAFN0AAAAAFOEAAAAABOUAAAAABOkAAAAABO0AAAAABP0AAPwAhCDVAAAAAATZAAAAABTdAAAAABThAAAAAATlAAAAAATpAAAAAATtAAAAAAT9AAEAAIQsVAAA9ACAYAABCACAZAABCACA1QAAAAAE2QAAAAAQ3QAAAAAQ4QAAAAAE5QAAAAAE6QAAAAAE7QAAAAAE_QABBACEINUAAAAABNkAAAAAEN0AAAAAEOEAAAAABOUAAAAABOkAAAAABO0AAAAABP0AAQgAhDRUAAD0AIBYAAEQAIBcAAD0AIBgAAD0AIBkAAD0AIDUCAAAAATYCAAAABDcCAAAABDgCAAAAATkCAAAAAToCAAAAATsCAAAAAT8CAEMAIQg1CAAAAAE2CAAAAAQ3CAAAAAQ4CAAAAAE5CAAAAAE6CAAAAAE7CAAAAAE_CABEACEJLAAARQAwLQAAHQAQLgAARQAwLwIARgAhMEAARwAhMUAARwAhMkAASAAhMwEASQAhNAEASgAhCDUCAAAAATYCAAAABDcCAAAABDgCAAAAATkCAAAAAToCAAAAATsCAAAAAT8CAD0AIQg1QAAAAAE2QAAAAAQ3QAAAAAQ4QAAAAAE5QAAAAAE6QAAAAAE7QAAAAAE_QABCACEINUAAAAABNkAAAAAFN0AAAAAFOEAAAAABOUAAAAABOkAAAAABO0AAAAABP0AAQAAhCzUBAAAAATYBAAAABDcBAAAABDgBAAAAATkBAAAAAToBAAAAATsBAAAAATwBAAAAAT0BAAAAAT4BAAAAAT8BAD4AIQs1AQAAAAE2AQAAAAU3AQAAAAU4AQAAAAE5AQAAAAE6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQAAAAE_AQA7ACEKLAAASwAwLQAAFwAQLgAASwAwLwIANAAhMEAANQAhMUAANQAhMkAANgAhQAEANwAhQQEANwAhQwAATEMiBxUAAD0AIBgAAE4AIBkAAE4AIDUAAABDAjYAAABDCDcAAABDCD8AAE1DIgcVAAA9ACAYAABOACAZAABOACA1AAAAQwI2AAAAQwg3AAAAQwg_AABNQyIENQAAAEMCNgAAAEMINwAAAEMIPwAATkMiCiwAAE8AMC0AAAQAEC4AAE8AMC8CAEYAITBAAEcAITFAAEcAITJAAEgAIUABAEkAIUEBAEkAIUMAAFBDIgQ1AAAAQwI2AAAAQwg3AAAAQwg_AABOQyIAAAAAAAABREAAAAABAURAAAAAAQFEAQAAAAEBRAEAAAABBUQCAAAAAUUCAAAAAUYCAAAAAUcCAAAAAUgCAAAAAQAAAAAAAUQAAABDAgAAAAAFFQAGFgAHFwAIGAAJGQAKAAAAAAAFFQAGFgAHFwAIGAAJGQAKAAAABRUAEBYAERcAEhgAExkAFAAAAAAABRUAEBYAERcAEhgAExkAFAECAQIDAQUGAQYHAQcIAQkKAQoMAgsNAwwPAQ0RAg4SBBETARIUARMVAhoYBRsZCxwbDB0cDB4fDB8gDCAhDCEjDCIlAiMmDSQoDCUqAiYrDicsDCgtDCkuAioxDysyFQ"
+}
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -37,12 +45,14 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.sqlite.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.sqlite.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
-  }
+  },
+
+  importName: "./query_compiler_fast_bg.js"
 }
 
 
