@@ -49,7 +49,7 @@ export const initLimitRate = async () => {
   blackList.forEach(item => limitRate.blackList.add(item.ip));
 };
 
-export const trigger: Middleware = async (req, ctx) => {
+export const trigger: Middleware = async (_, ctx) => {
   const ip = ctx.ip?.address;
   if (!ip) {
     throw new MiddlewareError({ message: 'ip no find!', status: 400, func: 'LimitRate' });

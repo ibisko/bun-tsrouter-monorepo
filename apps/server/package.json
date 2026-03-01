@@ -22,13 +22,12 @@
     "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
     "date-fns": "^4.1.0",
-    "dotenv": "^17.2.3",
-    "got": "^14.4.7",
-    "ioredis": "^5.9.0",
-    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^17.3.1",
+    "got": "^14.6.6",
+    "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
-    "keyv": "^5.5.3",
-    "yaml": "^2.8.1"
+    "keyv": "^5.6.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10"
