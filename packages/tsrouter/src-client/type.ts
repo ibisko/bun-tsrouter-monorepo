@@ -7,8 +7,8 @@ export type TsRouterOptions = {
   prefix?: string;
   timeout?: number;
   setHeaders?: (headers: Headers) => MaybePromise<void>;
-  refreshToken: (abort: () => void) => Promise<void>;
-  onResponseError: (error: unknown) => void;
+  refreshToken?: (abort: () => void) => Promise<void>;
+  onResponseError?: (error: unknown) => void;
 };
 
 export type MethodOptions = {

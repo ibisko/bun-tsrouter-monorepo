@@ -48,6 +48,7 @@ export class TsRouter implements TsRouterClass {
   upload = upload.bind(this);
 
   async refreshTokenHandle() {
+    if (!this.refreshToken) return;
     this.isRefreshing = true;
     try {
       await retryHandle(this.refreshToken);

@@ -56,7 +56,7 @@ export async function warpperRefreshTokenCatch(this: TsRouterClass, callback: ()
       }
       // todo 网络断开就等待10s后无限重试，直到离开页面的 abort
       // todo 离开页面的 abort
-      this.onResponseError(error);
+      this.onResponseError?.(error);
       // todo 触发钩子
       // 刷新失败，抛出异常
       throw error;

@@ -6,4 +6,3 @@ logs/
 .DS_Store
 
 **/*.db
-**/*.sql
