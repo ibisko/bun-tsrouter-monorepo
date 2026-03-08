@@ -4,6 +4,8 @@
 @font-face {
   font-family: 'LXGWWenKaiMono';
   src: url('../../fonts/LXGWWenKaiMono-Medium.ttf');
+  /* script/fontmin/index.ts 有字体子集化的功能 */
+  /* src: url('../../fonts/LXGWWenKaiMono-Medium.woff2'); */
 }
 
 @custom-variant dark (&:is(.dark *));
