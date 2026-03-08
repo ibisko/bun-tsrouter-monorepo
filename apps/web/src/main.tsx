@@ -1,4 +1,3 @@
-import '@packages/ui/styles-global.css';
 import '@packages/ui/styles.css';
 
 import { RouterProvider } from '@tanstack/react-router';

@@ -2,8 +2,7 @@
   "name": "@packages/ui",
   "version": "1.0.0",
   "exports": {
-    "./styles.css": "./dist/index.css",
-    "./styles-global.css": "./src/styles/global.css",
+    "./styles.css": "./src/styles/global.css",
     ".": {
       "types": "./src/main.ts",
       "import": "./dist/main.mjs"
