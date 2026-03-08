@@ -6,7 +6,4 @@ export default defineConfig(options => ({
   entryPoints: ['./src/main.ts'],
   format: ['esm'],
   external: ['react'],
-  async onSuccess() {
-    spawnSync('npx', '@tailwindcss/cli -i ./src/styles/global.css -o ./dist/index.css'.split(/\s+/));
-  },
 }));
