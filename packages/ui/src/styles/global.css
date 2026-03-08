@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* 监听组件所在的文件夹 */
+@source "../components";
+
 @font-face {
   font-family: 'LXGWWenKaiMono';
   src: url('../../fonts/LXGWWenKaiMono-Medium.ttf');
