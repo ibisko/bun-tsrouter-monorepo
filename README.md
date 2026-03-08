@@ -52,3 +52,24 @@ bun dev
 - 方便添加svg
 - 文件树，有被描述的文件标记，可查阅
 - 可视化自动构建
+
+# fontmin
+
+缩小字体文件，提取字体的子集
+
+## 前置安装
+
+macos
+
+```sh
+# 字体库工具
+brew install harfbuzz
+
+# 字体转woff2
+brew install woff2
+```
+
+```sh
+bun run ./scripts/fontmin.ts
+# 具体操作可修改
+```
