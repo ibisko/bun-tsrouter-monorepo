@@ -1,0 +1,12 @@
+import { config } from 'dotenv';
+import path from 'path';
+
+async function main() {
+  config({ path: path.join(process.cwd(), './config/.env') });
+  if (process.env.NODE_ENV === 'development') {
+    config({ path: path.join(process.cwd(), './config/.env.development') });
+  } else if (process.env.NODE_ENV === 'production') {
+    config({ path: path.join(process.cwd(), './config/.env.production') });
+  }
+}
+main();

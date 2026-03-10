@@ -1,0 +1,25 @@
+enum UserRole {
+    ROOT
+    USER
+}
+
+model Users {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    account  String   @unique
+    password String
+    role     UserRole // 角色权限
+}
+
+model BlackList {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    ip     String  @unique
+    remark String?
+}
