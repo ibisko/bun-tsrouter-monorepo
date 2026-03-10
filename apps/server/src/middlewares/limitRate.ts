@@ -1,6 +1,9 @@
 import prisma from '@/database/prisma';
 import { Middleware, MiddlewareError } from '@packages/tsrouter/server';
 
+/**
+ * 滑动窗口的限流方式
+ */
 class LimitRate {
   blackList = new Set<string>();
 

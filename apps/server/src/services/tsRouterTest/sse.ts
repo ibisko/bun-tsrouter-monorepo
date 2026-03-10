@@ -26,7 +26,7 @@ export const sse2 = procedure.sse(async ({ write, signal }) => {
   }
 });
 
-/** 返回步骤执行 */ 
+/** 返回步骤执行 */
 export const sse3 = procedure.sse(sse1Schema, async (param, { write, signal }) => {
   signal.addEventListener('abort', () => {
     console.log('sse3 abort!');

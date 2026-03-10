@@ -1,5 +1,5 @@
 import { Api } from '@/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Status } from './Status';
 import { TestCard } from './TestCard';
 
@@ -8,7 +8,7 @@ export const TestSSE = () => {
     <div className="flex flex-wrap gap-2">
       <TestCard title="Test-SSE (sse1)" description="有参数">
         <ModuleSSE1
-          sse={Api.test.tsRouter.sse1.sse({ id: 12, name: 'huhuhu' })}
+          sse={signal => Api.test.tsRouter.sse1.sse({ id: 12, name: 'huhuhu' }, { signal })}
           rule={(data, index) => {
             if (data.id !== index) {
               throw new Error();
@@ -23,7 +23,7 @@ export const TestSSE = () => {
 
       <TestCard title="Test-SSE (sse2)" description="无参数">
         <ModuleSSE1
-          sse={Api.test.tsRouter.sse2.sse()}
+          sse={signal => Api.test.tsRouter.sse2.sse(null, { signal })}
           rule={(data, index) => {
             if (data.id !== index) {
               throw new Error();
@@ -38,7 +38,7 @@ export const TestSSE = () => {
 
       <TestCard title="Test-SSE (sse3)" description="结构化返回">
         <ModuleSSE1
-          sse={Api.test.tsRouter.sse3.sse({ id: 12, name: 'jfklsd' })}
+          sse={signal => Api.test.tsRouter.sse3.sse({ id: 12, name: 'jfklsd' }, { signal })}
           // rule={(data, index) => {
           //   if (data.id !== index) {
           //     throw new Error();
@@ -55,16 +55,19 @@ export const TestSSE = () => {
 };
 
 type ModuleSSE1Props = {
-  sse: <K = any>(callback: (data: K) => void) => Promise<void>;
+  sse: (signal: AbortSignal) => <K = any>(callback: (data: K) => void) => Promise<void>;
   rule?: (data: any, index: number) => Promise<void> | void;
 };
 const ModuleSSE1 = ({ sse, rule }: ModuleSSE1Props) => {
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const [status, setStatus] = useState<'ok' | 'failed' | ''>('');
   const start = async () => {
     setStatus('');
     let index = 0;
     let isSuccess = true;
-    await sse<{ id: number; data: string }>(async data => {
+    abortControllerRef.current = new AbortController();
+    await sse(abortControllerRef.current.signal)<{ id: number; data: string }>(async data => {
       try {
         await rule?.(data, index);
       } catch (error) {
@@ -79,6 +82,9 @@ const ModuleSSE1 = ({ sse, rule }: ModuleSSE1Props) => {
   };
   useEffect(() => {
     start();
+    return () => {
+      abortControllerRef.current?.abort();
+    };
   }, []);
 
   return <Status status={status} />;

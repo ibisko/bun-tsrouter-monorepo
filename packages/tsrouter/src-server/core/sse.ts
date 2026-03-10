@@ -19,7 +19,7 @@ class SseServiceClass implements ServiceClass {
     }
 
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
-      const param = zodSchema ? parseZodSchema(request, zodSchema) : undefined;
+      const param = zodSchema ? await parseZodSchema(request, zodSchema) : undefined;
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
