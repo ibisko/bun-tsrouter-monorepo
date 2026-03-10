@@ -4,11 +4,8 @@ export declare global {
       port: string;
       REDIS_URL: string;
       DATABASE_URL: string;
-      authSecret: string;
-      refreshAuthSecret: string;
-
-      LIMIT_RATE_MAX: string;
-      LIMIT_RATE_TIME_WINDOW: string;
+      GML_CODING_PLAN_BASE_URL: string;
+      GML_CODING_PLAN_API_KEY: string;
     }
   }
 }

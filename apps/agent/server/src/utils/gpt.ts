@@ -1,5 +1,5 @@
-const BASE_URL = 'https://open.bigmodel.cn/api/coding/paas/v4/chat/completions';
-const API_KEY = 'ab7d41675116438d91cac12ebfbc788c.gE2B42cLw3haZ380';
+const BASE_URL = process.env.GML_CODING_PLAN_BASE_URL;
+const API_KEY = process.env.GML_CODING_PLAN_API_KEY;
 
 const parseValue = (value: Uint8Array<ArrayBuffer>) => {
   const decoder = new TextDecoder('utf-8');
