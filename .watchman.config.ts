@@ -1,4 +1,4 @@
-import type { WatchmanConfigInfo } from './scripts/watchman';
+import type { WatchmanConfigInfo } from './scripts/watchman/types';
 
 const configs: WatchmanConfigInfo = [
   {

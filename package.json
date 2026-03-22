@@ -2,8 +2,8 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run ./scripts/watchman.ts",
-    "init": "bun i && bun run ./scripts/watchman.ts --config .watchman-initial.config.ts",
+    "dev": "bun run ./scripts/watchman/index.ts",
+    "init": "bun i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts",
     "app": "bun ./scripts/createApp.ts"
   },
   "keywords": [],
