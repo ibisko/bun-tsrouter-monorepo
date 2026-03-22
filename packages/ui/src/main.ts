@@ -10,7 +10,4 @@ export * from './components/Descriptions';
 export * from './components/Dialog';
 
 export * from './utils/cn';
-
-export * from './icons/EosIconsBubbleLoading';
-export * from './icons/IxCertificateSuccessFilled';
-export * from './icons/MaterialSymbolsVisibility';
+export * from './icons';

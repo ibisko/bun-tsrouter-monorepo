@@ -14,6 +14,12 @@
 - Node.js v22
   用于 prisma 的 preinstall
 
+- watchman
+  https://facebook.github.io/watchman/docs/install
+  ```sh
+  brew install watchman
+  ```
+
 - redis
   - 端口密码在 `apps/server/.env` 进行修改
 
@@ -43,7 +49,7 @@ bun dev
 
 # redis 应用场景
 
-- [ ] 分布式事务锁
+- [ ] 分布式事务锁，任务队列
 <!-- - [x] `zadd` 滑动窗口限流
       `apps/server/src/middlewares/limitRate.ts` -->
 
