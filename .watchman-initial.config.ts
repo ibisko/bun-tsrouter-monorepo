@@ -2,50 +2,67 @@ import type { WatchmanConfigInfo } from './scripts/watchman';
 
 const configs: WatchmanConfigInfo = [
   {
-    name: 'package-utils',
+    name: 'package-utils build',
     scripts: [
       {
         cwd: 'packages/utils',
-        watch: ['src', 'src-server', 'src-web', 'types'],
         script: 'bun tsup',
+        isAwait: true,
       },
     ],
   },
   {
-    name: 'packages',
+    name: 'packages build',
     scripts: [
       {
         cwd: 'packages/ui',
-        watch: 'src',
         script: 'bun tsup',
+        isAwait: true,
       },
       {
         cwd: 'packages/tsrouter',
-        watch: ['src-client', 'src-server'],
         script: 'bun tsup',
+        isAwait: true,
       },
       {
         cwd: 'apps/server',
-        watch: 'src',
         script: 'bun tsup',
+        isAwait: true,
       },
       {
         cwd: 'packages/gpt',
-        watch: 'src',
         script: 'bun tsup',
+        isAwait: true,
       },
     ],
   },
   {
-    name: 'apps',
+    name: 'apps/server generate',
     scripts: [
       {
         cwd: 'apps/server',
-        script: 'bun run dev',
+        script: 'bun run generate',
+        isAwait: true,
       },
+    ],
+  },
+  {
+    name: 'apps/server diff',
+    scripts: [
       {
-        cwd: 'apps/web',
-        script: 'bun run dev',
+        cwd: 'apps/server',
+        script: 'bun run diff',
+        isAwait: true,
+      },
+    ],
+  },
+  {
+    name: 'apps/server execute',
+    scripts: [
+      {
+        cwd: 'apps/server',
+        script: 'bun run execute',
+        isAwait: true,
       },
     ],
   },

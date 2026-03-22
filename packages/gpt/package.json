@@ -3,16 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
+    "dev": "bun run ./src/index.ts",
     "build": "tsup"
   },
   "dependencies": {
+    "@packages/utils": "workspace:@packages/utils",
     "nanoid": "^5.1.6"
   }
 }

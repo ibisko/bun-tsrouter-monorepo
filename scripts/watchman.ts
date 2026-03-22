@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import EventEmitter from 'events';
 
 const ROOT_DIR = path.join(__dirname, '..');
-const WATCH_CONFIG_TS = path.join(ROOT_DIR, '.watchman.config.ts');
 const DEFAULT_FILTERS = ['ts', 'cts', 'tsx', 'js', 'cjs', 'jsx'];
 
 class WatchmanClient {
@@ -138,6 +137,15 @@ const getWatchProjectRelativePath = (client: watchman.Client, watchDir: string) 
   });
 
 async function main() {
+  const configIndex = process.argv.findIndex(item => item === '--config');
+  let watchConfigTs = path.join(ROOT_DIR, '.watchman.config.ts');
+  if (configIndex != -1) {
+    const config = process.argv[configIndex + 1];
+    if (config) {
+      watchConfigTs = path.join(ROOT_DIR, config);
+    }
+  }
+
   const client = new watchman.Client();
   // 检查与watchman连接是否成功
   await capabilityCheck(client);
@@ -148,76 +156,88 @@ async function main() {
   });
 
   const wc = new WatchmanClient(client);
-  const _configs = await import(WATCH_CONFIG_TS);
-  console.log('导入配置成功 WATCH_CONFIG_TS:', WATCH_CONFIG_TS);
+  const _configs = await import(watchConfigTs);
+  console.log('导入配置成功 watchConfigTs:', watchConfigTs);
 
-  const buildPackageStartTime = performance.now();
   const configs: WatchmanConfigInfo = _configs.default;
-  for (const packageItem of configs.packages) {
-    const packageCwd = path.isAbsolute(packageItem.cwd) ? packageItem.cwd : path.join(ROOT_DIR, packageItem.cwd);
-    if (!existsSync(packageCwd)) throw new Error(`${packageItem.cwd} 目录不存在`);
-    if (typeof packageItem.watch === 'string') {
-      packageItem.watch = [packageItem.watch];
-    }
 
-    const promises = [];
-    for (const watch of packageItem.watch) {
-      const p = new Promise<void>(async (resolve, reject) => {
-        try {
-          // 建立对目录的监听
-          // console.log('建立对项目的监听');
-
-          const event = await wc.watchProject({
-            packageCwd,
-            watch,
-            script: packageItem.script,
-            suffixs: packageItem.suffixs,
-          });
-          event.once('close', () => {
-            console.log();
-            resolve();
-          });
-        } catch (error) {
-          console.log(error);
-          reject(error);
+  for (const step of configs) {
+    const stepStartTime = performance.now();
+    for (const item of step.scripts) {
+      const cwd = path.isAbsolute(item.cwd) ? item.cwd : path.join(ROOT_DIR, item.cwd);
+      if (!existsSync(cwd)) throw new Error(`${item.cwd} 目录不存在`);
+      const promises = [];
+      if ('watch' in item) {
+        if (typeof item.watch === 'string') {
+          item.watch = [item.watch];
         }
-      });
-      promises.push(p);
+        for (const watch of item.watch) {
+          const p = new Promise<void>(async (resolve, reject) => {
+            try {
+              // 建立对目录的监听
+              console.log('建立对目录的监听', cwd);
+              const event = await wc.watchProject({
+                packageCwd: cwd,
+                watch,
+                script: item.script,
+                suffixs: item.suffixs,
+              });
+              event.once('close', resolve);
+            } catch (error) {
+              console.log(error);
+              reject(error);
+            }
+          });
+          promises.push(p);
+        }
+      } else {
+        const cmd = item.script.split(/\s+/);
+        if (item.isAwait) {
+          const p = new Promise<void>(resolve => {
+            const proc = spawn(cmd[0], cmd.slice(1), {
+              cwd: item.cwd,
+              stdio: 'inherit',
+            });
+            proc.on('close', () => {
+              resolve();
+            });
+          });
+          promises.push(p);
+        } else {
+          spawn(cmd[0], cmd.slice(1), {
+            cwd: item.cwd,
+            stdio: 'inherit',
+          });
+        }
+      }
+      await Promise.all(promises);
     }
-    await Promise.all(promises);
+    const stepDuration = ~~(performance.now() - stepStartTime);
+    console.log('step:', chalk.green(step.name), `${stepDuration}ms`);
   }
-  const packageBuildDuration = ~~(performance.now() - buildPackageStartTime);
-  console.log(chalk.gray('packages 构建耗时'), `${packageBuildDuration}ms`);
-
-  // 构建apps
-  // return;
-  console.log(chalk.gray('构建apps'));
-  for (const app of configs.apps) {
-    // console.log('开始构建apps', chalk.green(app.cwd));
-    const cmd = app.script.split(/\s+/);
-    spawn(cmd[0], cmd.slice(1), {
-      cwd: app.cwd,
-      stdio: 'inherit',
-      // stdio: 'ignore',
-    });
-  }
+  client.end();
 }
 main();
 
-export type WatchmanConfigInfo = {
-  apps: {
-    cwd: string;
-    script: string;
-  }[];
-  packages: {
-    cwd: string;
-    script: string;
-    watch: string | string[];
-    /**
-     * 过滤文件表达式，默认: ts, cts, tsx, js, cjs, jsx
-     */
-    suffixs?: string[];
-  }[];
+export type WatchmanConfigInfo = Step[];
+
+type Step = {
+  name: string;
+  scripts: (RunScript | WatchScript)[];
+};
+type RunScript = {
+  cwd: string;
+  script: string;
+  isAwait?: boolean;
+};
+type WatchScript = {
+  cwd: string;
+  script: string;
+  watch: string | string[];
+  /**
+   * 过滤文件表达式，默认: ts, cts, tsx, js, cjs, jsx
+   */
+  suffixs?: string[];
 };
 
 type WatchProjectParam = {
