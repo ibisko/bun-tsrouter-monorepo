@@ -7,6 +7,31 @@ import type { WatchmanConfigInfo, WatchScript } from './types';
 import { capabilityCheck, ROOT_DIR } from './uitls';
 import { WatchmanClient } from './client';
 
+let watchmanclient: WatchmanClient | null = null;
+
+// 通用的互斥锁工具：第一个调用者执行 cb，后续调用者等待第一个完成
+function createOnceAsync<T>(cb: () => Promise<T>): () => Promise<T> {
+  let promise: Promise<T> | null = null;
+  return () => {
+    if (!promise) {
+      promise = cb();
+    }
+    return promise;
+  };
+}
+
+const getWatchmanClient = createOnceAsync(async () => {
+  const client = new watchman.Client();
+  // 检查与watchman连接是否成功
+  await capabilityCheck(client);
+  console.log('与watchman连接成功');
+  process.on('SIGINT', () => {
+    client.end();
+  });
+  watchmanclient = new WatchmanClient(client);
+  return watchmanclient;
+});
+
 async function main() {
   const configIndex = process.argv.findIndex(item => item === '--config');
   let watchConfigTs = path.join(ROOT_DIR, '.watchman.config.ts');
@@ -17,15 +42,8 @@ async function main() {
     }
   }
 
-  const client = new watchman.Client();
-  // 检查与watchman连接是否成功
-  await capabilityCheck(client);
-  console.log('与watchman连接成功');
-  process.on('SIGINT', () => {
-    client.end();
-  });
+  // todo 没有watch的脚步就没必要创建client吧？
 
-  const wc = new WatchmanClient(client);
   const _configs = await import(watchConfigTs);
   // console.log('导入配置成功 watchConfigTs:', watchConfigTs);
 
@@ -45,6 +63,7 @@ async function main() {
           const p = new Promise<void>(async (resolve, reject) => {
             try {
               // 建立对目录的监听
+              const wc = await getWatchmanClient();
               const event = await wc.watchProject({
                 packageCwd: cwd,
                 watch,
@@ -84,6 +103,5 @@ async function main() {
     const stepDuration = ~~(performance.now() - stepStartTime);
     console.log('step -', chalk.blue(step.name), `${stepDuration}ms`);
   }
-  client.end();
 }
 main();

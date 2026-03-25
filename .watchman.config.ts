@@ -41,7 +41,7 @@ const configs: WatchmanConfigInfo = [
     scripts: [
       {
         cwd: 'apps/server',
-        script: 'bun run dev',
+        script: 'bun run --watch ./src/main.ts', // 这样能少一个父进程
       },
       {
         cwd: 'apps/web',
