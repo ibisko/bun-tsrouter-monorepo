@@ -13,9 +13,11 @@
 
 - Node.js v22
   用于 prisma 的 preinstall
+  用于 vite 运行
 
 - watchman
   https://facebook.github.io/watchman/docs/install
+
   ```sh
   brew install watchman
   ```
@@ -43,9 +45,9 @@ bun dev
 - [ ] UI 多主题色
 - [ ] `socket.io`
 - [ ] agent 基于现成的工具进行组合，不要新的东西
-<!-- - [ ] 集群 linux 复用同个端口 -->
-<!-- - [ ] 更新策略，如何处理新增和关闭服务 -->
-<!-- - [ ] 优雅管理进程更新 pm-bun -->
+  <!-- - [ ] 集群 linux 复用同个端口 -->
+  <!-- - [ ] 更新策略，如何处理新增和关闭服务 -->
+  <!-- - [ ] 优雅管理进程更新 pm-bun -->
 
 # redis 应用场景
 
@@ -79,3 +81,8 @@ brew install woff2
 bun run ./scripts/fontmin.ts
 # 具体操作可修改
 ```
+
+## 注意
+
+- vite还是在nodejs上跑的
+- bun的monorepo引入packages可以源码.ts文件引入
