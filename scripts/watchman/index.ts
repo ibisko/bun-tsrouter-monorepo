@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { spawn } from 'child_process';
 import watchman from 'fb-watchman';
 import chalk from 'chalk';
-import type { WatchmanConfigInfo, WatchScript } from './types';
+import type { WatchmanConfigInfo } from './types';
 import { capabilityCheck, ROOT_DIR } from './uitls';
 import { WatchmanClient } from './client';
 
@@ -41,8 +41,6 @@ async function main() {
       watchConfigTs = path.join(ROOT_DIR, config);
     }
   }
-
-  // todo 没有watch的脚步就没必要创建client吧？
 
   const _configs = await import(watchConfigTs);
   // console.log('导入配置成功 watchConfigTs:', watchConfigTs);

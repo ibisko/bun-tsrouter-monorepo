@@ -6,12 +6,12 @@ type Step = {
   scripts: (RunScript | WatchScript)[];
 };
 
-export type RunScript = {
+type RunScript = {
   cwd: string;
   script: string;
   isAwait?: boolean;
 };
-export type WatchScript = {
+type WatchScript = {
   cwd: string;
   script: string;
   watch: string | string[];
