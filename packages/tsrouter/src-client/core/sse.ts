@@ -1,15 +1,15 @@
 import { MethodOptions, TsRouterClass } from '../type';
 import { restApi } from './restApi';
 
-export function sse(this: TsRouterClass, path: string | string[], query: Record<string, string>, options: MethodOptions) {
+export function sse(this: TsRouterClass, path: string | string[], body: any, options: MethodOptions) {
   return async (callback: (data: any) => void) => {
     options.headers ??= {};
     Object.assign(options.headers, { accept: 'text/event-stream' });
 
     const response = await restApi.bind(this)({
-      method: 'get',
+      method: 'post',
       path,
-      query,
+      body,
       options,
     });
     if (!response) return;

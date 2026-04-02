@@ -41,8 +41,8 @@ export class TsRouter implements TsRouterClass {
   delete(path: string | string[], body: any, options: MethodOptions) {
     return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'delete', path, body, options }));
   }
-  sse(path: string | string[], query: Record<string, string>, options: Omit<MethodOptions, 'query'> = {}) {
-    return (callback: (data: any) => void) => warpperRefreshTokenCatch.bind(this)(() => sse.bind(this)(path, query, options)(callback));
+  sse(path: string | string[], body: any, options: MethodOptions = {}) {
+    return (callback: (data: any) => void) => warpperRefreshTokenCatch.bind(this)(() => sse.bind(this)(path, body, options)(callback));
   }
 
   upload = upload.bind(this);

@@ -6,7 +6,7 @@ import { ServiceError } from '../error';
 import { AwaitedReturn, Func } from '@packages/utils/types';
 
 class SseServiceClass implements ServiceClass {
-  method: RestApiMethod = 'get';
+  method: RestApiMethod = 'post';
 
   set(...args: unknown[]): RS {
     let zodSchema: z.ZodObject | undefined;
