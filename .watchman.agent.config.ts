@@ -2,12 +2,17 @@ import type { WatchmanConfigInfo } from './scripts/watchman/types';
 
 const configs: WatchmanConfigInfo = [
   {
-    name: 'package-utils',
+    name: 'packages pre build',
     scripts: [
       {
         cwd: 'packages/utils',
         watch: ['src', 'src-server', 'src-web', 'types'],
         script: 'bun tsup',
+      },
+      {
+        cwd: 'packages/icons',
+        script: 'bun tsup',
+        isAwait: true,
       },
     ],
   },

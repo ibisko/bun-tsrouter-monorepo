@@ -2,10 +2,15 @@ import type { WatchmanConfigInfo } from './scripts/watchman/types';
 
 const configs: WatchmanConfigInfo = [
   {
-    name: 'package-utils build',
+    name: 'packages pre build',
     scripts: [
       {
         cwd: 'packages/utils',
+        script: 'bun tsup',
+        isAwait: true,
+      },
+      {
+        cwd: 'packages/icons',
         script: 'bun tsup',
         isAwait: true,
       },
@@ -36,6 +41,8 @@ const configs: WatchmanConfigInfo = [
       },
     ],
   },
+
+  // app/server
   {
     name: 'apps/server generate',
     scripts: [
@@ -61,6 +68,38 @@ const configs: WatchmanConfigInfo = [
     scripts: [
       {
         cwd: 'apps/server',
+        script: 'bun run execute',
+        isAwait: true,
+      },
+    ],
+  },
+
+  // app/agent
+  {
+    name: 'apps/agent generate',
+    scripts: [
+      {
+        cwd: 'apps/agent',
+        script: 'bun run generate',
+        isAwait: true,
+      },
+    ],
+  },
+  {
+    name: 'apps/agent diff',
+    scripts: [
+      {
+        cwd: 'apps/agent',
+        script: 'bun run diff',
+        isAwait: true,
+      },
+    ],
+  },
+  {
+    name: 'apps/agent execute',
+    scripts: [
+      {
+        cwd: 'apps/agent',
         script: 'bun run execute',
         isAwait: true,
       },

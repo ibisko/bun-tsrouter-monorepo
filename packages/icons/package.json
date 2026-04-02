@@ -1,8 +1,7 @@
 {
-  "name": "@packages/ui",
+  "name": "@packages/icons",
   "version": "1.0.0",
   "exports": {
-    "./styles.css": "./src/styles/global.css",
     ".": {
       "types": "./src/main.ts",
       "import": "./dist/main.mjs"
@@ -18,7 +17,6 @@
   },
   "dependencies": {
     "@packages/utils": "workspace:^",
-    "@packages/icons": "workspace:^",
     "@radix-ui/react-select": "^2.2.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

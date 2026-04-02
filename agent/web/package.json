@@ -12,6 +12,7 @@
   "dependencies": {
     "@packages/tsrouter": "workspace:^",
     "@packages/ui": "workspace:^",
+    "@packages/icons": "workspace:^",
     "@packages/utils": "workspace:^",
     "@tanstack/react-router": "^1.163.3",
     "monaco-editor": "^0.55.1",

@@ -1,4 +1,4 @@
-import { EosIconsBubbleLoading, IxCertificateErrorFilled, IxCertificateSuccessFilled } from '@packages/ui';
+import { EosIconsBubbleLoading, IxCertificateErrorFilled, IxCertificateSuccessFilled } from '@packages/icons';
 
 type StatusProps = {
   status: 'ok' | 'failed' | '';

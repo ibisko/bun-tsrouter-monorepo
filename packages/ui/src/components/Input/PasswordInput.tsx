@@ -1,4 +1,4 @@
-import { MaterialSymbolsVisibility, MaterialSymbolsVisibilityOff } from '@/main';
+import { MaterialSymbolsVisibility, MaterialSymbolsVisibilityOff } from '@packages/icons';
 import { InputGroup, InputProps } from './BaseInput';
 import { useState } from 'react';
 
