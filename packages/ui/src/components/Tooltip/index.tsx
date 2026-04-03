@@ -1,73 +1,20 @@
 import { cn } from '@/main';
-import { cloneElement, type MouseEvent, useCallback, useRef, useState } from 'react';
+import { cloneElement, useRef } from 'react';
 import { createPortal } from 'react-dom';
-
-type Orientation = 'top' | 'bottom' | 'left' | 'right';
-
-type TooltipProps = {
-  className?: string;
-  children: React.ReactElement;
-  title?: React.ReactNode;
-  orientation?: Orientation;
-  /** 使用 tw-animate-css 动画，默认 false 只用 opacity transition */
-  animate?: boolean;
-};
-
-const getPos = (rect: DOMRect, orientation: Orientation) => {
-  const gap = 8;
-  switch (orientation) {
-    case 'top':
-      return { top: rect.top - gap, left: rect.left + rect.width / 2, x: '-50%', y: '-100%' };
-    case 'bottom':
-      return { top: rect.bottom + gap, left: rect.left + rect.width / 2, x: '-50%', y: '0' };
-    case 'left':
-      return { top: rect.top + rect.height / 2, left: rect.left - gap, x: '-100%', y: '-50%' };
-    case 'right':
-      return { top: rect.top + rect.height / 2, left: rect.right + gap, x: '0', y: '-50%' };
-  }
-};
-
-const DURATION = 200;
-const SHOW_DELAY = 100;
+import { useTooltip } from './useTooltip';
+import type { TooltipProps } from './types';
 
 export const Tooltip = ({ className, title, orientation = 'top', animate, children }: TooltipProps) => {
-  const [visible, setVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [transform, setTransform] = useState<string>();
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const showTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const { visible, mounted, transform, onPointerEnter, onPointerLeave, DURATION } = useTooltip(orientation);
   const ref = useRef<HTMLElement>(null);
   const childProps = children.props as any;
-
-  const onMouseEnter = useCallback(
-    (e: MouseEvent) => {
-      clearTimeout(timer.current);
-      clearTimeout(showTimer.current);
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const { top, left, x, y } = getPos(rect, orientation);
-      setTransform(`translate(${left}px,${top}px) translate(${x},${y})`);
-      showTimer.current = setTimeout(() => {
-        setMounted(true);
-        requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
-      }, SHOW_DELAY);
-      (childProps.onMouseEnter as ((e: MouseEvent) => void) | undefined)?.(e);
-    },
-    [orientation, childProps],
-  );
-
-  const onMouseLeave = useCallback(() => {
-    setVisible(false);
-    clearTimeout(showTimer.current);
-    timer.current = setTimeout(() => setMounted(false), DURATION);
-    (childProps.onMouseLeave as (() => void) | undefined)?.();
-  }, [childProps]);
 
   return (
     <>
       {cloneElement(children as React.ReactElement<any>, {
         ref,
-        onMouseEnter,
-        onMouseLeave,
+        onPointerEnter: (e: React.PointerEvent) => onPointerEnter(e, childProps),
+        onPointerLeave: () => onPointerLeave(childProps),
       })}
       {mounted &&
         createPortal(
