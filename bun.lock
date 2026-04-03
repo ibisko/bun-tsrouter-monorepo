@@ -54,6 +54,7 @@
       "name": "@apps/agent-web",
       "version": "0.0.0",
       "dependencies": {
+        "@packages/icons": "workspace:^",
         "@packages/tsrouter": "workspace:^",
         "@packages/ui": "workspace:^",
         "@packages/utils": "workspace:^",
@@ -106,6 +107,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@packages/gpt": "workspace:^",
+        "@packages/icons": "workspace:^",
         "@packages/tsrouter": "workspace:^",
         "@packages/ui": "workspace:^",
         "@packages/utils": "workspace:^",
@@ -176,6 +178,7 @@
       "name": "@packages/ui",
       "version": "1.0.0",
       "dependencies": {
+        "@packages/icons": "workspace:^",
         "@packages/utils": "workspace:^",
         "@radix-ui/react-select": "^2.2.6",
         "class-variance-authority": "^0.7.1",

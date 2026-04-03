@@ -30,7 +30,7 @@ const configs: WatchmanConfigInfo = [
         script: 'bun tsup',
       },
       {
-        cwd: 'apps/server',
+        cwd: 'agent/server',
         watch: 'src',
         script: 'bun tsup',
       },

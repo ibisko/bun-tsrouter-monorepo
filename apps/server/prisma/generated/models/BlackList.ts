@@ -1027,6 +1027,11 @@ export type BlackListFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Skip the first `n` BlackLists.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of BlackLists.
+   */
   distinct?: Prisma.BlackListScalarFieldEnum | Prisma.BlackListScalarFieldEnum[]
 }
 
