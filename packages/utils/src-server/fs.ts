@@ -20,15 +20,28 @@ export const hashFile = async (
   file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike | File,
   algorithm: Bun.SupportedCryptoAlgorithms = 'sha1',
 ) => {
-  let buffer;
+  let bunFile;
+
+  // string filePath
   if (typeof file === 'string') {
-    file = Bun.file(file);
-    buffer = await file.arrayBuffer();
-  } else if (file instanceof Blob) {
-    // Bun.BunFile
-    buffer = await file.arrayBuffer();
-  } else {
-    buffer = file;
+    bunFile = Bun.file(file);
   }
-  return Bun.CryptoHasher.hash(algorithm, buffer).toHex();
+
+  // Bun.BunFile
+  else if (file instanceof Blob) {
+    bunFile = file;
+  }
+
+  // buffer
+  else {
+    return Bun.CryptoHasher.hash(algorithm, file).toHex();
+  }
+
+  const hasher = new Bun.CryptoHasher(algorithm);
+
+  for await (const chunk of bunFile.stream()) {
+    hasher.update(chunk);
+  }
+
+  return hasher.digest().toHex();
 };
