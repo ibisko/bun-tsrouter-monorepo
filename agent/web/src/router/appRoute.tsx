@@ -1,4 +1,3 @@
-import { userActions } from '@/stores/user';
 import { RootRoute, createRoute, redirect } from '@tanstack/react-router';
 
 export const createAppRoute = (rootRoute: RootRoute) => {
@@ -6,7 +5,6 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     getParentRoute: () => rootRoute,
     path: '/app',
     async beforeLoad(ctx) {
-      await userActions.initUserInfo();
       // 重定向
       if (/^\/app\/?$/.test(ctx.location.pathname)) {
         throw redirect({ to: '/app/ts-router', replace: true });
@@ -15,17 +13,11 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     notFoundComponent: () => <div>404 not find</div>,
   }).lazy(() => import('@/layouts/app').then(r => r.Route));
 
-  const componentsRoute = createRoute({
+  const iconifyRoute = createRoute({
     getParentRoute: () => appRoute,
-    path: '/components',
-    staticData: { title: '组件' },
-  }).lazy(() => import('@/pages/components').then(r => r.Route));
-
-  const userRoute = createRoute({
-    getParentRoute: () => appRoute,
-    path: '/user',
-    staticData: { title: '用户' },
-  }).lazy(() => import('@/pages/user').then(r => r.Route));
+    path: '/iconify',
+    staticData: { title: 'iconify' },
+  }).lazy(() => import('@/pages/iconify').then(r => r.Route));
 
   const logRoute = createRoute({
     getParentRoute: () => appRoute,
@@ -39,5 +31,5 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     staticData: { title: 'tsRouter测试' },
   }).lazy(() => import('@/pages/tsRouter').then(r => r.Route));
 
-  return appRoute.addChildren([componentsRoute, userRoute, logRoute, tsRouter]);
+  return appRoute.addChildren([iconifyRoute, logRoute, tsRouter]);
 };
