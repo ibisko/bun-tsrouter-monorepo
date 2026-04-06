@@ -1,4 +1,5 @@
 import '@packages/ui/styles.css';
+import './styles/index.css';
 
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router/rootRoute.tsx';
