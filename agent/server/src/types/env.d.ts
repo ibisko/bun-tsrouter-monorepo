@@ -6,6 +6,9 @@ export declare global {
       DATABASE_URL: string;
       GML_CODING_PLAN_BASE_URL: string;
       GML_CODING_PLAN_API_KEY: string;
+      ROOT_DIR: string;
+      ICONS_COMPONENTS_DIR: string;
+      PRETTIERRC_JSONFILE: string;
     }
   }
 }

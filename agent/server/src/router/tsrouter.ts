@@ -7,6 +7,7 @@ import { uploadFile1 } from '@/services/tsRouterTest/upload';
 import { trigger } from '@/middlewares/limitRate';
 import { corsMiddleware } from '@/middlewares/cors';
 import { chatRouter } from '@/services/chat';
+import { iconifyRouter } from '@/services/iconify/router';
 
 export const logger = new Logger();
 
@@ -32,6 +33,8 @@ const mainWhiteListRouterTree = {
   test: {
     tsRouter: tsRouter,
   },
+
+  iconifyRouter,
 };
 
 export const mainAuthRouter = createRouter({
