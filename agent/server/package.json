@@ -10,7 +10,7 @@
     }
   },
   "scripts": {
-    "dev": "NODE_ENV=development bun run ./dev.ts",
+    "dev": "bun run ./src/main.ts",
     "generate": "prisma generate",
     "diff": "prisma migrate diff --from-config-datasource --to-schema ./prisma/schema --script -o diff.sql",
     "execute": "prisma db execute --file diff.sql"
@@ -21,12 +21,14 @@
   "dependencies": {
     "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
+    "@packages/icons": "workspace:^",
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "got": "^14.6.6",
     "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
     "keyv": "^5.6.0",
+    "prettier": "^3.8.1",
     "tencentcloud-sdk-nodejs": "^4.1.201",
     "yaml": "^2.8.2"
   },

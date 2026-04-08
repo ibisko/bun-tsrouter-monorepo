@@ -11,8 +11,8 @@ const configs: WatchmanConfigInfo = [
       },
       {
         cwd: 'packages/icons',
+        watch: ['src'],
         script: 'bun tsup',
-        isAwait: true,
       },
     ],
   },

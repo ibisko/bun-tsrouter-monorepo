@@ -5,7 +5,10 @@
   "type": "module",
   "exports": {
     "./client": "./src-client/main.ts",
-    "./server": "./src-server/main.ts"
+    "./server": {
+      "types": "./dist/server/main.d.ts",
+      "import": "./src-server/main.ts"
+    }
   },
   "scripts": {
     "build": "tsup"

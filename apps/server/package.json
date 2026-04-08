@@ -10,8 +10,7 @@
     }
   },
   "scripts": {
-    "dev": "NODE_ENV=development bun run ./src/main.ts",
-    "build-dts": "tsup",
+    "dev": "bun run ./src/main.ts",
     "generate": "prisma generate",
     "diff": "prisma migrate diff --from-config-datasource --to-schema ./prisma/schema --script -o diff.sql",
     "execute": "prisma db execute --file diff.sql"
