@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { iconifyApi } from './api';
+import type { IconInfo } from '@packages/icons';
+import { iconifyStore } from '@/stores/iconify';
 
 export const useIconSets = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [svgs, setSvgs] = useState<SvgInfo[]>([]);
+  const [svgs, setSvgs] = useState<(IconInfo & { filePath?: string })[]>([]);
   const [searchValue, setSearchValue] = useState<string>();
 
   const initail = async () => {
@@ -30,37 +32,39 @@ export const useIconSets = () => {
     const response = await iconifyApi.icons(prefix, ids);
     for (const id of ids) {
       const aliase = response.aliases[id];
-      const key = aliase?.parent ?? id;
-      const target = response.icons[key];
-      const path = target?.body;
-      if (!path) {
-        console.log('no body', { prefix, key, response });
+      const aliaseResponseIconId = aliase?.parent ?? id;
+      const iconInfo = response.icons[aliaseResponseIconId];
+      const body = iconInfo?.body;
+      if (!body) {
+        console.log('no body', { prefix, aliaseResponseIconId, response });
         continue;
       }
 
       /**
-       * 注意默认就是16
+       * 注意默认大小就是 16
        * https://iconify.design/docs/types/iconify-json.html#icon
        */
-      const height = target.height || response.height || size || 16;
-      const width = target.width || response.width || height;
-      const top = target.top || 0;
-      const left = target.left || 0;
+      const height = iconInfo.height || response.height || size || 16;
+      const width = iconInfo.width || response.width || height;
+      const top = iconInfo.top || 0;
+      const left = iconInfo.left || 0;
       if (!(response.height || size)) {
         console.log('no height', response);
       }
+      const key = `${prefix}:${id}`;
+      const existsLocal = iconifyStore.localIcons.find(item => item.key === key);
       setSvgs(e => [
         ...e,
         {
-          key: `${prefix}:${id}`,
+          key,
           top,
           left,
           width,
           height,
-          path,
+          body,
           prefix,
-          id: key,
-          isAnimate: path.includes('<animate'),
+          isAnimate: body.includes('<animate'),
+          filePath: existsLocal?.filePath,
         },
       ]);
     }
@@ -103,7 +107,6 @@ type Collection = {
   key: string;
   name: string;
   authorName: string;
-  //   version?: string;
   authorUrl: string;
   licenseTitle: string;
   licenseUrl: string;
@@ -111,16 +114,4 @@ type Collection = {
   total: number;
   samples: string[];
   tags: string[];
-};
-
-export type SvgInfo = {
-  key: string;
-  top?: number;
-  left?: number;
-  width?: number;
-  height: number;
-  path: string;
-  prefix: string;
-  id: string;
-  isAnimate?: boolean;
 };

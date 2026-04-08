@@ -14,7 +14,7 @@ const initialThemeStore: ThemeStore = {
   isDark: initialIsDark,
 };
 
-const themeStore = proxy<ThemeStore>(cloneDeep(initialThemeStore));
+export const themeStore = proxy<ThemeStore>(cloneDeep(initialThemeStore));
 
 const switchTheme = () => {
   themeStore.isDark = !themeStore.isDark;

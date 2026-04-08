@@ -1,8 +1,7 @@
 import { iconifyApi } from './api';
-import { Button, cn, Input, Tooltip } from '@packages/ui';
-import { toast } from 'sonner';
-import { pascalize } from '@/utils/string';
-import { useIconSets, type SvgInfo } from './useIconSets';
+import { Button, Input, Tooltip } from '@packages/ui';
+import { useIconSets } from './useIconSets';
+import { SvgIcon } from './IconSvg';
 
 export const IconSets = () => {
   const { svgs, collections, setSearchValue, search } = useIconSets();
@@ -53,36 +52,5 @@ export const IconSets = () => {
         ))}
       </div>
     </div>
-  );
-};
-
-type SvgIconProps = {
-  item: SvgInfo;
-};
-export const SvgIcon = ({ item }: SvgIconProps) => {
-  return (
-    <Tooltip title={`${item.prefix}:${item.id}`}>
-      <div
-        className={cn('p-1 cursor-pointer group', { 'bg-primary/20': item.isAnimate })}
-        onClick={() => {
-          const fileName = pascalize(`${item.prefix}:${item.id}`);
-          console.log({ fileName });
-          toast.success(`${item.prefix}:${item.id}`);
-        }}>
-        <svg
-          className="group-hover:bg-primary/40 cursor-pointer"
-          style={{
-            backgroundSize: '8px',
-            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.05)" d="M0 0h16v16H0zm16 16h16v16H16z"/><path fill="rgba(255,255,255,0.05)" d="M0 16h16v16H0zM16 0h16v16H16z"/></svg>')`,
-          }}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox={`${item.left} ${item.top} ${item.width} ${item.height}`}
-          width={40}
-          height={40}
-          dangerouslySetInnerHTML={{
-            __html: item.path,
-          }}></svg>
-      </div>
-    </Tooltip>
   );
 };
