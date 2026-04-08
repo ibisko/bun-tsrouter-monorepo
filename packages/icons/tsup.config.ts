@@ -6,4 +6,5 @@ export default defineConfig(options => ({
   format: ['esm'],
   external: ['react'],
   silent: true,
+  // dts: true,
 }));
