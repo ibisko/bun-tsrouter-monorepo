@@ -9,5 +9,6 @@ export * from './components/Table';
 export * from './components/Descriptions';
 export * from './components/Dialog';
 export * from './components/Tooltip';
+export * from './components/ContentEditable';
 
 export * from './utils/cn';
