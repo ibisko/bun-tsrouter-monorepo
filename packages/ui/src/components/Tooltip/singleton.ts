@@ -1,4 +1,3 @@
-// 模块级单例，保证同一时间只有一个 tooltip
 let activeHide: (() => void) | null = null;
 
 export const dismissActive = () => {
