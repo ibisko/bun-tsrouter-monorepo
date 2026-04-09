@@ -6,12 +6,12 @@ import { iconifyStore } from '@/stores/iconify';
 export const useSearch = () => {
   const [svgs, setSvgs] = useState<IconsListItem[]>([]);
   const [searchValue, setSearchValue] = useState<string>();
-  const [iconListKey, setIconListKey] = useState(0);
+  const [iconListKey, setIconListKey] = useState(Date.now());
 
   const search = async () => {
     if (!searchValue) {
       setSvgs([]);
-      setIconListKey(e => ++e);
+      setIconListKey(Date.now());
       return;
     }
     const response = await iconifyApi.search({ query: searchValue, limit: 999 });
@@ -62,7 +62,7 @@ export const useSearch = () => {
     }
 
     setSvgs(result);
-    setIconListKey(e => ++e);
+    setIconListKey(Date.now());
   };
 
   return {

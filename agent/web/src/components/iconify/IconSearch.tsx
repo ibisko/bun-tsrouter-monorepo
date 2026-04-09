@@ -8,7 +8,8 @@ export const IconSearch = () => {
   return (
     <>
       <div className="p-1.5 font-black">Search icons</div>
-      <div className="sticky -top-px -bottom-px flex gap-2 p-1.5 bg-background backdrop-blur-2xl border-t border-b">
+
+      <div className="sticky -top-px -bottom-px flex gap-2 p-1.5 border-t border-b bg-background">
         <Input onChange={e => setSearchValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && search()} placeholder="Search icons..." />
         <Button onClick={search}>
           <MaterialSymbolsSearchRounded className="size-5" />
