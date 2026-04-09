@@ -1,10 +1,17 @@
 import { router } from '@/router/rootRoute';
 import { themeActions } from '@/stores/theme';
+import { MaterialSymbolsIframeOutlineRounded, PhReadCvLogo } from '@packages/icons';
 import { Button } from '@packages/ui';
 import { useNavigate, useLocation } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 type MenuItem = { path: string; title?: string };
+
+const MapMenuItemIcon: Record<string, React.ReactNode> = {
+  '/app/iframe': <MaterialSymbolsIframeOutlineRounded />,
+  '/app/log': <PhReadCvLogo />,
+};
+
 export const MainMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +32,13 @@ export const MainMenu = () => {
     <div className="flex flex-col p-4">
       <div className="flex flex-col gap-2">
         {menus.map(item => (
-          <Button variant={location.pathname === item.path ? 'default' : 'ghost'} onClick={() => navigate({ to: item.path })} key={item.path} link>
+          <Button
+            variant={location.pathname === item.path ? 'default' : 'ghost'}
+            onClick={() => navigate({ to: item.path })}
+            key={item.path}
+            size="sm"
+            link>
+            {MapMenuItemIcon[item.path] || null}
             {item.title}
           </Button>
         ))}

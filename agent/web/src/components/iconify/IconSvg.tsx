@@ -12,13 +12,13 @@ type SvgIconProps = {
   className?: string;
   item: IconInfo & { filePath?: string };
 };
-export const SvgIcon = ({ item }: SvgIconProps) => {
+export const SvgIcon = ({ className, item }: SvgIconProps) => {
   const [visible, setVisible] = useState(false);
 
   return (
     <>
       <Tooltip title={item.key}>
-        <div className={cn('p-1 cursor-pointer group', { 'bg-primary/20': item.isAnimate })} onClick={() => setVisible(true)}>
+        <div className={cn('p-1 cursor-pointer group', { 'bg-primary/20': item.isAnimate }, className)} onClick={() => setVisible(true)}>
           <SVG className="group-hover:bg-primary/40 cursor-pointer" item={item} />
         </div>
       </Tooltip>
@@ -143,7 +143,7 @@ const DialogContent = ({ item, cancel }: DialogContentProps) => {
   );
 };
 
-const SVG = ({ className, item }: SvgIconProps) => {
+export const SVG = ({ className, item }: SvgIconProps) => {
   return (
     <svg
       className={cn('', className)}
@@ -153,8 +153,8 @@ const SVG = ({ className, item }: SvgIconProps) => {
       }}
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`${item.left} ${item.top} ${item.width} ${item.height}`}
-      width={40}
-      height={40}
+      width="1em"
+      height="1em"
       dangerouslySetInnerHTML={{
         __html: item.body,
       }}></svg>

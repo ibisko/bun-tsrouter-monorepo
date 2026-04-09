@@ -5,9 +5,11 @@ export interface CollectionsInfo {
   license: { title: string; spdx: string; url: string };
   samples: string[];
   height: number;
+  displayHeight?: number;
   category: string;
   tags: string[];
   palette: boolean;
+  hidden?: boolean;
 }
 
 /** Keyed by collection id (e.g. "material-symbols", "mdi") */

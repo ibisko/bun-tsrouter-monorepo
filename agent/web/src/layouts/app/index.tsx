@@ -15,11 +15,7 @@ const MainLayout = () => {
       <MainMenu />
 
       {/* 右侧面板 */}
-      <div
-        className={cn(
-          'relative flex-1 flex flex-col overflow-hidden bg-background left-0 scale-100 transition sm:pr-4 sm:pb-4',
-          'sm:scale-100 sm:left-0',
-        )}>
+      <div className={cn('relative flex-1 flex flex-col overflow-hidden bg-background left-0 scale-100 transition', 'pr-4 pb-4')}>
         {/* 主面板 */}
         {/* <div className="relative flex-1 bg-sidebar-accent sm:rounded-2xl overflow-y-auto overflow-x-hidden"> */}
         <div className="relative flex-1 overflow-y-auto overflow-x-hidden">

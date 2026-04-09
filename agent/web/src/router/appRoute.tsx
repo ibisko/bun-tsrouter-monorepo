@@ -7,17 +7,11 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     async beforeLoad(ctx) {
       // 重定向
       if (/^\/app\/?$/.test(ctx.location.pathname)) {
-        throw redirect({ to: '/app/ts-router', replace: true });
+        throw redirect({ to: '/app/iframe', replace: true });
       }
     },
     notFoundComponent: () => <div>404 not find</div>,
   }).lazy(() => import('@/layouts/app').then(r => r.Route));
-
-  const iconifyRoute = createRoute({
-    getParentRoute: () => appRoute,
-    path: '/iconify',
-    staticData: { title: 'iconify' },
-  }).lazy(() => import('@/pages/iconify').then(r => r.Route));
 
   const logRoute = createRoute({
     getParentRoute: () => appRoute,
@@ -25,11 +19,11 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     staticData: { title: '日志' },
   }).lazy(() => import('@/pages/log').then(r => r.Route));
 
-  const tsRouter = createRoute({
+  const iframeRouter = createRoute({
     getParentRoute: () => appRoute,
-    path: '/ts-router',
-    staticData: { title: 'tsRouter测试' },
-  }).lazy(() => import('@/pages/tsRouter').then(r => r.Route));
+    path: '/iframe',
+    staticData: { title: 'iframe' },
+  }).lazy(() => import('@/pages/iframe').then(r => r.Route));
 
-  return appRoute.addChildren([iconifyRoute, logRoute, tsRouter]);
+  return appRoute.addChildren([iframeRouter, logRoute]);
 };
