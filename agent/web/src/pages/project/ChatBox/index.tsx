@@ -9,15 +9,18 @@ export const ChatBox = () => {
     if (!value.trim()) return;
     console.log(value);
     setValue('');
+
+    // todo useChatGpt
+    // Api.gpt.chat.chat.sse({ text: value });
   };
 
   return (
     <div className="flex flex-col border-r p-2 w-[330px] overflow-hidden">
-      <div>chat box</div>
+      <div className="">Chat box</div>
 
-      <div className="flex-1"></div>
+      <div className="flex-1 overflow-auto">{/* todo对话内容 */}</div>
 
-      <div className=" border rounded-lg p-2">
+      <div className=" border rounded-lg p-3">
         <ContentEditable value={value} onChange={setValue} onSend={handleSend} placeholder="你有什么问题？" />
 
         <div className="flex mt-2">

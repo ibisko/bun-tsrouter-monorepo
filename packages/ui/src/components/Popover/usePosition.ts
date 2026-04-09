@@ -16,6 +16,7 @@ export function usePosition({ side, sideOffset, align, open }: UsePositionOption
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const closingRef = useRef(false);
 
   const updatePosition = useCallback(() => {
     const trigger = containerRef.current?.firstElementChild as HTMLElement | null;
@@ -28,6 +29,7 @@ export function usePosition({ side, sideOffset, align, open }: UsePositionOption
   // 打开/关闭：统一管理 mounted、visible、位置计算
   useEffect(() => {
     if (open) {
+      closingRef.current = false;
       clearTimeout(closeTimerRef.current);
       setMounted(true);
       requestAnimationFrame(() => {
@@ -35,9 +37,13 @@ export function usePosition({ side, sideOffset, align, open }: UsePositionOption
         requestAnimationFrame(() => setVisible(true));
       });
     } else if (visible) {
+      closingRef.current = true;
       setVisible(false);
-      closeTimerRef.current = setTimeout(() => setMounted(false), 150);
-    } else {
+      closeTimerRef.current = setTimeout(() => {
+        closingRef.current = false;
+        setMounted(false);
+      }, 150);
+    } else if (!closingRef.current) {
       setMounted(false);
     }
 

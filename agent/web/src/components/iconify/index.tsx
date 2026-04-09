@@ -20,6 +20,7 @@ export const Iconify = ({ className }: IconifyProps) => {
       }
       open={visible}
       onOpenChange={setVisible}
+      sideOffset={8}
       side="right"
       align="start">
       <IconifyBox />
