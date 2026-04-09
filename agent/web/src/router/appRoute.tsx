@@ -7,7 +7,7 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     async beforeLoad(ctx) {
       // 重定向
       if (/^\/app\/?$/.test(ctx.location.pathname)) {
-        throw redirect({ to: '/app/iframe', replace: true });
+        throw redirect({ to: '/app/project', replace: true });
       }
     },
     notFoundComponent: () => <div>404 not find</div>,
@@ -19,11 +19,11 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     staticData: { title: '日志' },
   }).lazy(() => import('@/pages/log').then(r => r.Route));
 
-  const iframeRouter = createRoute({
+  const projectRouter = createRoute({
     getParentRoute: () => appRoute,
-    path: '/iframe',
-    staticData: { title: 'iframe' },
-  }).lazy(() => import('@/pages/iframe').then(r => r.Route));
+    path: '/project',
+    staticData: { title: 'project' },
+  }).lazy(() => import('@/pages/project').then(r => r.Route));
 
-  return appRoute.addChildren([iframeRouter, logRoute]);
+  return appRoute.addChildren([projectRouter, logRoute]);
 };
