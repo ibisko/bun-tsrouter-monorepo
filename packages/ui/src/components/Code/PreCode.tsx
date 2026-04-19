@@ -1,4 +1,4 @@
-import { cn } from '@/main';
+import { cn } from '@/utils/cn';
 
 type PreCodeProps = {
   className?: string;

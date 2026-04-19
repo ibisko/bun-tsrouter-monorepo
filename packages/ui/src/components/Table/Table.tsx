@@ -1,4 +1,4 @@
-import { cn } from '@/main';
+import { cn } from '@/utils/cn';
 import type { Columns } from './type';
 
 type TableProps<T extends Record<string, any>> = {

@@ -1,4 +1,4 @@
-import { cn } from '@/main';
+import { cn } from '@/utils/cn';
 
 export const inputClass = cn(
   'h-9 w-full min-w-0 px-3 py-1 rounded-md shadow-xs transition-[color,box-shadow] outline-none',

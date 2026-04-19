@@ -1,4 +1,4 @@
-import { cn } from '@/main';
+import { cn } from '@/utils/cn';
 
 export function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (

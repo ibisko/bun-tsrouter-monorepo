@@ -2,7 +2,7 @@
   "name": "@packages/ui",
   "version": "1.0.0",
   "exports": {
-    "./styles.css": "./src/styles/global.css",
+    "./styles.css": "./src/styles/globals.css",
     ".": {
       "types": "./src/main.ts",
       "import": "./dist/main.mjs"
@@ -19,10 +19,10 @@
   "dependencies": {
     "@packages/icons": "workspace:^",
     "@packages/utils": "workspace:^",
-    "@radix-ui/react-select": "^2.2.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.2",
