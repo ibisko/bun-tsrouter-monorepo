@@ -16,7 +16,7 @@ class UploadFileServiceClass implements ServiceClass {
 
 export function createUploadFile() {
   const handle = <S extends UploadFileService>(service: S) => {
-    return new UploadFileServiceClass().set(service) as ProcedureDef<'uploadFile', Func, AwaitedReturn<S>>;
+    return new UploadFileServiceClass().set(service) as unknown as ProcedureDef<'uploadFile', Func, AwaitedReturn<S>>;
   };
   return handle;
 }

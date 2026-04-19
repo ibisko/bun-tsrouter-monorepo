@@ -33,7 +33,7 @@ class RestApiServiceClass implements ServiceClass {
 
 export function createStandardMethod<T extends RestApiMethod>(method: T) {
   const handle: Handle<T> = (...arg1: unknown[]) => {
-    return new RestApiServiceClass(method).set(...arg1) as ProcedureDef<T>;
+    return new RestApiServiceClass(method).set(...arg1) as unknown as ProcedureDef<T>;
   };
   return handle;
 }

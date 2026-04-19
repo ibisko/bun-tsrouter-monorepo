@@ -1,13 +1,7 @@
-import { kebabCase, merge } from 'lodash-es';
 import z from 'zod';
 import type { Context, Middleware, RS } from './type';
 import { MiddlewareError, ServiceError, ValidationError } from './error';
 import { Logger } from './logger';
-
-export const getPath = (path: string | string[]) => {
-  if (typeof path === 'string') return path;
-  return '/' + path.map(item => (item.startsWith(':') ? item : kebabCase(item))).join('/');
-};
 
 export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodObject) => {
   let param;

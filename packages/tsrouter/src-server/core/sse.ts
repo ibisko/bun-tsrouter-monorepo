@@ -117,7 +117,7 @@ class SseServiceClass implements ServiceClass {
 
 export function createSseMethod() {
   const handle: Handle = (...arg1: unknown[]) => {
-    return new SseServiceClass().set(...arg1) as ProcedureDef<'sse'>;
+    return new SseServiceClass().set(...arg1) as unknown as ProcedureDef<'sse'>;
   };
   return handle;
 }
