@@ -9,14 +9,13 @@ export type ReplaceSpecificLeaf<T> = NonNullable<
   // todo $作为前一个路径的函数参数
   // prettier-ignore
   keyof T extends `$${string}`    ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
-  T extends ProcedureDef<infer M> ? { [K in M]: NonNullable<T["func"]> } :
+  T extends ProcedureDef<infer M> ? { [K in M]: T["_func"] } :
   IsPlainObject<T> extends true   ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } :
                                     T
 >;
 
 export interface Context {
   url: string;
-  // ip: string;
   ip: Bun.SocketAddress | null;
   headers: Headers;
   resHeaders: Headers;
@@ -40,13 +39,11 @@ export type Method = RestApiMethod | 'sse' | 'uploadFile';
 
 // todo 移到 client ?
 export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R = any> = {
-  Method?: M;
-  param?: T extends z.ZodObject ? z.output<T> : null;
-  return?: R;
+  _method: M;
   // 单独条件区分，可扩展
   // todo uploadFile需要更完善些
   // prettier-ignore
-  func?:
+  _func:
     M extends 'sse'         ? SseHandler<T> :
     M extends 'uploadFile'  ? (formData: FormData, options?: UploadMethodOptions) => Promise<R> :
     M extends RestApiMethod ? StandardHandler<T, R> :

@@ -1,3 +1,7 @@
+- 添加 sse 的 cb 参数的类型约束 writeSchema
+  - `procedure.sse(reqSchema, writeSchema, async (param, { write, signal }) => {}`
+
+
 - [x] 前端可视化单元测试
 - [x] ctx 集成日志
 - [x] 参数前的请求headers检查拦截
