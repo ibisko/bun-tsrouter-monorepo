@@ -21,7 +21,7 @@ export class WatchmanClient {
     });
   }
 
-  async watchProject({ packageCwd, watch, script, suffixs = [] }: WatchProjectParam) {
+  async watchProject({ packageCwd, watch, script, suffixs = [], env }: WatchProjectParam) {
     const watchDir = path.join(packageCwd, watch);
     const relativePath = await getWatchProjectRelativePath(this.client, watchDir);
     if (!relativePath) throw new Error();
@@ -48,7 +48,7 @@ export class WatchmanClient {
         event,
         callback: (resp: watchman.SubscriptionResponse) => {
           if (resp.subscription !== subscribeName) return;
-          this.spawnHandle({ sign, script, packageCwd, relativePath: relativePath });
+          this.spawnHandle({ sign, script, packageCwd, relativePath, env });
         },
       });
       info = this.dirWatchState.get(sign)!;
@@ -70,7 +70,7 @@ export class WatchmanClient {
   }
 
   // 根据路径和脚本执行的节流器
-  private async spawnHandle({ sign, script, packageCwd, relativePath }: SpawnHandleParam) {
+  private async spawnHandle({ sign, script, packageCwd, relativePath, env }: SpawnHandleParam) {
     const state = this.dirWatchState.get(sign)!;
     if (state.throttleTimeout) {
       clearTimeout(state.throttleTimeout);
@@ -84,6 +84,7 @@ export class WatchmanClient {
           cwd: packageCwd,
           stdio: 'inherit',
           // stdio: 'ignore',
+          env,
         });
         // console.log(chalk.gray(relativePath), `${chalk.green(script)} - Start`);
         // on("close") 最稳，通过code来判断是否有异常

@@ -67,6 +67,7 @@ async function main() {
                 watch,
                 script: item.script,
                 suffixs: item.suffixs,
+                env: item.env,
               });
               event.once('close', resolve);
             } catch (error) {
