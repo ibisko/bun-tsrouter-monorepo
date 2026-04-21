@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./src/index.ts"
+    }
   },
   "scripts": {
     "dev": "bun run ./src/index.ts",
