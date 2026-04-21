@@ -47,7 +47,7 @@ export const ContentEditable = ({ value, onChange, placeholder, onSend }: Conten
           contentEditable="true"
           onInput={() => {
             if (composingRef.current) return;
-            triggerChange(ref.current!.textContent ?? '');
+            triggerChange(ref.current!.innerText ?? '');
           }}
           onCompositionStart={() => {
             composingRef.current = true;
