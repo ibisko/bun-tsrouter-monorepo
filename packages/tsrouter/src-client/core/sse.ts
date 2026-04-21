@@ -20,6 +20,8 @@ export function sse(this: TsRouterClass, path: string | string[], body: any, opt
       const { value, done } = await reader.read();
       finish = done;
       if (!done) {
+        // todo 这里分割就不对了，server 的 write data 还要 JSON.stringify 一层才能避免这里的 \n\n 分割
+        // todo TextDecoder 改成 TextDecoderStream
         const td = new TextDecoder();
         td.decode(value)
           .split('\n\n')
