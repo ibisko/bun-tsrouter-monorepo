@@ -19,9 +19,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@packages/gpt": "workspace:^",
+    "@packages/icons": "workspace:^",
     "@packages/tsrouter": "workspace:^",
     "@packages/utils": "workspace:^",
-    "@packages/icons": "workspace:^",
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "got": "^14.6.6",

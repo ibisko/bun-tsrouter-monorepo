@@ -74,32 +74,32 @@ const configs: WatchmanConfigInfo = [
     ],
   },
 
-  // app/agent
+  // agent/server
   {
-    name: 'apps/agent generate',
+    name: 'agent/server generate',
     scripts: [
       {
-        cwd: 'apps/agent',
+        cwd: 'agent/server',
         script: 'bun run generate',
         isAwait: true,
       },
     ],
   },
   {
-    name: 'apps/agent diff',
+    name: 'agent/server diff',
     scripts: [
       {
-        cwd: 'apps/agent',
+        cwd: 'agent/server',
         script: 'bun run diff',
         isAwait: true,
       },
     ],
   },
   {
-    name: 'apps/agent execute',
+    name: 'agent/server execute',
     scripts: [
       {
-        cwd: 'apps/agent',
+        cwd: 'agent/server',
         script: 'bun run execute',
         isAwait: true,
       },

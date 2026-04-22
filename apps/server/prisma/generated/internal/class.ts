@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.5.0",
-  "engineVersion": "280c870be64f457428992c43c1f6d557fab6e29e",
+  "clientVersion": "7.7.0",
+  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
   "activeProvider": "sqlite",
   "inlineSchema": "enum UserRole {\n  ROOT\n  USER\n}\n\nmodel Users {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  account  String   @unique\n  password String\n  role     UserRole // 角色权限\n}\n\nmodel BlackList {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  ip     String  @unique\n  remark String?\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n}\n",
   "runtimeDataModel": {

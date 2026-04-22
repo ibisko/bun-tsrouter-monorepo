@@ -199,7 +199,7 @@ export type BlackListGroupByOutputType = {
   _max: BlackListMaxAggregateOutputType | null
 }
 
-type GetBlackListGroupByPayload<T extends BlackListGroupByArgs> = Prisma.PrismaPromise<
+export type GetBlackListGroupByPayload<T extends BlackListGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<BlackListGroupByOutputType, T['by']> &
       {
