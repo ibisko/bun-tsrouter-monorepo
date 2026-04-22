@@ -10,7 +10,12 @@ export class ManageContext {
     const item: Context = {
       id: this.id,
       role,
-      content,
+      content: [
+        {
+          type: 'text',
+          text: content,
+        },
+      ],
       created: Date.now(),
     };
     this.id++;
@@ -25,7 +30,7 @@ export class ManageContext {
       if (isThinking) {
         item.thinking = data;
       } else {
-        item.content = data;
+        item.content = [{ type: 'text', text: data }];
       }
     };
   }
@@ -52,7 +57,7 @@ export class ManageContext {
   change(id: number, content: string) {
     const item = this.context.find(item => item.id === id);
     if (!item) return;
-    item.content = content;
+    item.content = [{ type: 'text', text: content }];
   }
 
   json() {

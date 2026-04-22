@@ -1,0 +1,9 @@
+- [x] GLM
+- [x] Deepseek
+- [x] Gemini
+- Kimi 2.6
+- MiniMax
+- Qwen
+- Ollama
+- Anthropic
+- OpenAI

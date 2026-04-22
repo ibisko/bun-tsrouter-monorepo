@@ -1,7 +1,6 @@
 import z from 'zod';
-import { Role, Tool } from '.';
 
-export namespace GLM {
+export namespace GPT {
   export type StreamResponse = {
     id: string;
     created: number; // 1772685335
@@ -53,19 +52,43 @@ export namespace GLM {
     };
   };
 
-  // ============================================================
+  export type Tool = {
+    type: 'function';
+    function: {
+      name: string;
+      description: string;
+      /** JSON Schema 格式，用 zod */
+      parameters: any;
+    };
+  };
 
-  export type GlmRequestParam = {
+  export type Message = z.output<typeof gptRequestSchema>['messages'][number];
+  export type Role = Message['role'];
+  export type Content = Message['content'];
+
+  export type RequestParam = {
     model?: string;
-    messages: any[];
+    messages: Message[];
     tools?: Tool[];
     temperature?: number;
   };
 }
 
-export const glmRequestSchema = z.object({
-  model: z.enum(['glm-5.1', 'glm-5-turbo', 'glm-4.5-air']).default('glm-5.1').optional(),
-  messages: z.array(z.any()),
+const gptRequestSchema = z.object({
+  messages: z.array(
+    z.object({
+      role: z.enum(['assistant', 'user', 'system', 'tool']),
+      content: z.array(
+        z.object({
+          type: z.enum(['file_url', 'image_url', 'video_url', 'text']),
+          text: z.string(),
+          file_url: z.object({ url: z.string() }).optional(),
+          image_url: z.object({ url: z.string() }).optional(),
+          video_url: z.object({ url: z.string() }).optional(),
+        }),
+      ),
+    }),
+  ),
   tools: z.array(z.any()).optional(),
   temperature: z.number().optional(),
   thinking: z
@@ -78,4 +101,14 @@ export const glmRequestSchema = z.object({
       type: z.enum(['json_object', 'text']),
     })
     .optional(),
+});
+
+export const glmRequestSchema = gptRequestSchema.extend({
+  model: z.enum(['glm-5.1', 'glm-5-turbo', 'glm-4.7', 'glm-4.6v', 'glm-4.5', 'glm-4.5-air']).default('glm-5.1').optional(),
+});
+export const deepseekRequestSchema = gptRequestSchema.extend({
+  model: z.enum(['deepseek-reasoner']).default('deepseek-reasoner').optional(),
+});
+export const kimiRequestSchema = gptRequestSchema.extend({
+  model: z.enum(['kimi-k2.5']).default('kimi-k2.5').optional(),
 });

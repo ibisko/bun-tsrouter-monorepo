@@ -1,23 +1,11 @@
-export type Role = 'assistant' | 'user' | 'system' | 'tool';
+export { type Gemini, geminiRequestSchema } from '@/types/gemini';
+export { type GPT, glmRequestSchema, deepseekRequestSchema, kimiRequestSchema } from '@/types/gpt';
+import { type GPT } from '@/types/gpt';
 
-export type Tool = {
-  type: 'function';
-  function: {
-    name: string;
-    description: string;
-    /** JSON Schema 格式，用 zod */
-    parameters: any;
-  };
-};
+export type Role = GPT.Role;
 
-export type Message = {
-  role: Role;
-  content: string;
-  tool_call_id?: string;
-};
-
-export type Context = Message & {
+export type Context = GPT.Message & {
   id: number;
   created: number;
-  thinking?: string
+  thinking?: string;
 };

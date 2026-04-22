@@ -1,9 +1,12 @@
 import z from 'zod';
 import { pick } from 'lodash-es';
-import { Context, Tool } from '@/types';
+import { GPT } from '@/types';
+
+export { geminiParseStreamJson } from './gemini';
+export { gptParseStreamJson } from './gpt';
 
 /** 添加工具 */
-export const createTool = ({ name, description, parameters }: AddTool): Tool => ({
+export const createTool = ({ name, description, parameters }: AddTool): GPT.Tool => ({
   type: 'function',
   function: {
     name,
@@ -22,4 +25,60 @@ export type AddTool = {
   name: string;
   description: string;
   parameters: z.ZodObject;
+};
+
+/** 以 `data:` 开头 */
+export const createDataStreamToJson = <T>() => {
+  let cache = ''; // todo 真的适合放这里吗，需要检查每次进来的data是否都是data:开头
+  return (data: string): T[] => {
+    if (!data.startsWith('data:')) {
+      // console.log({ cache, data, cache_data: cache + data });
+      data = cache + data;
+    }
+
+    const items = data.split('\n').filter(item => !!item);
+    const resJsons: T[] = [];
+
+    for (const item of items) {
+      let strdata = item;
+      const data = /^data:\s+(.*)/.exec(item);
+      if (data) {
+        // console.log('no data:', data);
+        strdata = data[1]!;
+      }
+      if (strdata === '[DONE]') {
+        // console.log(`[DONE]-item: <${JSON.stringify(items, null, 4)}>`);
+        break;
+      }
+
+      let res;
+      try {
+        // todo 不连续的 jsonstring
+        res = JSON.parse(strdata.trim());
+        cache = '';
+      } catch (error) {
+        const hasCache = !!cache;
+        cache += strdata;
+        if (hasCache) {
+          try {
+            // todo 未验证
+            // todo 感觉这里写得太丑了
+            console.log('<{cache}>');
+            res = JSON.parse(cache);
+          } catch (error) {}
+        }
+
+        /* if (error instanceof Error) {
+          console.log('Error strdata:', strdata);
+        } */
+        continue;
+      }
+
+      resJsons.push(res);
+    }
+    /* if (cache) {
+      console.log(`存在剩余cache: <${cache}>`);
+    } */
+    return resJsons;
+  };
 };

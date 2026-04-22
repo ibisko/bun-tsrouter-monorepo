@@ -1,19 +1,15 @@
 import type { MaybePromise } from 'bun';
-import type { GLM } from '@/types/glm';
+import type { GPT } from '@/types';
 import { AddTool, createTool } from '@/utils';
-import { Context, Message, Tool } from './types';
+import { Context, Gemini } from './types';
 import { ManageContext } from './ManageContext';
-import { cloneDeep } from 'lodash-es';
-
-type ChatContextParam = {
-  system: string;
-};
+import { cloneDeep, pick } from 'lodash-es';
 
 /** 用于定义agent行为 */
 export class ChatContext<T> {
   private created = Date.now();
-  system: string;
-  tools: Tool[] = [];
+  system: string = '';
+  tools: GPT.Tool[] = [];
 
   /** 历史上下文 */
   context = new ManageContext();
@@ -26,9 +22,7 @@ export class ChatContext<T> {
    * 初始的 system
    *
    */
-  constructor({ system }: ChatContextParam) {
-    this.system = system;
-  }
+  constructor() {}
 
   setSystem(content: string) {
     this.system = content;
@@ -40,64 +34,46 @@ export class ChatContext<T> {
     this.tools.push(tool);
   }
 
-  private request: (param: GLM.GlmRequestParam, cb: Callback) => Promise<any> = async () => {};
-  bindRequest(cb: (param: GLM.GlmRequestParam, cb: Callback) => Promise<any>) {
-    this.request = cb;
-  }
-  private messageCallback: Callback = () => {};
-  bindMessage(cb: Callback) {
-    this.messageCallback = cb;
-  }
-  /** agent 主动询问用户 */
-  bindAgentRequest(cb: () => void) {}
-
-  /** 用户添加会话消息 */
-  async sendMessage(message: string) {
-    this.context.add('user', message);
-
-    const res = await this.request(
-      {
-        messages: this.context.json(),
-        tools: this.tools,
-      },
-      this.messageCallback,
-    );
-
-    // todo 工具调用循环反馈
-    // todo 工具激活调用
-    const toolsCallback: {
-      role: 'tool'; // 角色必須是 tool
-      tool_call_id: string; // 必須與上面的 id 一致
-      content: string;
-    }[] = [];
-    const tools = res.choicesToolCalls as GLM.ChoicesToolCalls[];
-    for (const item of tools) {
-      console.log(item.id, item.index, item.function.name);
-      console.log(JSON.parse(item.function.arguments));
-    }
-  }
-
   jsonContext(): Context[] {
-    return cloneDeep([
-      {
+    const res = cloneDeep(this.context.context);
+    if (this.system) {
+      res.unshift({
         id: 0,
-        role: 'system',
         created: this.created,
-        content: this.system,
-      },
-      ...this.context.context,
-    ]);
+        role: 'system',
+        content: [{ type: 'text', text: this.system }],
+      });
+    }
+    return res;
   }
 
-  json(): Message[] {
-    return cloneDeep([
-      {
+  json(): GPT.Message[] {
+    const res = cloneDeep(this.context.json());
+    if (this.system) {
+      res.unshift({
         role: 'system',
-        content: this.system,
-      },
-      ...this.context.json(),
-    ]);
+        content: [{ type: 'text', text: this.system }],
+      });
+    }
+    return res;
+  }
+
+  toGemini() {
+    const contents: Gemini.Content[] = this.context.context
+      .filter(item => ['assistant', 'user'].includes(item.role))
+      .map(item => {
+        let role = item.role as Gemini.Role;
+        if (item.role === 'assistant') {
+          role = 'model';
+        }
+        if (typeof item.content === 'string') {
+          return { role, parts: [{ text: item.content }] };
+        }
+        return { role, parts: item.content.map(item => pick(item, 'text')) };
+      });
+    return {
+      systemInstruction: { parts: [{ text: this.system }] },
+      contents,
+    };
   }
 }
-
-type Callback = (text: string, type: 'thinking' | 'content') => MaybePromise<void>;
