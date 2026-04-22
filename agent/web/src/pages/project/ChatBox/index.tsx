@@ -1,34 +1,13 @@
-import { IconoirSendSolid } from '@packages/icons';
-import { Button, ContentEditable } from '@packages/ui';
-import { useState } from 'react';
+import { MessagesContext } from './Messages';
+import { SendMessage } from './SendMessage';
+import { useChatContext } from './useChatContext';
 
 export const ChatBox = () => {
-  const [value, setValue] = useState('');
-
-  const handleSend = () => {
-    if (!value.trim()) return;
-    console.log(value);
-    setValue('');
-
-    // todo useChatGpt
-    // Api.gpt.chat.chat.sse({ text: value });
-  };
-
+  const { context, sendMessage, retry, loading } = useChatContext();
   return (
-    <div className="flex flex-col border-r p-2 w-[330px] overflow-hidden">
-      <div className="">Chat box</div>
-
-      <div className="flex-1 overflow-auto">{/* todo对话内容 */}</div>
-
-      <div className=" border rounded-lg p-3">
-        <ContentEditable value={value} onChange={setValue} onSend={handleSend} placeholder="你有什么问题？" />
-
-        <div className="flex mt-2">
-          <Button className="ml-auto" size="icon-sm" onClick={handleSend}>
-            <IconoirSendSolid className="-rotate-90" />
-          </Button>
-        </div>
-      </div>
+    <div className="relative flex flex-col h-full bg-card border-r overflow-x-hidden overflow-y-auto">
+      <MessagesContext context={context} loading={loading} />
+      <SendMessage className="sticky left-0 bottom-3 w-full px-1.5" sendMessage={sendMessage} retry={retry} />
     </div>
   );
 };
