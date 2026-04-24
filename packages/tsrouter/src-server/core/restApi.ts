@@ -1,12 +1,14 @@
 import z from 'zod';
 import type { Func, AwaitedReturn } from '@packages/utils/types';
-import type { Context, ProcedureDef, RestApiMethod, RS, ServiceClass } from '../type';
+import type { Context, ServiceClass } from '../type';
+import type { ProcedureDef } from '@/src-client/type';
 import { parseZodSchema, responseToString, trycatchAndMiddlewaresHandle } from '../utils';
+import type { RestApiMethod } from '@/types';
 
 class RestApiServiceClass implements ServiceClass {
   constructor(readonly method: RestApiMethod) {}
 
-  set(...args: unknown[]): RS {
+  set(...args: unknown[]) {
     let zodSchema: z.ZodObject | undefined;
     let service: Func;
     if (typeof args[0] !== 'function') {

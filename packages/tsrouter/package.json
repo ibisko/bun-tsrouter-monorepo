@@ -4,7 +4,10 @@
   "description": "",
   "type": "module",
   "exports": {
-    "./client": "./src-client/main.ts",
+    "./client": {
+      "types": "./dist/client/main.d.ts",
+      "import": "./src-client/main.ts"
+    },
     "./server": {
       "types": "./dist/server/main.d.ts",
       "import": "./src-server/main.ts"

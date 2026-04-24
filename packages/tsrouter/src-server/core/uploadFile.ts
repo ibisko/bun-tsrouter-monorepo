@@ -1,11 +1,13 @@
-import type { ProcedureDef, RestApiMethod, RS, ServiceClass, UploadFileService } from '../type';
+import type { ServiceClass, UploadFileService } from '../type';
+import type { ProcedureDef } from '@/src-client/type';
 import { responseToString, trycatchAndMiddlewaresHandle } from '../utils';
 import { AwaitedReturn, Func } from '@packages/utils/types';
+import type { RestApiMethod } from '@/types';
 
 class UploadFileServiceClass implements ServiceClass {
   method: RestApiMethod = 'post';
 
-  set(service: UploadFileService): RS {
+  set(service: UploadFileService) {
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       const formData = await request.formData();
       const response = await service(formData, ctx);

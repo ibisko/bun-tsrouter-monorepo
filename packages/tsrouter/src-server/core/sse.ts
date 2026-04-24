@@ -1,14 +1,17 @@
 import z from 'zod';
 import { parseZodSchema, trycatchAndMiddlewaresHandle } from '../utils';
-import type { ProcedureDef, RestApiMethod, RS, ServiceClass, SseService, WriteFunc } from '../type';
+import type { ServiceClass, Context } from '../type';
+import type { ProcedureDef } from '@/src-client/type';
 import { WatchDog } from '@packages/utils';
 import { ServiceError } from '../error';
 import { AwaitedReturn, Func } from '@packages/utils/types';
+import type { RestApiMethod } from '@/types';
+import { MaybePromise } from 'bun';
 
 class SseServiceClass implements ServiceClass {
   method: RestApiMethod = 'post';
 
-  set(...args: unknown[]): RS {
+  set(...args: unknown[]) {
     let zodSchema: z.ZodObject | undefined;
     let service: Function;
     if (typeof args[0] !== 'function') {
@@ -122,7 +125,28 @@ export function createSseMethod() {
   return handle;
 }
 
+/** 这里定义在 server 中的定义类型 */
+
 type Handle = {
   <S extends SseService>(service: S): ProcedureDef<'sse', Func, AwaitedReturn<S>>;
   <T extends z.ZodObject, S extends SseService<T>>(schema: T, service: S): ProcedureDef<'sse', T, AwaitedReturn<S>>;
+};
+
+// prettier-ignore
+export type SseService<T extends z.ZodObject | null = null> =
+  T extends z.ZodObject ? (param: z.output<T>, optional: SseServiceOptional) => MaybePromise<void> :
+                          (optional: SseServiceOptional) => MaybePromise<void>;
+
+type SseServiceOptional = {
+  write: WriteFunc;
+  signal: AbortSignal;
+  ctx: Context;
+};
+
+/** sse写消息的方法 */
+export type WriteFunc = {
+  /** 默认 event 是 message */
+  (data: string): Promise<void>;
+  /** 自定义 event */
+  (data: string, event: string): Promise<void>;
 };

@@ -1,4 +1,5 @@
 export * from './procedure';
 export * from './error';
 export * from './logger';
-export type { SseService, ReplaceSpecificLeaf, Context, WriteFunc, Middleware } from './type';
+export type { Context, Middleware } from './type';
+export type { ReplaceSpecificLeaf } from '@/src-client/type';

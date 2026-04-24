@@ -1,5 +1,6 @@
 import { ResponseError } from '../error';
-import { MethodOptions, RestApiMethod, TsRouterClass } from '../type';
+import { MethodOptions, TsRouterClass } from '../type';
+import type { RestApiMethod } from '@/types';
 import { parseUrl } from '../utils';
 
 export async function restApi(this: TsRouterClass, { method, path, query, body, options = {} }: RestApiParams) {
