@@ -1,13 +1,14 @@
 import type { Context, GPT } from '@packages/gpt';
 import { EosIconsThreeDotsLoading } from '@packages/icons';
-import { cn } from '@packages/ui';
+import { cn, Reveal } from '@packages/ui';
 import { useEffect, useRef } from 'react';
 
 type MessagesContextProps = {
+  className?: string;
   context: Context[];
   loading: boolean;
 };
-export const MessagesContext = ({ context, loading }: MessagesContextProps) => {
+export const MessagesContext = ({ className, context, loading }: MessagesContextProps) => {
   const contextRef = useRef<HTMLDivElement>(null);
   const isAutoScrollRef = useRef(true);
   const prevScrollTopRef = useRef(0);
@@ -37,7 +38,7 @@ export const MessagesContext = ({ context, loading }: MessagesContextProps) => {
   }, [context, loading]);
 
   return (
-    <div ref={contextRef} className="flex-1 text-sm pt-4 pb-6 overflow-y-auto" onScroll={handleScroll}>
+    <div ref={contextRef} className={cn('flex-1 text-sm overflow-y-auto', className)} onScroll={handleScroll}>
       {context.map(item => {
         switch (item.role) {
           case 'assistant':
@@ -119,16 +120,16 @@ const BaseMessage = ({ className, date, children, side }: BaseMessageProps) => {
   return (
     <div className={cn('relative flex flex-col justify-end px-1.5 py-1 group hover:bg-foreground/5')}>
       {date && (
-        <div
+        <Reveal
           className={cn(
-            'text-nowrap text-xs overflow-hidden text-foreground/80',
-            'h-0 opacity-0 group-hover:h-4 group-hover:opacity-100 transition-all',
+            'text-nowrap text-xs text-foreground/80',
+            'delay-0 group-hover:delay-1000 group-hover:opacity-100 group-hover:grid-rows-[1fr]',
             { 'mr-auto': side === 'left' },
             { 'mx-auto': side === 'mid' },
             { 'ml-auto': side === 'right' },
           )}>
           {date.toLocaleString()}
-        </div>
+        </Reveal>
       )}
 
       <pre
