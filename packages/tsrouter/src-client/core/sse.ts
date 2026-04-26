@@ -1,48 +1,42 @@
-import { MethodOptions, TsRouterClass } from '../type';
+import { ResponseError } from '../error';
+import { MethodOptions, SseMessageHandler, TsRouterClass } from '../type';
 import { restApi } from './restApi';
 
-export function sse(this: TsRouterClass, path: string | string[], body: any, options: MethodOptions) {
-  return async (callback: (data: any) => void) => {
-    options.headers ??= {};
-    Object.assign(options.headers, { accept: 'text/event-stream' });
+export async function sse(this: TsRouterClass, path: string[], body: any, options: MethodOptions) {
+  options.headers ??= {};
+  Object.assign(options.headers, { accept: 'text/event-stream' });
 
-    const response = await restApi.bind(this)({
-      method: 'post',
-      path,
-      body,
-      options,
-    });
-    if (!response) return;
+  const response = await restApi.bind(this)({
+    method: 'post',
+    path,
+    body,
+    options,
+  });
 
-    const reader = response.body!.getReader();
-    let finish = false;
-    do {
+  return async (callback: SseMessageHandler) => {
+    const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
+    if (!reader) throw new Error('no reader');
+
+    while (true) {
       const { value, done } = await reader.read();
-      finish = done;
-      if (!done) {
-        // todo 这里分割就不对了，server 的 write data 还要 JSON.stringify 一层才能避免这里的 \n\n 分割
-        // todo TextDecoder 改成 TextDecoderStream
-        const td = new TextDecoder();
-        td.decode(value)
-          .split('\n\n')
-          .filter(item => item)
-          .map(content =>
-            content.split('\n').reduce<{ [k: string]: any }>((res, line) => {
-              const regexp = /^(\S+)\:\s+?(.*)/.exec(line);
-              if (regexp) {
-                const key = regexp[1];
-                let val = regexp[2];
-                if (key === 'id') {
-                  res[key] = +val;
-                } else {
-                  res[key] = val;
-                }
-              }
-              return res;
-            }, {}),
-          )
-          .forEach(callback);
+      if (done) break;
+
+      const contents = value.split('\n\n');
+      for (let content of contents) {
+        content = content.trim();
+        if (!content) continue;
+        if (content === ':') continue; // 心跳
+        let obj;
+        try {
+          obj = JSON.parse(content);
+        } catch (error) {
+          throw new ResponseError({ message: 'sse 返回值 data json解析有问题', status: 200 });
+        }
+        if (obj.event === 'SERVICE_ERROR') {
+          throw new ResponseError({ message: obj.data, status: 200 });
+        }
+        callback(obj);
       }
-    } while (!finish);
+    }
   };
 }

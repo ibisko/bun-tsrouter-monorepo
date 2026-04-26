@@ -1,6 +1,6 @@
 import { createStandardMethod } from './core/restApi';
 import { Logger } from './logger';
-import { Middleware } from './type';
+import { BunServeHandler, Middleware } from './type';
 import { createSseMethod } from './core/sse';
 import { createUploadFile } from './core/uploadFile';
 import { MaybePromise } from 'bun';
@@ -23,9 +23,10 @@ type CreateRouterParams = {
   router: Record<string, unknown>;
   logger: Logger;
   middlewares: Middleware[];
+  optionsService?: BunServeHandler;
 };
 
-export const createRouter = ({ prefix = '/', router, logger, middlewares }: CreateRouterParams) => {
+export const createRouter = ({ prefix = '/', router, logger, middlewares, optionsService }: CreateRouterParams) => {
   if (prefix.length > 1 && prefix.endsWith('/')) {
     prefix = prefix.slice(0, -1) as `/${string}`;
   }
@@ -37,7 +38,7 @@ export const createRouter = ({ prefix = '/', router, logger, middlewares }: Crea
       const regexp = /^\$(.*)/.exec(key);
       const _prefix = `${prefix}/${regexp ? `:${kebabCase(regexp[1])}` : kebabCase(key)}`;
       if (typeof func === 'function') {
-        routes[_prefix] = func(logger, middlewares);
+        routes[_prefix] = func(logger, middlewares, optionsService);
       } else {
         parseRouter(func, _prefix);
       }

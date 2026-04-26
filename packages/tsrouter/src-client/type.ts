@@ -1,7 +1,8 @@
 import z from 'zod';
 import { MaybePromise } from 'bun';
 import type { Func, IsPlainObject } from '@packages/utils/types';
-import type { RestApiMethod, Method } from '@/types';
+import type { Method } from '@/types';
+import { RestApiMethod } from '@packages/utils';
 
 export type TsRouterOptions = {
   baseUrl: string;
@@ -9,7 +10,7 @@ export type TsRouterOptions = {
   timeout?: number;
   setHeaders?: (headers: Headers) => MaybePromise<void>;
   refreshToken?: (abort: () => void) => Promise<void>;
-  onResponseError?: (error: unknown) => void;
+  onResponseError?: (error: unknown) => Promise<void>;
 };
 
 export type MethodOptions = {
@@ -36,7 +37,7 @@ export abstract class TsRouterClass {
   abstract baseUrl: string;
   abstract isRefreshing: boolean;
   abstract prefix?: string;
-  abstract timeout?: number;
+  abstract timeout: number;
   abstract interceptDuringRefreshResolves: { resolve: (val?: unknown) => void; reject: (error: Error) => void }[];
   abstract setHeaders: TsRouterOptions['setHeaders'];
   abstract refreshToken: TsRouterOptions['refreshToken'];
@@ -48,7 +49,7 @@ export abstract class TsRouterClass {
 
 /** 用于在 server 导出，在 clinet 使用的 AppRouter */
 export type ReplaceSpecificLeaf<T> = NonNullable<
-  // todo $作为前一个路径的函数参数
+  // $作为前一个路径的函数参数
   // prettier-ignore
   keyof T extends `$${string}`    ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
   T extends ProcedureDef<infer M> ? { [K in M]: T["_func"] } :
@@ -72,12 +73,18 @@ export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R
 
 type StandardHandler<T, R> =
   // prettier-ignore
-  T extends z.ZodObject ? (params: z.output<T>, options?: MethodOptions) => Promise<R>
+  T extends z.ZodObject ? (params: z.input<T>, options?: MethodOptions) => Promise<R>
                         : (parmas?: null, options?: MethodOptions) => Promise<R>;
 
 type SseHandler<T> =
   // prettier-ignore
-  T extends z.ZodObject ? (params: z.output<T>, options?: MethodOptions) =>
-                              <K = any>(callback: (data: K) => void) => Promise<void>:
-                          (parmas?: null, options?: MethodOptions) =>
-                              <K = any>(callback: (data: K) => void) => Promise<void>;
+  T extends z.ZodObject ? (params: z.input<T>, options?: MethodOptions) =>
+                              Promise<SseHandlerCallback> :
+                              (parmas?: null, options?: MethodOptions) =>
+                              Promise<SseHandlerCallback>;
+
+type SseHandlerCallback = <K = any>(callback: SseMessageHandler<K>) => Promise<void>;
+
+export type SseMessageHandler<T = any> = {
+  (data: { id: number; event: string; data: T }): void;
+};

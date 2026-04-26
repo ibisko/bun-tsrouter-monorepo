@@ -3,7 +3,7 @@ import type { Func, AwaitedReturn } from '@packages/utils/types';
 import type { Context, ServiceClass } from '../type';
 import type { ProcedureDef } from '@/src-client/type';
 import { parseZodSchema, responseToString, trycatchAndMiddlewaresHandle } from '../utils';
-import type { RestApiMethod } from '@/types';
+import { RestApiMethod } from '@packages/utils';
 
 class RestApiServiceClass implements ServiceClass {
   constructor(readonly method: RestApiMethod) {}
@@ -33,12 +33,11 @@ class RestApiServiceClass implements ServiceClass {
   }
 }
 
-export function createStandardMethod<T extends RestApiMethod>(method: T) {
-  const handle: Handle<T> = (...arg1: unknown[]) => {
+export const createStandardMethod =
+  <T extends RestApiMethod>(method: T): Handle<T> =>
+  (...arg1: unknown[]) => {
     return new RestApiServiceClass(method).set(...arg1) as unknown as ProcedureDef<T>;
   };
-  return handle;
-}
 
 type Handle<M extends RestApiMethod> = {
   <S extends NonParamService>(service: S): ProcedureDef<M, Func, AwaitedReturn<S>>;

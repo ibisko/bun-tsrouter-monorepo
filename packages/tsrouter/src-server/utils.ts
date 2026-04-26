@@ -1,5 +1,5 @@
 import z from 'zod';
-import type { Context, Middleware, RS } from './type';
+import type { BunServeHandler, Context, Middleware, RouterSetup } from './type';
 import { MiddlewareError, ServiceError, ValidationError } from './error';
 import { Logger } from './logger';
 
@@ -19,93 +19,94 @@ export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodOb
   return resparse.data as z.output<typeof zodSchema>;
 };
 
-export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: string, callback: Middleware): RS => {
-  return (logger, middlewares) => {
+export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: string, callback: Middleware): RouterSetup => {
+  return (logger, middlewares, optionsService) => {
     logger = logger.child({ func: serviceFuncName });
-    return {
-      [method.toUpperCase()]: async (request: Bun.BunRequest, server: Bun.Server<undefined>) => {
-        const reqId = `req-${Logger.reqId}`;
 
-        Logger.reqId++;
-        logger = logger.child({
-          reqId,
-          req: {
-            method: request.method.toUpperCase(),
-            url: request.url,
-            ip: server.requestIP(request),
-          },
-        });
-        logger.info();
+    const methodService: BunServeHandler = async (request: Bun.BunRequest, server: Bun.Server<undefined>) => {
+      const reqId = `req-${Logger.reqId}`;
 
-        const resHeaders = new Headers();
-        resHeaders.set('Content-Type', 'application/json');
-
-        const ctx: Context = {
+      Logger.reqId++;
+      logger = logger.child({
+        reqId,
+        req: {
+          method: request.method.toUpperCase(),
           url: request.url,
-          params: request.params,
           ip: server.requestIP(request),
-          headers: request.headers,
-          resHeaders,
-          body: request.body,
-          logger,
-        };
+        },
+      });
+      logger.info();
 
-        try {
-          for (const mid of middlewares) {
-            await mid(request, ctx);
-          }
-          ctx.logger = ctx.logger.child({ step: 'service' });
-          return await callback(request, ctx);
-        } catch (error) {
-          if (error instanceof MiddlewareError) {
-            ctx.logger.error({
-              step: 'middleware',
-              func: error.func,
-              msg: error.message,
-              reason: error.reason,
-              data: error.data,
-            });
-            return new Response(error.message, {
-              status: error.status,
-              headers: ctx.resHeaders,
-            });
-          } else if (error instanceof ValidationError) {
-            ctx.logger.error({ step: 'validation', msg: error.message });
-            return new Response(error.message, { status: 400, headers: ctx.resHeaders });
-          } else if (error instanceof ServiceError) {
-            ctx.logger.error({
-              step: 'service',
-              msg: error.message,
-              reason: error.reason,
-              data: error.data,
-            });
-            return new Response(error.message, { status: error.status, headers: ctx.resHeaders });
-          } else if (error instanceof Error) {
-            ctx.logger.error({
-              step: 'serviceAccident',
-              msg: error.message,
-              data: { stack: error.stack },
-            });
-            return new Response(error.message, { status: 500, headers: ctx.resHeaders });
-          } else {
-            ctx.logger.error({
-              step: 'serviceAccident',
-              msg: '未知异常',
-              data: { error },
-            });
-            return new Response('未知异常', { status: 500, headers: ctx.resHeaders });
-          }
+      const resHeaders = new Headers();
+      resHeaders.set('Content-Type', 'application/json');
+
+      const ctx: Context = {
+        url: request.url,
+        params: request.params,
+        ip: server.requestIP(request),
+        headers: request.headers,
+        resHeaders,
+        body: request.body,
+        logger,
+      };
+
+      try {
+        for (const mid of middlewares) {
+          await mid(request, ctx);
         }
-      },
-      // todo 外部设置？
-      OPTIONS: () => {
-        const headers = new Headers();
-        headers.set('Access-Control-Allow-Origin', '*');
-        headers.set('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
-        headers.set('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With, X-Cos-Meta');
-        return new Response(null, { status: 204, headers });
-      },
+        ctx.logger = ctx.logger.child({ step: 'service' });
+        return await callback(request, ctx);
+      } catch (error) {
+        if (error instanceof MiddlewareError) {
+          ctx.logger.error({
+            step: 'middleware',
+            func: error.func,
+            msg: error.message,
+            reason: error.reason,
+            data: error.data,
+          });
+          return new Response(error.message, {
+            status: error.status,
+            headers: ctx.resHeaders,
+          });
+        } else if (error instanceof ValidationError) {
+          ctx.logger.error({ step: 'validation', msg: error.message });
+          return new Response(error.message, { status: 400, headers: ctx.resHeaders });
+        } else if (error instanceof ServiceError) {
+          ctx.logger.error({
+            step: 'service',
+            msg: error.message,
+            reason: error.reason,
+            data: error.data,
+          });
+          return new Response(error.message, { status: error.status, headers: ctx.resHeaders });
+        } else if (error instanceof Error) {
+          ctx.logger.error({
+            step: 'serviceAccident',
+            msg: error.message,
+            data: { stack: error.stack },
+          });
+          return new Response(error.message, { status: 500, headers: ctx.resHeaders });
+        } else {
+          ctx.logger.error({
+            step: 'serviceAccident',
+            msg: '未知异常',
+            data: { error },
+          });
+          return new Response('未知异常', { status: 500, headers: ctx.resHeaders });
+        }
+      }
     };
+
+    const res: Record<string, BunServeHandler> = {
+      [method.toUpperCase()]: methodService,
+    };
+
+    if (optionsService) {
+      res['OPTIONS'] = optionsService;
+    }
+
+    return res;
   };
 };
 

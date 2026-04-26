@@ -35,29 +35,33 @@ export class RefreshFailed extends Error {
 
 // ==========================
 
-export async function warpperRefreshTokenCatch(this: TsRouterClass, callback: () => Promise<Response | void>) {
+export async function warpperRefreshTokenCatch(this: TsRouterClass, requestHandle: () => Promise<Response | void>) {
   do {
     try {
       /** 如果正在刷新，暂时阻塞所有的请求 */
       if (this.isRefreshing) {
         await new Promise((resolve, reject) => this.interceptDuringRefreshResolves.push({ resolve, reject }));
       }
-      const response = await callback();
-      try {
-        return response?.json();
-      } catch (error) {
-        return response?.text();
+
+      const response = await requestHandle();
+      if (response) {
+        let resdata = await response?.text();
+        try {
+          return JSON.parse(resdata);
+        } catch {
+          return resdata;
+        }
       }
+      return;
     } catch (error) {
       if (error instanceof RefreshSuccess) {
         // 刷新成功，重新执行
         console.log('刷新成功，重新执行');
         continue;
       }
-      // todo 网络断开就等待10s后无限重试，直到离开页面的 abort
-      // todo 离开页面的 abort
-      this.onResponseError?.(error);
-      // todo 触发钩子
+
+      // 这里不做网络检查，放到 this.onResponseError 用户自定义来做吧
+      await this.onResponseError?.(error);
       // 刷新失败，抛出异常
       throw error;
     }

@@ -1,6 +1,6 @@
 import type { Logger } from './logger';
 import { MaybePromise } from 'bun';
-import type { RestApiMethod } from '@/types';
+import { RestApiMethod } from '@packages/utils';
 
 export interface Context {
   url: string;
@@ -13,13 +13,16 @@ export interface Context {
   logger: Logger;
 }
 
-// =============== 扩展方法SSE ===============
+/** 在 createRouter 中设置上下文 */
+export type RouterSetup = (logger: Logger, middlewares: Middleware[], optionsService: BunServeHandler) => void;
 
-type RS = (logger: Logger, middlewares: Middleware[]) => void;
+export type BunServeHandler = Bun.Serve.Handler<Bun.BunRequest, Bun.Server<undefined>, unknown>;
+
+// =============== 扩展方法SSE ===============
 
 export interface ServiceClass {
   method: RestApiMethod;
-  set(...args: unknown[]): RS;
+  set(...args: unknown[]): RouterSetup;
 }
 
 // todo next()

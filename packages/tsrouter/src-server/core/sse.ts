@@ -5,7 +5,7 @@ import type { ProcedureDef } from '@/src-client/type';
 import { WatchDog } from '@packages/utils';
 import { ServiceError } from '../error';
 import { AwaitedReturn, Func } from '@packages/utils/types';
-import type { RestApiMethod } from '@/types';
+import { RestApiMethod } from '@packages/utils';
 import { MaybePromise } from 'bun';
 
 class SseServiceClass implements ServiceClass {
@@ -38,14 +38,11 @@ class SseServiceClass implements ServiceClass {
           });
 
           let id = 0;
-          const callback: WriteFunc = async (data, event?: string) => {
+          const callback: WriteFunc = async (data, event = 'message') => {
             request.signal.throwIfAborted();
             watchDog.feed();
-            const msg = [`id: ${id}`, `data: ${data}`];
-            if (event) {
-              msg.push(`event: ${event}`);
-            }
-            controller.enqueue(encoder.encode(msg.join('\n') + '\n\n'));
+            const resData = JSON.stringify({ id, data, event });
+            controller.enqueue(encoder.encode(resData + '\n\n'));
             id++;
           };
 
@@ -62,43 +59,35 @@ class SseServiceClass implements ServiceClass {
               await service(optional);
             }
           } catch (error) {
+            let msg: string, reason: string | undefined, data, serviceError: string | undefined;
             if (error instanceof ServiceError) {
-              ctx.logger.error({
-                step: 'service',
-                msg: error.message,
-                reason: error.reason,
-                data: error.data,
-              });
-              await callback(error.message, 'error');
+              msg = error.message;
+              reason = error.reason;
+              data = error.data;
+              serviceError = error.message;
+            } else if (error instanceof DOMException && error.name === 'AbortError') {
+              // 网页上的中断
+              msg = '中断';
+              reason = 'SSE_ABORT_ERROR';
             } else if (error instanceof Error) {
-              if (error.name === 'AbortError') {
-                ctx.logger.error({
-                  step: 'service',
-                  msg: '中断',
-                  reason: 'sse AbortError',
-                });
-              } else {
-                ctx.logger.error({
-                  step: 'service',
-                  msg: error.message,
-                  reason: 'sse error',
-                  data: {
-                    stack: error.stack,
-                    name: error.name,
-                    cause: error.cause,
-                  },
-                });
-                await callback(error.message, 'error');
-              }
+              msg = error.message;
+              reason = 'sse error';
+              data = {
+                stack: error.stack,
+                name: error.name,
+                cause: error.cause,
+              };
+              serviceError = error.message;
             } else {
-              ctx.logger.error({
-                step: 'service',
-                msg: '异常',
-                reason: 'sse error no-error',
-                data: { error },
-              });
-              await callback('异常', 'error');
+              msg = '异常';
+              reason = 'sse error no-error';
+              data = { error };
+              serviceError = '未知异常';
             }
+            if (serviceError) {
+              await callback(serviceError, 'SERVICE_ERROR');
+            }
+            ctx.logger.error({ step: 'service', msg, reason, data });
           }
           watchDog.kill();
           controller.close();
@@ -118,12 +107,11 @@ class SseServiceClass implements ServiceClass {
   }
 }
 
-export function createSseMethod() {
-  const handle: Handle = (...arg1: unknown[]) => {
+export const createSseMethod =
+  (): Handle =>
+  (...arg1: unknown[]) => {
     return new SseServiceClass().set(...arg1) as unknown as ProcedureDef<'sse'>;
   };
-  return handle;
-}
 
 /** 这里定义在 server 中的定义类型 */
 

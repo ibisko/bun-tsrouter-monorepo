@@ -1,2 +1,3 @@
-export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
+import { RestApiMethod } from "@packages/utils";
+
 export type Method = RestApiMethod | 'sse' | 'uploadFile';

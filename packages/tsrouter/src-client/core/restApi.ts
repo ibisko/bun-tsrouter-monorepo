@@ -1,67 +1,74 @@
 import { ResponseError } from '../error';
 import { MethodOptions, TsRouterClass } from '../type';
-import type { RestApiMethod } from '@/types';
-import { parseUrl } from '../utils';
+import { RestApiMethod } from '@packages/utils';
 
 export async function restApi(this: TsRouterClass, { method, path, query, body, options = {} }: RestApiParams) {
+  // ============ 设置 Headers ============
   const headers = options.headers instanceof Headers ? options.headers : new Headers();
   if (this.setHeaders) {
     await this.setHeaders(headers);
   }
-
-  if (options.headers) {
-    Object.entries(options.headers).map(([key, value]) => {
-      headers.set(key, value);
-    });
-  }
-
   if (body) {
     headers.set('Content-Type', 'application/json');
   }
+  if (options.headers) {
+    Object.entries(options.headers).map(([key, val]) => headers.set(key, val));
+  }
 
-  // 超时中断
-  const controller = new AbortController();
-  const signals = [controller.signal];
+  // ============ 超时设置 ============
+  const defaultAbortController = new AbortController();
+  const signalList = [defaultAbortController.signal];
   if (options.signal) {
-    signals.push(options.signal);
+    signalList.push(options.signal);
   }
-  const signal = AbortSignal.any(signals);
-  if (this.timeout || options.timeout) {
-    setTimeout(() => controller.abort(), options.timeout ?? this.timeout);
+  const signal = AbortSignal.any(signalList);
+  const timeout = options.timeout ?? this.timeout;
+  const timeoutInstance = setTimeout(() => defaultAbortController.abort(), timeout);
+
+  // 不要 jsonRequest 因为里面就已经做了 response.ok 的错误捕获
+  const url = new URL(`${this.prefix}/${path.join('/')}`, this.baseUrl);
+  if (query) {
+    Object.entries(query).forEach(([key, val]) => url.searchParams.append(key, val));
   }
 
-  const url = parseUrl({ baseUrl: this.baseUrl, prefix: this.prefix, path, query });
-  const response = await fetch(url, {
-    method: method.toUpperCase(),
+  const reqInit: RequestInit = {
+    method: method,
     headers: headers,
     signal: signal,
-    body: ['get', 'sse', 'head'].includes(method) ? undefined : JSON.stringify(body),
-  });
+  };
+
+  if (!['get', 'head'].includes(method)) {
+    reqInit.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(url, reqInit);
+
+  clearTimeout(timeoutInstance);
 
   if (!response.ok) {
-    // todo 网络检查
-    const status = response.status;
+    let message = await response.text();
+    try {
+      const obj = JSON.parse(message);
+      let _message = obj.msg || obj.message;
+      if (_message) message = _message;
+    } catch {}
 
-    if (status === 401) {
-      // 刷新token续签
-      return await this.refreshTokenHandle();
-    } else if (status === 403) {
-      // IP已被拉黑
-      throw new ResponseError({ message: 'IP已被拉黑', status: 403 });
-    } else if (status === 429) {
-      // IP已被限流
-      throw new ResponseError({ message: 'IP已被拉黑', status: 429 });
-    } else {
-      // todo 后续捕获结果再抛出异常
-      let message = await response.text();
-      try {
-        const obj = JSON.parse(message);
-        let _message = obj.msg || obj.message;
-        if (_message) message = _message;
-      } catch {}
-      console.log({ ErrMessage: message });
+    switch (response.status) {
+      case 401:
+        // 刷新token续签
+        await this.refreshTokenHandle(); // 只要定义了 refreshToken 就会抛异常，如果没有那就用下面抛出异常
+        throw new ResponseError({ message, status: response.status });
 
-      throw new ResponseError({ message, status: 400 });
+      case 403:
+        // IP已被拉黑
+        throw new ResponseError({ message: message || 'IP已被拉黑', status: response.status });
+
+      case 429:
+        // IP已被限流
+        throw new ResponseError({ message: message || 'IP已被限流', status: response.status });
+
+      default:
+        throw new ResponseError({ message, status: response.status });
     }
   }
 
@@ -70,7 +77,7 @@ export async function restApi(this: TsRouterClass, { method, path, query, body, 
 
 export type RestApiParams = {
   method: RestApiMethod;
-  path: string | string[];
+  path: string[];
   query?: Record<string, string> | null;
   body?: any;
   options?: MethodOptions;
