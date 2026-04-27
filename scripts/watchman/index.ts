@@ -7,8 +7,6 @@ import type { WatchmanConfigInfo } from './types';
 import { capabilityCheck, ROOT_DIR } from './uitls';
 import { WatchmanClient } from './client';
 
-let watchmanclient: WatchmanClient | null = null;
-
 // 通用的互斥锁工具：第一个调用者执行 cb，后续调用者等待第一个完成
 function createOnceAsync<T>(cb: () => Promise<T>): () => Promise<T> {
   let promise: Promise<T> | null = null;
@@ -24,12 +22,11 @@ const getWatchmanClient = createOnceAsync(async () => {
   const client = new watchman.Client();
   // 检查与watchman连接是否成功
   await capabilityCheck(client);
-  console.log('与watchman连接成功');
+  // console.log('与watchman连接成功');
   process.on('SIGINT', () => {
     client.end();
   });
-  watchmanclient = new WatchmanClient(client);
-  return watchmanclient;
+  return new WatchmanClient(client);
 });
 
 async function main() {

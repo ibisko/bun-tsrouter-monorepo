@@ -26,7 +26,7 @@ const configs: WatchmanConfigInfo = [
       },
       {
         cwd: 'packages/tsrouter',
-        watch: ['src-client', 'src-server'],
+        watch: ['src-client', 'src-server', 'types'],
         script: 'bun tsup',
       },
       {
