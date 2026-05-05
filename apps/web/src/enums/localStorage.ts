@@ -1,3 +1,3 @@
 export const LocalStorageEnum = {
-  IsDark: 'isDark',
+  Theme: 'theme',
 };
