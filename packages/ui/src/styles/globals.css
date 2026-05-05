@@ -14,7 +14,7 @@
   /* src: url('../../fonts/LXGWWenKaiMono-Medium.woff2'); */
 }
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 @theme inline {
   /* --font-sans: 'LXGWWenKaiMono', ui-sans-serif, system-ui, sans-serif; */
@@ -99,12 +99,12 @@
   --sidebar-ring: oklch(0.737 0.021 106.9);
 }
 
-.dark {
+[data-theme="dark"] {
   --background: oklch(0.153 0.006 107.1);
   --foreground: oklch(0.988 0.003 106.5);
   --card: oklch(0.218 0.008 223.9);
   --card-foreground: oklch(0.987 0.002 197.1);
-  --popover: oklch(0.228 0.013 107.4);
+  --popover: oklch(22.372% 0.01031 196.576);
   --popover-foreground: oklch(0.988 0.003 106.5);
   --primary: oklch(0.437 0.078 188.216);
   --primary-foreground: oklch(0.984 0.014 180.72);
@@ -140,5 +140,11 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  * {
+    /* scrollbar-width: thin; */
+    scrollbar-width: none;
+    scrollbar-color: oklch(0.7 0.02 106.5) transparent;
   }
 }
