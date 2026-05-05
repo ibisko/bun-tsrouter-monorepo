@@ -1,30 +1,42 @@
-type Method = 'POST' | 'GET';
+export type RestApiMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 
 type RequestParam = {
-  method: Method;
+  method: RestApiMethod | Uppercase<RestApiMethod>;
   url: string;
   headers?: Headers;
-  host: string;
-  query?: Record<string, string>;
+  baseUrl: string;
+  query?: Record<string, string> | null;
   body?: Record<string, any>;
   signal?: AbortSignal;
+  timeout?: number;
+  skipErrorHandler?: boolean;
 };
 
-export async function jsonRequest({ method, url, host, query, body, headers = new Headers(), signal }: RequestParam) {
-  const _url = new URL(url, host);
+export async function jsonRequest({
+  method,
+  url,
+  baseUrl,
+  query,
+  body,
+  headers = new Headers(),
+  signal,
+  timeout = 1e3 * 60,
+  skipErrorHandler,
+}: RequestParam) {
+  const _method = method.toUpperCase();
+  const _url = new URL(url, baseUrl);
 
-  if (query) {
-    Object.entries(query).forEach(([key, val]) => {
-      _url.searchParams.append(key, val);
-    });
-  }
+  if (query) Object.entries(query).forEach(([key, val]) => _url.searchParams.append(key, val));
+
+  const signals = [AbortSignal.timeout(timeout)];
+  if (signal) signals.push(signal);
 
   const reqInit: RequestInit = {
-    method,
+    method: _method,
     headers,
-    signal,
+    signal: AbortSignal.any(signals),
   };
-  if (method === 'POST' && body) {
+  if (_method !== 'GET' && body) {
     reqInit.body = JSON.stringify(body);
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
@@ -32,6 +44,8 @@ export async function jsonRequest({ method, url, host, query, body, headers = ne
   }
 
   const response = await fetch(_url, reqInit);
+
+  if (skipErrorHandler) return response;
 
   if (!response.ok) {
     let msg = await response.text();
