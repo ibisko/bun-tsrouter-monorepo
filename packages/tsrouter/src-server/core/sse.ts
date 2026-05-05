@@ -26,11 +26,12 @@ class SseServiceClass implements ServiceClass {
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
-          // 设置看门狗，每15s发送一次心跳来保持连接
+          // 设置看门狗，每5s发送一次心跳来保持连接
           const watchDog = new WatchDog(() => {
+            console.log('设置看门狗，每5s发送一次心跳来保持连接');
             controller.enqueue(encoder.encode(':\n\n'));
             watchDog.feed();
-          }, 1e3 * 15);
+          }, 1e3 * 5);
 
           // 断开连接时
           request.signal.addEventListener('abort', async () => {
@@ -67,8 +68,10 @@ class SseServiceClass implements ServiceClass {
               serviceError = error.message;
             } else if (error instanceof DOMException && error.name === 'AbortError') {
               // 网页上的中断
+              console.log("捕获到网页上的中断");
               msg = '中断';
               reason = 'SSE_ABORT_ERROR';
+              serviceError = '网页abort';
             } else if (error instanceof Error) {
               msg = error.message;
               reason = 'sse error';
@@ -125,7 +128,7 @@ export type SseService<T extends z.ZodObject | null = null> =
   T extends z.ZodObject ? (param: z.output<T>, optional: SseServiceOptional) => MaybePromise<void> :
                           (optional: SseServiceOptional) => MaybePromise<void>;
 
-type SseServiceOptional = {
+export type SseServiceOptional = {
   write: WriteFunc;
   signal: AbortSignal;
   ctx: Context;
@@ -134,7 +137,7 @@ type SseServiceOptional = {
 /** sse写消息的方法 */
 export type WriteFunc = {
   /** 默认 event 是 message */
-  (data: string): Promise<void>;
+  (data: any): Promise<void>;
   /** 自定义 event */
-  (data: string, event: string): Promise<void>;
+  (data: any, event: string): Promise<void>;
 };

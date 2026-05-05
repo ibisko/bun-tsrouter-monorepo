@@ -1,49 +1,27 @@
+import { kebabCase } from 'lodash-es';
 import { ResponseError } from '../error';
 import { MethodOptions, TsRouterClass } from '../type';
-import { RestApiMethod } from '@packages/utils';
+import { jsonRequest, RestApiMethod } from '@packages/utils';
 
 export async function restApi(this: TsRouterClass, { method, path, query, body, options = {} }: RestApiParams) {
   // ============ 设置 Headers ============
   const headers = options.headers instanceof Headers ? options.headers : new Headers();
-  if (this.setHeaders) {
-    await this.setHeaders(headers);
-  }
-  if (body) {
-    headers.set('Content-Type', 'application/json');
-  }
-  if (options.headers) {
-    Object.entries(options.headers).map(([key, val]) => headers.set(key, val));
-  }
+  if (this.setHeaders) await this.setHeaders(headers);
+  if (body) headers.set('Content-Type', 'application/json');
+  if (options.headers) Object.entries(options.headers).map(([key, val]) => headers.set(key, val));
 
-  // ============ 超时设置 ============
-  const defaultAbortController = new AbortController();
-  const signalList = [defaultAbortController.signal];
-  if (options.signal) {
-    signalList.push(options.signal);
-  }
-  const signal = AbortSignal.any(signalList);
-  const timeout = options.timeout ?? this.timeout;
-  const timeoutInstance = setTimeout(() => defaultAbortController.abort(), timeout);
-
-  // 不要 jsonRequest 因为里面就已经做了 response.ok 的错误捕获
-  const url = new URL(`${this.prefix}/${path.join('/')}`, this.baseUrl);
-  if (query) {
-    Object.entries(query).forEach(([key, val]) => url.searchParams.append(key, val));
-  }
-
-  const reqInit: RequestInit = {
-    method: method,
-    headers: headers,
-    signal: signal,
-  };
-
-  if (!['get', 'head'].includes(method)) {
-    reqInit.body = JSON.stringify(body);
-  }
-
-  const response = await fetch(url, reqInit);
-
-  clearTimeout(timeoutInstance);
+  const url = `${kebabCase(this.prefix)}/${path.map(item => kebabCase(item)).join('/')}`;
+  const response = await jsonRequest({
+    method,
+    baseUrl: this.baseUrl,
+    url,
+    headers,
+    body,
+    query,
+    timeout: options.timeout ?? this.timeout,
+    signal: options.signal,
+    skipErrorHandler: true,
+  });
 
   if (!response.ok) {
     let message = await response.text();
