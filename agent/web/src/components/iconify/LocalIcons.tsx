@@ -11,13 +11,13 @@ export const LocalIcons = () => {
   }, []);
 
   return (
-    <>
-      <div className='p-1.5 font-black'>Local icons</div>
-      <div className="flex flex-wrap p-1.5">
+    <div className='flex flex-col'>
+      <div className="p-1.5 font-black">Local icons</div>
+      <div className="grid grid-cols-7 mx-auto my-1.5">
         {localIcons.map(item => (
           <SvgIcon className="text-4xl" item={item} key={item.key} />
         ))}
       </div>
-    </>
+    </div>
   );
 };

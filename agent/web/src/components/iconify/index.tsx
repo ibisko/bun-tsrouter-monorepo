@@ -13,6 +13,7 @@ export const Iconify = ({ className }: IconifyProps) => {
 
   return (
     <Popover
+      className={cn('w-80 h-135 backdrop-blur-md border rounded-xl shadow-xl overflow-auto', className)}
       trigger={
         <Button variant={visible ? 'default' : 'ghost'} size="icon-sm">
           <LineMdIconify2StaticTwotone className="size-5" />
@@ -20,25 +21,12 @@ export const Iconify = ({ className }: IconifyProps) => {
       }
       open={visible}
       onOpenChange={setVisible}
-      sideOffset={8}
+      sideOffset={10}
       side="right"
       align="start">
-      <IconifyBox />
+      <LocalIcons />
+      <IconSearch />
+      <IconSets />
     </Popover>
-  );
-};
-
-type IconifyBoxProps = {
-  className?: string;
-};
-export const IconifyBox = ({ className }: IconifyBoxProps) => {
-  return (
-    <div className={cn('bg-background/95 backdrop-blur-md border rounded-xl shadow-xl overflow-hidden', className)}>
-      <div className="w-80 h-[540px] overflow-auto">
-        <LocalIcons />
-        <IconSearch />
-        <IconSets />
-      </div>
-    </div>
   );
 };

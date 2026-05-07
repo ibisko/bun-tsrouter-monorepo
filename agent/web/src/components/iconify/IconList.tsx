@@ -17,7 +17,6 @@ export const IconSubList = ({ className, iconsData, size = 44 }: IconListSubProp
 
   useEffect(() => {
     if (!isIntersecting) return;
-    console.log('useIntersectionObserver', `${iconsData.prefix}(${iconsData.ids.length})`);
     fetchIcons(iconsData, icon => {
       setIcon(e => e.map(item => (item.key === icon.key ? { ...item, info: icon } : item)));
     });
