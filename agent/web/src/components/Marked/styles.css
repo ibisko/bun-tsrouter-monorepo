@@ -1,0 +1,87 @@
+@reference "@packages/ui/styles.css";
+
+.marked-components {
+  @apply relative w-full;
+
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply my-2;
+
+  }
+
+
+  pre {
+    @apply my-2 text-xs;
+  }
+
+  hr {
+    @apply my-4;
+  }
+
+  :not(pre)>code {
+    @apply px-1 border rounded text-xs bg-primary/30;
+  }
+
+  table {
+    @apply my-2 border;
+
+    thead {
+      @apply border-b bg-muted;
+
+      th {
+        @apply not-last:border-r font-bold;
+      }
+    }
+
+    tbody {
+      @apply text-xs;
+
+      tr {
+        @apply not-last:border-b;
+
+        &:nth-child(even) {
+          @apply bg-muted/50;
+        }
+      }
+
+      td {
+        @apply not-last:border-r;
+      }
+    }
+
+    td,
+    th {
+      @apply px-2 py-1;
+    }
+
+    tr {
+      @apply px-2;
+    }
+  }
+
+  ul {
+    @apply list-disc pl-5;
+
+    /* ol {
+      @apply my-2 list-decimal pl-5;
+    } */
+  }
+}
