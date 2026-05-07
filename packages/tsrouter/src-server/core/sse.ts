@@ -68,7 +68,6 @@ class SseServiceClass implements ServiceClass {
               serviceError = error.message;
             } else if (error instanceof DOMException && error.name === 'AbortError') {
               // 网页上的中断
-              console.log("捕获到网页上的中断");
               msg = '中断';
               reason = 'SSE_ABORT_ERROR';
               serviceError = '网页abort';
@@ -136,8 +135,6 @@ export type SseServiceOptional = {
 
 /** sse写消息的方法 */
 export type WriteFunc = {
-  /** 默认 event 是 message */
-  (data: any): Promise<void>;
   /** 自定义 event */
-  (data: any, event: string): Promise<void>;
+  (data: any, event?: string): Promise<void>;
 };
