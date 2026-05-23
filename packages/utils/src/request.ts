@@ -32,6 +32,7 @@ export async function jsonRequest({
     });
   }
 
+  // timeout setting
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(new DOMException('Request timed out', 'TimeoutError')), timeout);
   const onAbort = () => clearTimeout(timeoutId);

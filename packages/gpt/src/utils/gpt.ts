@@ -1,22 +1,29 @@
-import { MaybePromise } from 'bun';
-import { GPT } from '@/types';
+import { GPT, MessageType, SseCallback } from '@/types';
 
-export const gptParseStreamJson = (streamJson: GPT.StreamResponse[], cb: Callback) => {
+export const gptParseStreamJson = async (streamJson: GPT.StreamResponse[], cb: SseCallback) => {
   let usage: GPT.Usage | undefined = undefined;
-  let reasoning_content = '';
+  let thinking = '';
   let content = '';
-  const tool_calls: GPT.ChoicesToolCalls[] = [];
 
   for (const item of streamJson) {
     for (const chiocs of item.choices) {
       if (chiocs.delta.reasoning_content) {
-        reasoning_content += chiocs.delta.reasoning_content;
+        thinking += chiocs.delta.reasoning_content;
       }
       if (chiocs.delta.content) {
         content += chiocs.delta.content;
       }
       if (chiocs.delta.tool_calls) {
-        tool_calls.push(...chiocs.delta.tool_calls);
+        for (const tool of chiocs.delta.tool_calls) {
+          await cb(
+            {
+              id: tool.id,
+              name: tool.function.name,
+              args: JSON.parse(tool.function.arguments.trim()),
+            },
+            MessageType.Tools,
+          );
+        }
       }
     }
     if (item.usage) {
@@ -24,15 +31,7 @@ export const gptParseStreamJson = (streamJson: GPT.StreamResponse[], cb: Callbac
     }
   }
 
-  if (reasoning_content) {
-    cb(reasoning_content, 'thinking');
-  }
-
-  if (content) {
-    cb(content, 'content');
-  }
-
-  return { usage, tool_calls };
+  if (thinking) await cb(thinking, MessageType.Thinking);
+  if (content) await cb(content, MessageType.Content);
+  if (usage) await cb(usage, MessageType.Usage);
 };
-
-type Callback = (data: string, type: 'thinking' | 'content') => MaybePromise<void>;

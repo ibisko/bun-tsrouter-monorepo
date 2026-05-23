@@ -1,5 +1,5 @@
-import { chatSse } from './chat';
+import { sendMessageRouter } from './chat';
 
 export const chatRouter = {
-  chat: chatSse,
+  sendMessage: sendMessageRouter,
 };

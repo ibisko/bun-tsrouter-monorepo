@@ -1,0 +1,50 @@
+model UserMessages {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    pid     Int?
+    content String
+    sources Json?
+
+    session      Sessions?
+    agentMessage AgentMessages[]
+}
+
+model AgentMessages {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    pid      Int?
+    role     String
+    content  Json // 单行消息，注意不是整组
+    metadata Json?
+
+    agent_type String? // 该消息来源于哪个 agent 直接生成的，用于复盘 sub-agent
+
+    umid        Int
+    userMessage UserMessages @relation(fields: [umid], references: [id])
+}
+
+// 用户会话新建、分支新建的 session
+model Sessions {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    title           String // 简单的理解小标题，只是给用户看的
+    summary         String? // 内容过长，就需要总结摘要
+    summary_to_umid Int? // 摘要到哪个 umid 为止
+
+    latest_umid Int          @unique // 最后一条 UserMessage 消息 id
+    userMessage UserMessages @relation(fields: [latest_umid], references: [id])
+}
+
+// agent 自动归档分类的 session
+// todo 对 session 的关键提取，有目标来指定，不要让 agent 来自己指定吧？
+// pid         Int? // 从哪个 session 之下分化细分的，考虑下最大层级数（根据实际体验吧，后续加入）
+// description String // 描述 session 是干嘛的，用与匹配

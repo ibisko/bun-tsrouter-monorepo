@@ -2,7 +2,7 @@ import z from 'zod';
 
 export namespace Gemini {
   // export type Role = 'user' | 'model';
-  export type Content = z.output<typeof geminiRequestSchema>['contents'][number];
+  export type Content = z.output<typeof geminiRequestSchema>['messages'][number];
   export type Role = Content['role'];
   /**
    * https://ai.google.dev/gemini-api/docs/gemini-3?hl=zh-cn#meet_the_gemini_3_series
@@ -83,7 +83,7 @@ export namespace Gemini {
     media_resolution_high = 'media_resolution_high',
   }
 
-  type Part = {
+  export type Part = {
     text: string;
     inline_data?: {
       mime_type: 'image/jpeg';
@@ -126,7 +126,26 @@ export namespace Gemini {
     };
   };
 
-  type Tool = { googleSearch: {} } | { urlContext: {} };
+  export type Tool = {
+    googleSearch?: {};
+    google_search?: {};
+    urlContext?: {};
+    code_execution?: {};
+    functionDeclarations?: {
+      name: string;
+      description: string;
+      parameters: {};
+    }[];
+  };
+
+  export type ToolCall = {
+    /** 调用函数名 */
+    name: string;
+    /** 对象参数 */
+    args: any;
+    /** 调用id */
+    id: string;
+  };
 
   export type UsageMetadata = {
     promptTokenCount: number;
@@ -136,13 +155,45 @@ export namespace Gemini {
     thoughtsTokenCount?: number;
   };
 
+  type CandidateContentModel = {
+    role: 'model' | 'user';
+    parts: {
+      text: string;
+      thought?: boolean;
+      functionCall?: ToolCall;
+      functionResponse: {
+        name: string;
+        id: string;
+        response: any;
+        /* parts: {
+            inlineData: {
+              displayName: 'instrument.jpg';
+              mimeType: string;
+              data: string;
+            };
+          }[]; */
+      };
+      thoughtSignature?: string;
+    }[];
+  };
+
+  export type CandidateContent = CandidateContentModel;
+
   export type Candidate = {
-    content: {
-      role: 'model';
-      parts: { text: string; thought?: boolean; thoughtSignature?: string }[];
-    };
     index: number;
+    content: CandidateContent;
     finishReason?: 'STOP';
+    groundingMetadata?: {
+      webSearchQueries: string[];
+      searchEntryPoint: {
+        renderedContent: string;
+      };
+      groundingChunks: { web: { uri: string; title: string } }[];
+      groundingSupports: {
+        segment: { startIndex: number; endIndex: number; text: string };
+        groundingChunkIndices: number[];
+      }[];
+    };
   };
 
   export type StreamResponse = {
@@ -153,17 +204,19 @@ export namespace Gemini {
   };
 }
 
+export const geminiModel = z.enum([
+  'gemini-3.5-flash',
+  'gemini-3.1-flash-lite-preview',
+  'gemini-3.1-flash-image-preview',
+  'gemini-3.1-pro-preview',
+  'gemini-3-flash-preview',
+  'gemini-3-pro-image-preview',
+]);
+
 export const geminiRequestSchema = z.object({
-  systemInstruction: z
-    .object({
-      parts: z.array(
-        z.object({
-          text: z.string(),
-        }),
-      ),
-    })
-    .optional(),
-  contents: z.array(
+  model: geminiModel.optional().default('gemini-3.5-flash'),
+  system: z.string().optional(),
+  messages: z.array(
     z.object({
       role: z.enum(['user', 'model']),
       parts: z.array(

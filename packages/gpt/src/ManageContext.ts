@@ -1,13 +1,13 @@
 import { pick } from 'lodash-es';
-import { Context, Role } from './types';
+import { Context, GPT } from './types';
 
 export class ManageContext {
   private id = 1;
 
   context: Context[] = [];
 
-  add(role: Role, content: string, insertIndex?: number) {
-    const item: Context = {
+  add(role: GPT.Role, content: string, insertIndex?: number) {
+    const item: any = {
       id: this.id,
       role,
       content: [
@@ -35,6 +35,7 @@ export class ManageContext {
     };
   }
 
+  // todo 修改
   // set(id: number, content: string) {
   //   this.context.find()
   // }
@@ -42,6 +43,15 @@ export class ManageContext {
   delete(...ids: number[]) {
     const set = new Set(ids);
     this.context = this.context.filter(item => !set.has(item.id));
+  }
+
+  truncateFrom(id: number) {
+    const context = [];
+    for (const item of this.context) {
+      context.push(item);
+      if (item.id === id) break;
+    }
+    this.context = context;
   }
 
   sort(...ids: number[]) {

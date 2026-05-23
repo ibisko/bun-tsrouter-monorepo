@@ -1,34 +1,32 @@
 import z from 'zod';
 import { pick } from 'lodash-es';
-import { GPT } from '@/types';
+import type { MaybePromise } from 'bun';
 
 export { geminiParseStreamJson } from './gemini';
 export { gptParseStreamJson } from './gpt';
-
-/** 添加工具 */
-export const createTool = ({ name, description, parameters }: AddTool): GPT.Tool => ({
-  type: 'function',
-  function: {
-    name,
-    description,
-    parameters: pick(
-      parameters.toJSONSchema({
-        target: 'openapi-3.0',
-        io: 'input',
-      }),
-      ['type', 'properties'],
-    ),
-  },
-});
+export { createAnthropicParseStreamJson } from './anthropic';
 
 export type AddTool = {
   name: string;
   description: string;
-  parameters: z.ZodObject;
+  parameters: z.ZodType;
 };
 
+/** 添加工具 gemini 也同样可用 */
+export const createTool = ({ name, description, parameters }: AddTool) => ({
+  name,
+  description,
+  parameters: pick(
+    parameters.toJSONSchema({
+      target: 'openapi-3.0',
+      io: 'input',
+    }),
+    ['type', 'properties', 'required'],
+  ) as any,
+});
+
 /** 以 `data:` 开头 */
-export const createDataStreamToJson = <T>() => {
+const createDataStreamToJson = <T>() => {
   let cache = ''; // todo 真的适合放这里吗，需要检查每次进来的data是否都是data:开头
   return (data: string): T[] => {
     if (!data.startsWith('data:')) {
@@ -81,4 +79,18 @@ export const createDataStreamToJson = <T>() => {
     } */
     return resJsons;
   };
+};
+
+export const wrapperSSEStream = async <T>(response: Response, cb: (data: T[]) => MaybePromise<void>) => {
+  const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
+  if (!reader) throw new Error('no reader');
+
+  const streamToJson = createDataStreamToJson<T>();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const jsons = streamToJson(value);
+    await cb(jsons);
+  }
 };

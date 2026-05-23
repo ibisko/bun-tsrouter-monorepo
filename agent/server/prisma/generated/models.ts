@@ -8,6 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Users'
+export type * from './models/UserMessages'
+export type * from './models/AgentMessages'
+export type * from './models/Sessions'
 export type * from './models/BlackList'
 export type * from './commonInputTypes'

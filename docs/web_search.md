@@ -1,0 +1,1 @@
+- digitalapplied.com

@@ -1,15 +1,13 @@
-import type { MaybePromise } from 'bun';
-import type { GPT } from '@/types';
+import { GPT } from '@/types';
 import { AddTool, createTool } from '@/utils';
 import { Context, Gemini } from './types';
 import { ManageContext } from './ManageContext';
 import { cloneDeep, pick } from 'lodash-es';
 
 /** 用于定义agent行为 */
-export class ChatContext<T> {
+export class ChatContext {
   private created = Date.now();
   system: string = '';
-  tools: GPT.Tool[] = [];
 
   /** 历史上下文 */
   context = new ManageContext();
@@ -17,21 +15,8 @@ export class ChatContext<T> {
   thinkingEvent = new EventTarget();
   contentEvent = new EventTarget();
 
-  /**
-   * todo
-   * 初始的 system
-   *
-   */
-  constructor() {}
-
   setSystem(content: string) {
     this.system = content;
-  }
-
-  /** 添加工具 */
-  addTools({ name, description, parameters }: AddTool) {
-    const tool = createTool({ name, description, parameters });
-    this.tools.push(tool);
   }
 
   jsonContext(): Context[] {
@@ -40,26 +25,22 @@ export class ChatContext<T> {
       res.unshift({
         id: 0,
         created: this.created,
-        role: 'system',
-        content: [{ type: 'text', text: this.system }],
+        role: GPT.Role.System,
+        content: this.system,
       });
     }
     return res;
   }
 
-  json(): GPT.Message[] {
-    const res = cloneDeep(this.context.json());
-    if (this.system) {
-      res.unshift({
-        role: 'system',
-        content: [{ type: 'text', text: this.system }],
-      });
-    }
-    return res;
+  json(): { system: string; messages: GPT.Message[] } {
+    return {
+      system: this.system,
+      messages: cloneDeep(this.context.json()) as GPT.Message[],
+    };
   }
 
   toGemini() {
-    const contents: Gemini.Content[] = this.context.context
+    const messages: Gemini.Content[] = this.context.context
       .filter(item => ['assistant', 'user'].includes(item.role))
       .map(item => {
         let role = item.role as Gemini.Role;
@@ -69,11 +50,21 @@ export class ChatContext<T> {
         if (typeof item.content === 'string') {
           return { role, parts: [{ text: item.content }] };
         }
-        return { role, parts: item.content.map(item => pick(item, 'text')) };
+        return {
+          role,
+          parts: item.content.map(item => pick(item, 'text')) as Gemini.Part[],
+        };
       });
     return {
-      systemInstruction: { parts: [{ text: this.system }] },
-      contents,
+      system: this.system,
+      messages,
+    };
+  }
+
+  toAnthropic() {
+    return {
+      system: this.system,
+      messages: this.context.json(),
     };
   }
 }
