@@ -1,6 +1,12 @@
-- 添加 sse 的 cb 参数的类型约束 writeSchema
-  - `procedure.sse(reqSchema, writeSchema, async (param, { write, signal }) => {}`
+- 尝试 client 中的上传进度采用 ReadableStream
+- 目前的 client upload 并不完善，缺少错误状态码处理
 
+- ~~添加 sse 的 cb 参数的类型约束 writeSchema~~
+  - `procedure.sse(reqSchema, writeSchema, async (param, { write, signal }) => {}`
+  - 不要这样做，因为对应不同的 type 都有不同的数据类型，太折腾了
+
+- [x] sse的错误处理，内容json.string
+- ? 提供sse的前端hook，封装 useEffect 的 return abortSign 取消
 
 - [x] 前端可视化单元测试
 - [x] ctx 集成日志
@@ -35,7 +41,6 @@
 - [x] 适用于常见的 Json 响应
 - [x] 适用于 SSE 结构化
 - [x] 错误处理
-- todo 网络异常的检查，失败的时候自动重试
 - todo 适用于 ws ?
 - todo 适用于 formData 上传
 - todo 适用于文件流式下载

@@ -39,5 +39,17 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     staticData: { title: 'tsRouter测试' },
   }).lazy(() => import('@/pages/tsRouter').then(r => r.Route));
 
-  return appRoute.addChildren([componentsRoute, userRoute, logRoute, tsRouter]);
+  // const gptRouter = createRoute({
+  //   getParentRoute: () => appRoute,
+  //   path: '/gpt',
+  //   staticData: { title: 'GPT Node' },
+  // }).lazy(() => import('@/pages/gpt').then(r => r.Route));
+
+  return appRoute.addChildren([
+    componentsRoute,
+    userRoute,
+    logRoute,
+    tsRouter,
+    // gptRouter
+  ]);
 };

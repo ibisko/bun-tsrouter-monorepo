@@ -1,7 +1,6 @@
-import { Outlet, RootRoute, createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
+import { Outlet, RootRoute, createRootRoute, createRoute, createRouter, redirect } from '@tanstack/react-router';
 import { Toaster } from 'sonner';
 import { createAppRoute } from './appRoute';
-import LoginPage from '@/pages/home';
 // import { createWhiteListRoute } from './whiteListRoute';
 
 export const rootRoute: RootRoute = createRootRoute({
@@ -18,7 +17,11 @@ export const rootRoute: RootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: LoginPage,
+  // component: LoginPage,
+  async beforeLoad() {
+    // 重定向
+    throw redirect({ to: '/app/project', replace: true });
+  },
 });
 
 export const routeTree = rootRoute.addChildren([

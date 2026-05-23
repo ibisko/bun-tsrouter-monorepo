@@ -4,7 +4,6 @@ import { Marked as MarkedClass } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 import './styles.css';
-import 'highlight.js/styles/github-dark.min.css';
 
 const markedInstance = new MarkedClass(
   markedHighlight({
@@ -12,6 +11,16 @@ const markedInstance = new MarkedClass(
     langPrefix: 'hljs language-',
     highlight(code, lang) {
       const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      switch (language) {
+        case 'json':
+          try {
+            code = JSON.stringify(JSON.parse(code), null, 2);
+          } catch {
+            /* empty */
+          }
+          break;
+        // todo 可接口提供格式化
+      }
       return hljs.highlight(code, { language }).value;
     },
   }),

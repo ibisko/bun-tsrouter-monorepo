@@ -12,11 +12,11 @@ const initialIconifyStore: IconifyStore = {
 export const iconifyStore = proxy<IconifyStore>(initialIconifyStore);
 
 const fetchLocalIcons = async () => {
-  const list = await Api.iconifyRouter.local.listIcon.get();
+  const list = await Api.iconify.local.listIcon.get();
   iconifyStore.localIcons = list;
 };
 
-type ListIconResponse = Awaited<ReturnType<typeof Api.iconifyRouter.local.listIcon.get>>;
+type ListIconResponse = Awaited<ReturnType<typeof Api.iconify.local.listIcon.get>>;
 
 export const iconifyAction = {
   fetchLocalIcons,

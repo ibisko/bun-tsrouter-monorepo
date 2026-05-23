@@ -1,54 +1,38 @@
 import { createRouter, Logger, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
-import { login, loginSchema, refreshToken } from '@/services/auth';
-import { getUserInfo } from '@/services/users';
-import { tsRouter } from '@/services/tsRouterTest';
 import { authMiddleware } from '@/middlewares/auth';
-import { uploadFile1 } from '@/services/tsRouterTest/upload';
 import { trigger } from '@/middlewares/limitRate';
-import { corsMiddleware } from '@/middlewares/cors';
+import { corsMiddleware, optionsService } from '@/middlewares/cors';
 import { chatRouter } from '@/services/chat';
 import { iconifyRouter } from '@/services/iconify/router';
+import { toolsRouter } from '@/tools';
+import { llmRouter } from '@/services/llm';
 
 export const logger = new Logger();
 
-const mainAuthRouterTree = {
-  user: {
-    getUserInfo: procedure.get(getUserInfo),
-  },
-};
+const mainAuthRouterTree = {};
 
 const mainWhiteListRouterTree = {
-  gpt: {
-    chat: chatRouter,
-  },
-  auth: {
-    login: procedure.post(loginSchema, login),
-    refreshToken: procedure.get(refreshToken),
-  },
+  chat: chatRouter,
+  llm: llmRouter,
 
-  upload: {
-    file: procedure.uploadFile(uploadFile1),
-  },
-
-  test: {
-    tsRouter: tsRouter,
-  },
-
-  iconifyRouter,
+  iconify: iconifyRouter,
+  tools: toolsRouter,
 };
 
 export const mainAuthRouter = createRouter({
-  prefix: ['api'],
+  prefix: '/api',
   logger,
   middlewares: [trigger, authMiddleware, corsMiddleware],
   router: mainAuthRouterTree,
+  optionsService,
 });
 
 export const mainWhiteListRouter = createRouter({
-  prefix: ['api'],
+  prefix: '/api',
   logger,
   middlewares: [trigger, corsMiddleware],
   router: mainWhiteListRouterTree,
+  optionsService,
 });
 
 export type AppRouter = ReplaceSpecificLeaf<typeof mainAuthRouterTree & typeof mainWhiteListRouterTree>;

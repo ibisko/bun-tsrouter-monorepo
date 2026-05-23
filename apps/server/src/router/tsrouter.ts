@@ -7,7 +7,11 @@ import { uploadFile1 } from '@/services/tsRouterTest/upload';
 import { trigger } from '@/middlewares/limitRate';
 import { corsMiddleware } from '@/middlewares/cors';
 
-export const logger = new Logger();
+export const logger = new Logger({
+  stdout(data) {
+    // console.log(data);
+  },
+});
 
 const mainAuthRouterTree = {
   user: {
@@ -31,14 +35,14 @@ const mainWhiteListRouterTree = {
 };
 
 export const mainAuthRouter = createRouter({
-  prefix: ['api'],
+  prefix: '/api',
   logger,
   middlewares: [trigger, authMiddleware, corsMiddleware],
   router: mainAuthRouterTree,
 });
 
 export const mainWhiteListRouter = createRouter({
-  prefix: ['api'],
+  prefix: '/api',
   logger,
   middlewares: [trigger, corsMiddleware],
   router: mainWhiteListRouterTree,

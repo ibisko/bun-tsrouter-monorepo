@@ -29,7 +29,7 @@ async function createServer() {
   });
   console.log('server:', server.url.href);
 
-  // todo 反向代理，需要从 X-Forwarded-For 头部获取真实 IP
+  // todo 反向代理，如从 Nginx 反向代理后 X-Forwarded-For 头部获取真实 IP
 }
 
 async function main() {
@@ -38,7 +38,6 @@ async function main() {
 }
 
 main();
-
 
 // http://macbookm2.ibisko.fun:5773/api/test/ts-router/get-1
 
