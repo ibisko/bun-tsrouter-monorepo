@@ -14,14 +14,10 @@ export async function sse(this: TsRouterClass, path: string[], body: any, option
   });
 
   return async (callback: SseMessageHandler) => {
-    const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
-    if (!reader) throw new Error('no reader');
+    if (!response.body) throw new Error('no body');
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      const contents = value.split('\n\n');
+    for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
+      const contents = chunk.split('\n\n');
       for (let content of contents) {
         content = content.trim();
         if (!content) continue;

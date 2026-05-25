@@ -38,6 +38,7 @@ class SseServiceClass implements ServiceClass {
             watchDog.kill();
           });
 
+          // todo 需要提供外部调用 id，用于从指定 id 开始恢复，便于 web 端重连时指定恢复id
           let id = 0;
           const callback: WriteFunc = async (data, event = 'message') => {
             request.signal.throwIfAborted();

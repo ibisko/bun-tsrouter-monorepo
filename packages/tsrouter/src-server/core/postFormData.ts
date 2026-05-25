@@ -1,13 +1,13 @@
-import type { ServiceClass, UploadFileService } from '../type';
+import type { ServiceClass, PostFormDataService } from '../type';
 import type { ProcedureDef } from '@/src-client/type';
 import { responseToString, trycatchAndMiddlewaresHandle } from '../utils';
 import { AwaitedReturn, Func } from '@packages/utils/types';
 import { RestApiMethod } from '@packages/utils';
 
-class UploadFileServiceClass implements ServiceClass {
+class PostFormDataServiceClass implements ServiceClass {
   method: RestApiMethod = 'post';
 
-  set(service: UploadFileService) {
+  set(service: PostFormDataService) {
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       const formData = await request.formData();
       const response = await service(formData, ctx);
@@ -16,8 +16,8 @@ class UploadFileServiceClass implements ServiceClass {
   }
 }
 
-export const createUploadFile =
+export const createPostFormData =
   () =>
-  <S extends UploadFileService>(service: S) => {
-    return new UploadFileServiceClass().set(service) as unknown as ProcedureDef<'uploadFile', Func, AwaitedReturn<S>>;
+  <S extends PostFormDataService>(service: S) => {
+    return new PostFormDataServiceClass().set(service) as unknown as ProcedureDef<'postFormData', Func, AwaitedReturn<S>>;
   };

@@ -19,7 +19,7 @@ export const UploadFile = () => {
     formData.append('file', file);
 
     try {
-      const res = await Api.test.tsRouter.upload1.uploadFile(formData, {
+      const res = await Api.test.tsRouter.upload1.postFormData(formData, {
         onPercent(percent) {
           console.log('上传进度', percent);
         },
@@ -36,7 +36,7 @@ export const UploadFile = () => {
 
   return (
     <div className="flex">
-      <TestCard title="uploadFile(1)" description="文件&le;5MB 直接单次上传">
+      <TestCard title="postFormData(1)" description="文件&le;5MB 直接单次上传">
         <div className="flex gap-4">
           <Input ref={inputRef} type="file" />
           <Button onClick={upload}>Upload</Button>

@@ -26,7 +26,7 @@ const mainWhiteListRouterTree = {
   },
 
   upload: {
-    file: procedure.uploadFile(uploadFile1),
+    file: procedure.postFormData(uploadFile1),
   },
 
   test: {

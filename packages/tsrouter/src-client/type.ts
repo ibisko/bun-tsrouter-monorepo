@@ -64,7 +64,8 @@ export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R
   // prettier-ignore
   _func:
     M extends 'sse'         ? SseHandler<T> :
-    M extends 'uploadFile'  ? (formData: FormData, options?: UploadMethodOptions) => Promise<R> :
+    M extends 'postFormData'  ? (formData: FormData, options?: UploadMethodOptions) => Promise<R> :
+    M extends 'putFile'  ? (file: File, options?: UploadMethodOptions) => Promise<R> :
     M extends RestApiMethod ? StandardHandler<T, R> :
                               never;
 };

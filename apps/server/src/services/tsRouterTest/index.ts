@@ -11,5 +11,5 @@ export const tsRouter = {
   sse2: sse2,
   sse3: sse3,
 
-  upload1: procedure.uploadFile(uploadFile1),
+  upload1: procedure.postFormData(uploadFile1),
 };

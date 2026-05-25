@@ -78,5 +78,5 @@ export const createAppRouter = <T>(tsRouter: TsRouter) =>
     put: tsRouter.put.bind(tsRouter),
     delete: tsRouter.delete.bind(tsRouter),
     sse: tsRouter.sse.bind(tsRouter),
-    uploadFile: tsRouter.upload.bind(tsRouter),
+    postFormData: tsRouter.upload.bind(tsRouter),
   });

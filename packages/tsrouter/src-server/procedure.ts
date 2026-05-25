@@ -2,9 +2,10 @@ import { createStandardMethod } from './core/restApi';
 import { Logger } from './logger';
 import { BunServeHandler, Middleware } from './type';
 import { createSseMethod } from './core/sse';
-import { createUploadFile } from './core/uploadFile';
+import { createPostFormData } from './core/postFormData';
 import { MaybePromise } from 'bun';
 import { kebabCase } from 'lodash-es';
+import { createPutFile } from './core/putFile';
 
 export const procedure = {
   // 基础方法
@@ -15,7 +16,8 @@ export const procedure = {
   delete: createStandardMethod('delete'),
   // 扩展方法
   sse: createSseMethod(),
-  uploadFile: createUploadFile(),
+  postFormData: createPostFormData(),
+  putFile: createPutFile(),
 };
 
 type CreateRouterParams = {

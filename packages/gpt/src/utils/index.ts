@@ -82,15 +82,10 @@ const createDataStreamToJson = <T>() => {
 };
 
 export const wrapperSSEStream = async <T>(response: Response, cb: (data: T[]) => MaybePromise<void>) => {
-  const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
-  if (!reader) throw new Error('no reader');
+  if (!response.body) throw new Error('no body');
 
   const streamToJson = createDataStreamToJson<T>();
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    const jsons = streamToJson(value);
-    await cb(jsons);
+  for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
+    await cb(streamToJson(chunk));
   }
 };

@@ -28,4 +28,6 @@ export interface ServiceClass {
 // todo next()
 export type Middleware = (request: Bun.BunRequest, ctx: Context) => MaybePromise<unknown>;
 
-export type UploadFileService = (formData: FormData, ctx: Context) => MaybePromise<any>;
+export type PostFormDataService = (formData: FormData, ctx: Context) => MaybePromise<any>;
+
+export type PutFileService = (request: Bun.BunRequest, ctx: Context) => MaybePromise<any>;
