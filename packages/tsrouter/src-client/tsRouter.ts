@@ -3,7 +3,8 @@ import { RefreshFailed, RefreshSuccess, warpperRefreshTokenCatch } from './utils
 import type { MethodOptions, SseMessageHandler, TsRouterClass, TsRouterOptions } from './type';
 import { restApi } from './core/restApi';
 import { sse } from './core/sse';
-import { upload } from './core/upload';
+import { postFormData } from './core/postFormData';
+import { putFile } from './core/putFile';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -49,7 +50,8 @@ export class TsRouter implements TsRouterClass {
       });
   }
 
-  upload = upload.bind(this);
+  postFormData = postFormData.bind(this);
+  putFile = putFile.bind(this);
 
   async refreshTokenHandle() {
     if (!this.refreshToken) return;
@@ -78,5 +80,6 @@ export const createAppRouter = <T>(tsRouter: TsRouter) =>
     put: tsRouter.put.bind(tsRouter),
     delete: tsRouter.delete.bind(tsRouter),
     sse: tsRouter.sse.bind(tsRouter),
-    postFormData: tsRouter.upload.bind(tsRouter),
+    postFormData: tsRouter.postFormData.bind(tsRouter),
+    putFile: tsRouter.putFile.bind(tsRouter),
   });

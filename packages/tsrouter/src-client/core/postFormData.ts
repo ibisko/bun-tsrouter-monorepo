@@ -2,7 +2,7 @@ import { ResponseError } from '../error';
 import type { TsRouterClass, UploadMethodOptions } from '../type';
 import { parseUrl } from '../utils';
 
-export async function upload(this: TsRouterClass, path: string[], formData: FormData, options: UploadMethodOptions = {}) {
+export async function postFormData(this: TsRouterClass, path: string[], formData: FormData, options: UploadMethodOptions = {}) {
   return new Promise(async (resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
