@@ -1,4 +1,4 @@
-import { createStandardMethod } from './core/restApi';
+import { createDownloadMethod, createStandardMethod } from './core/restApi';
 import { Logger } from './logger';
 import { BunServeHandler, Middleware } from './type';
 import { createSseMethod } from './core/sse';
@@ -8,16 +8,17 @@ import { kebabCase } from 'lodash-es';
 import { createPutFile } from './core/putFile';
 
 export const procedure = {
-  // 基础方法
+  // 基础 RestApi
   get: createStandardMethod('get'),
   post: createStandardMethod('post'),
   patch: createStandardMethod('patch'),
   put: createStandardMethod('put'),
   delete: createStandardMethod('delete'),
-  // 扩展方法
+  // 扩展 Method
   sse: createSseMethod(),
   postFormData: createPostFormData(),
   putFile: createPutFile(),
+  download: createDownloadMethod(), // 本质还是原来的 get
 };
 
 type CreateRouterParams = {
@@ -40,6 +41,7 @@ export const createRouter = ({ prefix = '/', router, logger, middlewares, option
       const regexp = /^\$(.*)/.exec(key);
       const _prefix = `${prefix}/${regexp ? `:${kebabCase(regexp[1])}` : kebabCase(key)}`;
       if (typeof func === 'function') {
+        // 此处定义 Bun.serve routes 的路径路由
         routes[_prefix] = func(logger, middlewares, optionsService);
       } else {
         parseRouter(func, _prefix);

@@ -4,6 +4,7 @@ import type { Context, ServiceClass } from '../type';
 import type { ProcedureDef } from '@/src-client/type';
 import { parseZodSchema, responseToString, trycatchAndMiddlewaresHandle } from '../utils';
 import { RestApiMethod } from '@packages/utils';
+import { Method } from '@/types';
 
 class RestApiServiceClass implements ServiceClass {
   constructor(readonly method: RestApiMethod) {}
@@ -39,10 +40,16 @@ export const createStandardMethod =
     return new RestApiServiceClass(method).set(...arg1) as unknown as ProcedureDef<T>;
   };
 
-type Handle<M extends RestApiMethod> = {
+type Handle<M extends Method> = {
   <S extends NonParamService>(service: S): ProcedureDef<M, Func, AwaitedReturn<S>>;
   <T extends z.ZodObject, S extends HasParamService<T>>(schema: T, service: S): ProcedureDef<M, T, AwaitedReturn<S>>;
 };
 
 type HasParamService<T extends z.ZodObject> = (param: z.output<T>, ctx: Context) => any;
 type NonParamService = (ctx: Context) => any;
+
+export const createDownloadMethod =
+  (): Handle<'download'> =>
+  (...arg1: unknown[]) => {
+    return new RestApiServiceClass('get').set(...arg1) as unknown as ProcedureDef<'download'>;
+  };

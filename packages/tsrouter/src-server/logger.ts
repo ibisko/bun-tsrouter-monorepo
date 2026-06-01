@@ -59,7 +59,7 @@ export class Logger {
 
   child(params: Record<string, any>) {
     const child = Object.create(this) as Logger; // 用于创建一个新的原型
-    child._this = this._this || this;
+    child._this = this._this ?? this;
     child._bindings = child._bindings ? merge(child._bindings, cloneDeep(params)) : cloneDeep(params);
     return child;
   }

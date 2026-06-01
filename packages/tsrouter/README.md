@@ -1,38 +1,10 @@
-- 尝试 client 中的上传进度采用 ReadableStream
-- 目前的 client upload 并不完善，缺少错误状态码处理
-
-- ~~添加 sse 的 cb 参数的类型约束 writeSchema~~
-  - `procedure.sse(reqSchema, writeSchema, async (param, { write, signal }) => {}`
-  - 不要这样做，因为对应不同的 type 都有不同的数据类型，太折腾了
-
-- [x] sse的错误处理，内容json.string
 - ? 提供sse的前端hook，封装 useEffect 的 return abortSign 取消
 
-- [x] 前端可视化单元测试
-- [x] ctx 集成日志
-- [x] 参数前的请求headers检查拦截
-  - ~~addHook('onRequest')~~
-- ~~参数校验拦截~~
-  - ~~addHook('preValidation')~~
-- [x] services 错误拦截
-- ~~send 返回值包装~~
-  - ~~addHook('onSend')~~
-  - ~~注意 sse 就不要包装~~
-    - ~~怎么判断是sse~~
-
-- [x] client 中断 sse 时候，server sse仍在执行
-- [x] 刷新 token
-- client 全局响应错误拦截，便于跳转
-  - 提供预设工具函数，可用于403时跳回到主页
-  - 403 等错误码的钩子回调
-  - 400 异常抛出的自定义 Error
-- client xhr formData 流式上传，上传进度
-- client fetch 流式下载文件，下载进度
 - socket.io
   - 是否合适封装到 TsRouter
   - 如何设计封装
   - 聊天室调研
-- [x] 进行模块化测试
+- 健康检查 head 请求方式
 
 ---
 
@@ -41,31 +13,20 @@
 - [x] 适用于常见的 Json 响应
 - [x] 适用于 SSE 结构化
 - [x] 错误处理
-- todo 适用于 ws ?
-- todo 适用于 formData 上传
-- todo 适用于文件流式下载
-- todo 连接池模式，可以设置并发数量
+- [x] 适用于 formData 上传
+- [x] 适用于文件流式下载
+- 适用于 ws ?
+- 连接池模式，可以设置并发数量
 
 ---
 
 # Web Fetch Options
 
-````ts
+```ts
 fetch(url, {
   method,
   headers: headers,
-  /**
-   * ```ts
-   * const controller = new AbortController();
-   * fetch('/api', { signal: controller.signal });
-   * controller.abort(); // 取消请求
-   * ```
-   */
   signal: signal,
-
-  /**
-   *  GET、HEAD、SSE 请求不能包含 body
-   */
   body: ['get', 'sse', 'head'].includes(method) ? undefined : JSON.stringify(body),
 
   /**
@@ -111,4 +72,4 @@ fetch(url, {
    */
   // integrity:
 });
-````
+```

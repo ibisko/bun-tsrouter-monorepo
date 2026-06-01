@@ -30,4 +30,4 @@ export type Middleware = (request: Bun.BunRequest, ctx: Context) => MaybePromise
 
 export type PostFormDataService = (formData: FormData, ctx: Context) => MaybePromise<any>;
 
-export type PutFileService = (request: Bun.BunRequest, ctx: Context) => MaybePromise<any>;
+export type PutFileService = (readableStream: ReadableStream<Uint8Array<ArrayBuffer>>, ctx: Context) => MaybePromise<any>;

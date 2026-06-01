@@ -46,9 +46,13 @@ export async function jsonRequest({
   };
 
   if (_method !== 'GET' && body) {
-    reqInit.body = JSON.stringify(body);
-    if (!headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
+    if (body instanceof FormData) {
+      reqInit.body = body;
+    } else {
+      reqInit.body = JSON.stringify(body);
+      if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+      }
     }
   }
 

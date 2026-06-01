@@ -1,10 +1,9 @@
 import { createRecursiveProxy, retryHandle } from '@packages/utils';
-import { RefreshFailed, RefreshSuccess, warpperRefreshTokenCatch } from './utils';
-import type { MethodOptions, SseMessageHandler, TsRouterClass, TsRouterOptions } from './type';
-import { restApi } from './core/restApi';
-import { sse } from './core/sse';
-import { postFormData } from './core/postFormData';
-import { putFile } from './core/putFile';
+import { RefreshFailed, RefreshSuccess } from './utils';
+import type { TsRouterClass, TsRouterOptions } from './type';
+import { createGetMethod, createStandardMethod, createPostFormData, createDownloadMethod } from './core/restApi';
+import { createSseMethod } from './core/sse';
+import { createPutFile } from './core/putFile';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -27,32 +26,6 @@ export class TsRouter implements TsRouterClass {
     this.onResponseError = options.onResponseError;
   }
 
-  get(path: string[], query: Record<string, string> | null, options: Omit<MethodOptions, 'query'>) {
-    return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'get', path, query, options }));
-  }
-  post(path: string[], body: any, options: MethodOptions) {
-    return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'post', path, body, options }));
-  }
-  patch(path: string[], body: any, options: MethodOptions) {
-    return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'patch', path, body, options }));
-  }
-  put(path: string[], body: any, options: MethodOptions) {
-    return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'put', path, body, options }));
-  }
-  delete(path: string[], body: any, options: MethodOptions) {
-    return warpperRefreshTokenCatch.bind(this)(() => restApi.bind(this)({ method: 'delete', path, body, options }));
-  }
-  sse(path: string[], body: any, options: MethodOptions = {}) {
-    return (callback: SseMessageHandler) =>
-      warpperRefreshTokenCatch.bind(this)(async () => {
-        const cb = await sse.bind(this)(path, body, options);
-        return await cb(callback);
-      });
-  }
-
-  postFormData = postFormData.bind(this);
-  putFile = putFile.bind(this);
-
   async refreshTokenHandle() {
     if (!this.refreshToken) return;
     this.isRefreshing = true;
@@ -74,12 +47,13 @@ export class TsRouter implements TsRouterClass {
 
 export const createAppRouter = <T>(tsRouter: TsRouter) =>
   createRecursiveProxy<T>({
-    get: tsRouter.get.bind(tsRouter),
-    post: tsRouter.post.bind(tsRouter),
-    patch: tsRouter.patch.bind(tsRouter),
-    put: tsRouter.put.bind(tsRouter),
-    delete: tsRouter.delete.bind(tsRouter),
-    sse: tsRouter.sse.bind(tsRouter),
-    postFormData: tsRouter.postFormData.bind(tsRouter),
-    putFile: tsRouter.putFile.bind(tsRouter),
+    get: createGetMethod(tsRouter),
+    post: createStandardMethod(tsRouter, 'POST'),
+    patch: createStandardMethod(tsRouter, 'PATCH'),
+    put: createStandardMethod(tsRouter, 'PUT'),
+    delete: createStandardMethod(tsRouter, 'DELETE'),
+    sse: createSseMethod(tsRouter),
+    postFormData: createPostFormData(tsRouter),
+    putFile: createPutFile(tsRouter),
+    download: createDownloadMethod(tsRouter),
   });

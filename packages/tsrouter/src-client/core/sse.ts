@@ -1,38 +1,44 @@
 import { ResponseError } from '../error';
 import { MethodOptions, SseMessageHandler, TsRouterClass } from '../type';
-import { restApi } from './restApi';
+import { warpperRefreshTokenCatch } from '../utils';
+import { baseFetch } from './baseFetch';
 
-export async function sse(this: TsRouterClass, path: string[], body: any, options: MethodOptions) {
-  options.headers ??= {};
-  Object.assign(options.headers, { accept: 'text/event-stream' });
+const sseMessageCallback = (body: ReadableStream) => async (callback: SseMessageHandler) => {
+  for await (const chunk of body.pipeThrough(new TextDecoderStream())) {
+    const contents = chunk.split('\n\n');
 
-  const response = await restApi.bind(this)({
-    method: 'post',
-    path,
-    body,
-    options,
-  });
+    for (const item of contents) {
+      const content = item.trim();
+      if (!content) continue;
+      if (content === ':') continue; // 心跳
 
-  return async (callback: SseMessageHandler) => {
-    if (!response.body) throw new Error('no body');
-
-    for await (const chunk of response.body.pipeThrough(new TextDecoderStream())) {
-      const contents = chunk.split('\n\n');
-      for (let content of contents) {
-        content = content.trim();
-        if (!content) continue;
-        if (content === ':') continue; // 心跳
-        let obj;
-        try {
-          obj = JSON.parse(content);
-        } catch (error) {
-          throw new ResponseError({ message: 'sse 返回值 data json解析有问题', status: 200 });
-        }
-        if (obj.event === 'SERVICE_ERROR') {
-          throw new ResponseError({ message: obj.data, status: 200 });
-        }
-        callback(obj);
+      let obj;
+      try {
+        obj = JSON.parse(content);
+      } catch {
+        throw new ResponseError({ message: `SSE parse json Error: ${content}`, status: 200 });
       }
+      if (obj.event === 'SERVICE_ERROR') throw new ResponseError({ message: obj.data, status: 200 });
+      callback(obj);
     }
+  }
+};
+
+export const createSseMethod =
+  (tsRouter: TsRouterClass) =>
+  async (path: string[], body: any, options: MethodOptions = {}) => {
+    options.headers ??= {};
+    Object.assign(options.headers, { accept: 'text/event-stream' });
+
+    const response = await warpperRefreshTokenCatch(tsRouter, () =>
+      baseFetch(tsRouter, {
+        method: 'POST',
+        path,
+        body,
+        options,
+      }),
+    );
+
+    if (!response.body) throw new Error('no body');
+    return sseMessageCallback(response.body);
   };
-}

@@ -33,26 +33,15 @@ export class RefreshFailed extends Error {
   }
 }
 
-// ==========================
-
-export async function warpperRefreshTokenCatch(this: TsRouterClass, requestHandle: () => Promise<Response | void>) {
+/** 捕获并刷新令牌 */
+export async function warpperRefreshTokenCatch<R>(tsRouter: TsRouterClass, requestHandle: () => Promise<R>): Promise<R> {
   do {
     try {
       /** 如果正在刷新，暂时阻塞所有的请求 */
-      if (this.isRefreshing) {
-        await new Promise((resolve, reject) => this.interceptDuringRefreshResolves.push({ resolve, reject }));
+      if (tsRouter.isRefreshing) {
+        await new Promise((resolve, reject) => tsRouter.interceptDuringRefreshResolves.push({ resolve, reject }));
       }
-
-      const response = await requestHandle();
-      if (response) {
-        let resdata = await response?.text();
-        try {
-          return JSON.parse(resdata);
-        } catch {
-          return resdata;
-        }
-      }
-      return;
+      return await requestHandle();
     } catch (error) {
       if (error instanceof RefreshSuccess) {
         // 刷新成功，重新执行
@@ -61,9 +50,18 @@ export async function warpperRefreshTokenCatch(this: TsRouterClass, requestHandl
       }
 
       // 这里不做网络检查，放到 this.onResponseError 用户自定义来做吧
-      await this.onResponseError?.(error);
+      await tsRouter.onResponseError?.(error);
+      // todo 这里有问题吧？
       // 刷新失败，抛出异常
       throw error;
     }
   } while (true);
 }
+
+export const safeJsonParse = (text: string) => {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+};
