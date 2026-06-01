@@ -5,7 +5,7 @@ import { tsRouter } from '@/services/tsRouterTest';
 import { authMiddleware } from '@/middlewares/auth';
 import { uploadFile1 } from '@/services/tsRouterTest/upload';
 import { trigger } from '@/middlewares/limitRate';
-import { corsMiddleware } from '@/middlewares/cors';
+import { corsMiddleware, optionsService } from '@/middlewares/cors';
 
 export const logger = new Logger({
   stdout(data) {
@@ -39,6 +39,7 @@ export const mainAuthRouter = createRouter({
   logger,
   middlewares: [trigger, authMiddleware, corsMiddleware],
   router: mainAuthRouterTree,
+  optionsService,
 });
 
 export const mainWhiteListRouter = createRouter({
@@ -46,6 +47,7 @@ export const mainWhiteListRouter = createRouter({
   logger,
   middlewares: [trigger, corsMiddleware],
   router: mainWhiteListRouterTree,
+  optionsService,
 });
 
 export type AppRouter = ReplaceSpecificLeaf<typeof mainAuthRouterTree & typeof mainWhiteListRouterTree>;

@@ -4,9 +4,8 @@
   "description": "",
   "type": "module",
   "exports": {
-    "./browser": {
-      "types": "./dist/main.d.ts",
-      "import": "./dist/browser.js"
+    "./client": {
+      "types": "./dist/main.d.ts"
     }
   },
   "scripts": {

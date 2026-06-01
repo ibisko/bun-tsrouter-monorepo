@@ -1,7 +1,7 @@
 import { proxy } from 'valtio';
 import { Api } from '@/api';
 import { redirect } from '@tanstack/react-router';
-import type { UserRole } from '@apps/server/browser';
+import type { UserRole } from '@apps/server/client';
 import type { Nullable } from '@packages/utils/types';
 import { hashString } from '@packages/utils/web';
 import { cloneDeep } from 'lodash-es';
