@@ -5,7 +5,7 @@ import { createSseMethod } from './core/sse';
 import { createPostFormData } from './core/postFormData';
 import { MaybePromise } from 'bun';
 import { kebabCase } from 'lodash-es';
-import { createPutFile } from './core/putFile';
+import { createPutFile, createPutFileXhr } from './core/putFile';
 
 export const procedure = {
   // 基础 RestApi
@@ -18,6 +18,7 @@ export const procedure = {
   sse: createSseMethod(),
   postFormData: createPostFormData(),
   putFile: createPutFile(),
+  putFileXhr: createPutFileXhr(),
   download: createDownloadMethod(), // 本质还是原来的 get
 };
 

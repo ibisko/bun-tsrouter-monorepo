@@ -63,7 +63,8 @@ export type ProcedureDef<M extends Method, T extends z.ZodObject | Func = any, R
   _func:
   M extends 'sse'      ? StandardHandler<T, SseHandlerCallback> :
   M extends 'postFormData' ? (formData: FormData, options?: MethodOptions) => Promise<R> :
-  M extends 'putFile'  ? (file: XMLHttpRequestBodyInit, options?: XhrMethodOptions) => Promise<R> :
+  M extends 'putFile'  ? (file: BodyInit, options?: MethodOptions) => Promise<R> :
+  M extends 'putFileXhr'  ? (file: XMLHttpRequestBodyInit, options?: XhrMethodOptions) => Promise<R> :
   M extends 'download' ? StandardHandler<T, Response> :
   M extends RestApiMethod ? StandardHandler<T, R> : never;
 };

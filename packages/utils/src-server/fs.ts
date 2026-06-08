@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import fs, { rm } from 'fs';
 
 /** 确保指定的目录存在 */
 export const fsEnsureMkdir = async (...paths: string[]) => {
@@ -15,6 +15,13 @@ export const fsEnsureMkdir = async (...paths: string[]) => {
     }),
   );
 };
+
+export const fsRemove = (dir: string) =>
+  new Promise<void>((resolve, reject) => {
+    rm(dir, { recursive: true }, err => {
+      err ? reject(err) : resolve();
+    });
+  });
 
 export const hashFile = async (
   file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike | File,

@@ -22,3 +22,9 @@ export const createPutFile =
   <S extends PutFileService>(service: S) => {
     return new PutFileServiceClass().set(service) as unknown as ProcedureDef<'putFile', Func, AwaitedReturn<S>>;
   };
+
+export const createPutFileXhr =
+  () =>
+  <S extends PutFileService>(service: S) => {
+    return new PutFileServiceClass().set(service) as unknown as ProcedureDef<'putFileXhr', Func, AwaitedReturn<S>>;
+  };

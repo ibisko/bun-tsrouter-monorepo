@@ -3,7 +3,7 @@ import { RefreshFailed, RefreshSuccess } from './utils';
 import type { TsRouterClass, TsRouterOptions } from './type';
 import { createGetMethod, createStandardMethod, createPostFormData, createDownloadMethod } from './core/restApi';
 import { createSseMethod } from './core/sse';
-import { createPutFile } from './core/putFile';
+import { createPutFile, createPutFileXhr } from './core/putFile';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -55,5 +55,6 @@ export const createAppRouter = <T>(tsRouter: TsRouter) =>
     sse: createSseMethod(tsRouter),
     postFormData: createPostFormData(tsRouter),
     putFile: createPutFile(tsRouter),
+    putFileXhr: createPutFileXhr(tsRouter),
     download: createDownloadMethod(tsRouter),
   });

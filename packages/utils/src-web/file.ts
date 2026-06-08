@@ -1,14 +1,19 @@
 /** 文件摘要 */
-export const hashFile = async (file: File) => {
-  const buffer = await file.arrayBuffer();
-  const hashBuffer = await window.crypto.subtle.digest('MD5', buffer);
+export const hashFile = async (file: File | ArrayBuffer) => {
+  let buffer: ArrayBuffer;
+  if (file instanceof File) {
+    buffer = await file.arrayBuffer();
+  } else if (file instanceof ArrayBuffer) {
+    buffer = file;
+  }
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', buffer!);
   const hashArray = new Uint8Array(hashBuffer);
   return Array.from(hashArray)
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 };
 
-export const hashString = async (data: string, algorithm: string = 'sha-1') => {
+export const hashString = async (data: string, algorithm: string = 'SHA-256') => {
   const encoder = new TextEncoder();
   const arrayBuffer = encoder.encode(data);
   const hashBuffer = await crypto.subtle.digest(algorithm, arrayBuffer);

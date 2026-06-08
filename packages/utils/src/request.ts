@@ -6,7 +6,7 @@ type RequestParam = {
   headers?: Headers;
   baseUrl: string;
   query?: Record<string, string> | null;
-  body?: Record<string, any>;
+  body?: BodyInit;
   signal?: AbortSignal;
   /** 首字节超时：等待服务器响应的超时时间，收到响应后不再计时 */
   timeout?: number;
@@ -46,7 +46,7 @@ export async function jsonRequest({
   };
 
   if (_method !== 'GET' && body) {
-    if (body instanceof FormData) {
+    if (body instanceof FormData || body instanceof Blob) {
       reqInit.body = body;
     } else {
       reqInit.body = JSON.stringify(body);
