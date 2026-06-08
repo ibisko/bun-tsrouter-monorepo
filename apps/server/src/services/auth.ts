@@ -13,7 +13,7 @@ export const loginSchema = z.object({
 });
 export const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
   ctx.logger.info({ msg: '用户登录', data: param });
-  const passwordMd5 = hashString(process.env.authSecret + param.password);
+  const passwordMd5 = hashString(process.env.AUTH_SECRET + param.password);
   const count = await prisma.users.count();
   let userInfo;
   if (count === 0) {
@@ -71,7 +71,7 @@ export const refreshToken = async (ctx: Context) => {
 
   let detoken;
   try {
-    detoken = jwt.verify(token, process.env.refreshAuthSecret) as JwtPayload;
+    detoken = jwt.verify(token, process.env.REFRESH_AUTH_SECRET) as JwtPayload;
     if (!detoken?.userId || detoken.userId <= 0) {
       throw new ServiceError({
         message: '非法用户',
@@ -128,11 +128,11 @@ type GenerateJwtParam = {
 const generateJwt = ({ flag, userId }: GenerateJwtParam) => {
   // 用来记录某些属性是否有变动
   return {
-    token: jwt.sign({ flag, userId }, process.env.authSecret, {
+    token: jwt.sign({ flag, userId }, process.env.AUTH_SECRET, {
       expiresIn: '1h',
       // expiresIn: '10s',
     }),
-    refreshToken: jwt.sign({ flag, userId }, process.env.refreshAuthSecret, {
+    refreshToken: jwt.sign({ flag, userId }, process.env.REFRESH_AUTH_SECRET, {
       expiresIn: '7d',
       // expiresIn: '30s',
     }),

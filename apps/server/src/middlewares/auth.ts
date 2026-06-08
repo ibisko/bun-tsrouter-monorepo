@@ -40,7 +40,7 @@ export const authMiddleware: Middleware = (req, ctx) => {
   }
 
   try {
-    const detoken = jwt.verify(token, process.env.authSecret) as JwtPayload;
+    const detoken = jwt.verify(token, process.env.AUTH_SECRET) as JwtPayload;
     ctx.userId = detoken.userId;
 
     // todo 参数设置上下文

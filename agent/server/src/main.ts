@@ -1,5 +1,5 @@
 import { merge } from 'lodash-es';
-import { mainAuthRouter, mainWhiteListRouter } from './router/tsrouter';
+import { mainWhiteListRouter } from './router/tsrouter';
 import { initLimitRate } from './middlewares/limitRate';
 export type { AppRouter } from './router/tsrouter';
 export * from 'prisma/generated/enums';
@@ -19,7 +19,7 @@ async function createServer() {
   const server = Bun.serve({
     port: process.env.port,
     // hostname: "0.0.0.0",
-    routes: merge(mainAuthRouter, mainWhiteListRouter),
+    routes: merge(mainWhiteListRouter),
     // maxRequestBodySize: 1024 ** 2 * 5, // 这里设置成5MB，默认是 128MB
     maxRequestBodySize: 1024 ** 2 * 5000, // 测试
     // hostname: '0.0.0.0',
