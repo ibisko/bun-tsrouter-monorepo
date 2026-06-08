@@ -2,7 +2,7 @@ import type { Collection, CollectionsResponse, IconsResponse, SearchResponse } f
 
 const Host = 'https://api.iconify.design';
 
-type ListParams = {
+type ListParam = {
   prefix?: string;
   info?: boolean;
   chars?: boolean;
@@ -17,8 +17,8 @@ const request = async <T>(path: string, params?: Record<string, unknown>): Promi
 };
 
 export const iconifyApi = {
-  collections: (params?: ListParams) => request<CollectionsResponse>('/collections', params),
-  collection: (params: ListParams & { prefix: string }) => request<Collection>('/collection', params),
+  collections: (params?: ListParam) => request<CollectionsResponse>('/collections', params),
+  collection: (params: ListParam & { prefix: string }) => request<Collection>('/collection', params),
   icons: (prefix: string, ids: string[]) => request<IconsResponse>(`/${prefix}.json`, { icons: ids.join() }),
   search: (params: { query: string; limit?: number }) => request<SearchResponse>('/search', params),
 };

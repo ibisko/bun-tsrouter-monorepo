@@ -1,4 +1,3 @@
-import { hashString } from '@/utils/hash';
 import { Context, ServiceError } from '@packages/tsrouter/server';
 import z from 'zod';
 import jwt from 'jsonwebtoken';
@@ -6,6 +5,7 @@ import prisma from '@/database/prisma';
 import { merge } from 'lodash-es';
 import { JwtPayload } from '@/types/jwt';
 import { UserRole } from 'prisma/generated/enums';
+import { hashString } from '@packages/utils/server';
 
 export const loginSchema = z.object({
   account: z.string(),
@@ -118,7 +118,7 @@ type GenerateJwtFlag = {
   password: string;
 };
 /** 用于检查指定的属性是否变更 */
-const generateFlag = ({ password }: GenerateJwtFlag) => hashString([password].join());
+const generateFlag = ({ password }: GenerateJwtFlag) => hashString(password);
 
 type GenerateJwtParam = {
   flag: string;

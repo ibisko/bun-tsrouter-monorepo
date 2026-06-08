@@ -18,7 +18,7 @@ export const fsEnsureMkdir = async (...paths: string[]) => {
 
 export const hashFile = async (
   file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike | File,
-  algorithm: Bun.SupportedCryptoAlgorithms = 'sha1',
+  algorithm: Bun.SupportedCryptoAlgorithms = 'blake2b256',
 ) => {
   let bunFile;
 
@@ -44,4 +44,8 @@ export const hashFile = async (
   }
 
   return hasher.digest().toHex();
+};
+
+export const hashString = (data: Bun.BlobOrStringOrBuffer, algorithm: Bun.SupportedCryptoAlgorithms = 'blake2b256') => {
+  return Bun.CryptoHasher.hash(algorithm, data).toHex();
 };

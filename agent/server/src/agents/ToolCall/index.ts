@@ -21,7 +21,7 @@ export class ToolCall extends BaseAgent {
     return toolResults;
   }
 
-  async call({ text, sources }: CallParams) {
+  async call({ text, sources }: CallParam) {
     const system = await Bun.file(path.join(__dirname, 'prompt.md')).text();
     system.replace('<|CURRENT_TIME|>', new Date().toString());
 
@@ -35,7 +35,7 @@ export class ToolCall extends BaseAgent {
   }
 }
 
-type CallParams = {
+type CallParam = {
   text: string;
   sources?: SourceItem[];
 };

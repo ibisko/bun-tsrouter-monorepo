@@ -15,7 +15,7 @@ export class AgentSession {
   private agentMessageId: number | null = null;
 
   /** 补充会话 */
-  async supplementary({ sessionId, text, sources }: SupplementarySessionParams) {
+  async supplementary({ sessionId, text, sources }: SupplementarySessionParam) {
     if (this.sessionId && AgentSession.runningSessionId.has(this.sessionId)) {
       // todo 运行时追加用户Message，可能没有指定 agentMessageId ，未知怎么处理合适
       throw new Error('运行时追加用户Message，可能没有指定 agentMessageId ，未知怎么处理合适');
@@ -61,7 +61,7 @@ export class AgentSession {
   }
 
   /** 创建会话 */
-  async createSession({ text, sources }: CreateSessionParams) {
+  async createSession({ text, sources }: CreateSessionParam) {
     const message = await prisma.userMessages.create({
       data: { content: text, sources },
     });
@@ -125,20 +125,20 @@ export type SourceItem = {
   url: string;
 };
 
-type CreateSessionParams = {
+type CreateSessionParam = {
   text: string;
   sources?: SourceItem[];
 };
 
-type SupplementarySessionParams = CreateSessionParams & {
+type SupplementarySessionParam = CreateSessionParam & {
   sessionId: number;
 };
 
-type AgentSessionSplitByPid = CreateSessionParams & {
+type AgentSessionSplitByPid = CreateSessionParam & {
   pid: number;
 };
 
-type AppendParams = CreateSessionParams & {
+type AppendParam = CreateSessionParam & {
   pid: number;
   role: GPT.Role;
   metadata: any;

@@ -3,7 +3,7 @@ import { ResponseError } from '../error';
 import { MethodOptions, TsRouterClass } from '../type';
 import { jsonRequest, RestApiMethod } from '@packages/utils';
 
-export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, body, options = {} }: BaseFetchParams) {
+export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, body, options = {} }: BaseFetchParam) {
   // ============ 设置 Headers ============
   const headers = new Headers();
   if (tsRouter.setHeaders) await tsRouter.setHeaders(headers);
@@ -53,7 +53,7 @@ export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, 
 
 export type Query = Record<string, string> | null;
 
-export type BaseFetchParams = {
+type BaseFetchParam = {
   method: Uppercase<RestApiMethod>;
   path: string[];
   query?: Query;

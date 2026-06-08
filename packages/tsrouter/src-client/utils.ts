@@ -1,9 +1,9 @@
 import { kebabCase } from 'lodash-es';
-import type { RestApiParams, TsRouterClass, TsRouterOptions } from './type';
+import type { RestApiParam, TsRouterClass, TsRouterOptions } from './type';
 
-interface ParseUrlParams extends Pick<RestApiParams, 'path' | 'query'>, Pick<TsRouterOptions, 'baseUrl' | 'prefix'> {}
+interface ParseUrlParam extends Pick<RestApiParam, 'path' | 'query'>, Pick<TsRouterOptions, 'baseUrl' | 'prefix'> {}
 
-export const parseUrl = ({ baseUrl, path, query, prefix }: ParseUrlParams) => {
+export const parseUrl = ({ baseUrl, path, query, prefix }: ParseUrlParam) => {
   if (typeof path === 'string') {
     if (prefix) {
       path = path.startsWith('/') ? `${prefix}${path}` : `${prefix}/${path}`;

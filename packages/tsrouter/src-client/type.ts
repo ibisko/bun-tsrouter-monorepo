@@ -25,7 +25,7 @@ export type XhrMethodOptions = MethodOptions & {
   onPercent?: (percent: number) => void;
 };
 
-export type RestApiParams = {
+export type RestApiParam = {
   method: RestApiMethod;
   path: string | string[];
   query?: Record<string, string> | null;

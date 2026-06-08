@@ -3,7 +3,7 @@ import { ResponseError } from '../error';
 import type { TsRouterClass, XhrMethodOptions } from '../type';
 import { parseUrl, safeJsonParse } from '../utils';
 
-export const baseXMLHttpRequest = (tsRouter: TsRouterClass, { path, method, body, options = {} }: BaseXMLHttpRequestParams) =>
+export const baseXMLHttpRequest = (tsRouter: TsRouterClass, { path, method, body, options = {} }: BaseXMLHttpRequestParam) =>
   new Promise(async (resolve, reject) => {
     const url = parseUrl({
       baseUrl: tsRouter.baseUrl,
@@ -75,7 +75,7 @@ export const baseXMLHttpRequest = (tsRouter: TsRouterClass, { path, method, body
     xhr.send(body);
   });
 
-type BaseXMLHttpRequestParams = {
+type BaseXMLHttpRequestParam = {
   path: string[];
   method: Uppercase<RestApiMethod>;
   body: XMLHttpRequestBodyInit;

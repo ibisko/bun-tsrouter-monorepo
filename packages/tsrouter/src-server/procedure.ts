@@ -21,7 +21,7 @@ export const procedure = {
   download: createDownloadMethod(), // 本质还是原来的 get
 };
 
-type CreateRouterParams = {
+type CreateRouterParam = {
   prefix?: `/${string}`;
   router: Record<string, unknown>;
   logger: Logger;
@@ -29,7 +29,7 @@ type CreateRouterParams = {
   optionsService?: BunServeHandler;
 };
 
-export const createRouter = ({ prefix = '/', router, logger, middlewares, optionsService }: CreateRouterParams) => {
+export const createRouter = ({ prefix = '/', router, logger, middlewares, optionsService }: CreateRouterParam) => {
   if (prefix.length > 1 && prefix.endsWith('/')) {
     prefix = prefix.slice(0, -1) as `/${string}`;
   }
