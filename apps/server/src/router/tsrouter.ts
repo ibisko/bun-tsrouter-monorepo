@@ -1,5 +1,5 @@
 import { createRouter, Logger, procedure, ReplaceSpecificLeaf } from '@packages/tsrouter/server';
-import { login, loginSchema, refreshToken } from '@/services/auth';
+import { authRouter } from '@/services/auth';
 import { getUserInfo } from '@/services/users';
 import { tsRouter } from '@/services/tsRouterTest';
 import { authMiddleware } from '@/middlewares/auth';
@@ -20,10 +20,7 @@ const mainAuthRouterTree = {
 };
 
 const mainWhiteListRouterTree = {
-  auth: {
-    login: procedure.post(loginSchema, login),
-    refreshToken: procedure.get(refreshToken),
-  },
+  auth: authRouter,
 
   upload: {
     file: procedure.postFormData(uploadFile1),

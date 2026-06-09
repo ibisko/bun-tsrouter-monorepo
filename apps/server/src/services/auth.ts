@@ -1,4 +1,4 @@
-import { Context, ServiceError } from '@packages/tsrouter/server';
+import { Context, procedure, ServiceError } from '@packages/tsrouter/server';
 import z from 'zod';
 import jwt from 'jsonwebtoken';
 import prisma from '@/database/prisma';
@@ -7,11 +7,12 @@ import { JwtPayload } from '@/types/jwt';
 import { UserRole } from 'prisma/generated/enums';
 import { hashString } from '@packages/utils/server';
 
-export const loginSchema = z.object({
+const loginSchema = z.object({
   account: z.string(),
   password: z.string(),
 });
-export const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
+
+const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
   ctx.logger.info({ msg: '用户登录', data: param });
   const passwordMd5 = hashString(process.env.AUTH_SECRET + param.password);
   const count = await prisma.users.count();
@@ -46,8 +47,7 @@ export const login = async (param: z.output<typeof loginSchema>, ctx: Context) =
     }
   }
 
-  const flag = generateFlag({ password: passwordMd5 });
-  // return generateJwt({ flag, userId: userInfo.id });
+  const flag = generateFlag(userInfo.password);
   const jwtData = generateJwt({ flag, userId: userInfo.id });
   return merge(jwtData, {
     role: userInfo.role,
@@ -57,7 +57,7 @@ export const login = async (param: z.output<typeof loginSchema>, ctx: Context) =
 };
 
 /** 刷新凭证 */
-export const refreshToken = async (ctx: Context) => {
+const refreshToken = async (ctx: Context) => {
   const authorization = ctx?.headers?.get('authorization');
   if (!authorization) {
     throw new ServiceError({ message: '缺少凭证', reason: '没有 authorization 的越权访问' });
@@ -103,7 +103,7 @@ export const refreshToken = async (ctx: Context) => {
   }
 
   // 检查flag是否有变动
-  const flag = generateFlag({ password: userInfo.password });
+  const flag = generateFlag(userInfo.password);
   if (detoken.flag !== flag) {
     throw new ServiceError({
       message: '某属性值已变动，需要重新登录',
@@ -114,11 +114,8 @@ export const refreshToken = async (ctx: Context) => {
   return generateJwt({ flag, userId: userInfo.id });
 };
 
-type GenerateJwtFlag = {
-  password: string;
-};
 /** 用于检查指定的属性是否变更 */
-const generateFlag = ({ password }: GenerateJwtFlag) => hashString(password);
+const generateFlag = (password: string) => hashString(password);
 
 type GenerateJwtParam = {
   flag: string;
@@ -137,4 +134,9 @@ const generateJwt = ({ flag, userId }: GenerateJwtParam) => {
       // expiresIn: '30s',
     }),
   };
+};
+
+export const authRouter = {
+  login: procedure.post(loginSchema, login),
+  refreshToken: procedure.get(refreshToken),
 };

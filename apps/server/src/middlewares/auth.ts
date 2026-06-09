@@ -2,86 +2,47 @@ import jwt from 'jsonwebtoken';
 import { Middleware, MiddlewareError } from '@packages/tsrouter/server';
 import { JwtPayload } from '@/types/jwt';
 
+type FailOptionParam = {
+  status?: number;
+  data?: Record<string, unknown>;
+  reason?: string;
+};
+
+const fail = (message: string, options?: FailOptionParam) => {
+  const status = options?.status || 400;
+  return new MiddlewareError({ message, reason: options?.reason, func: 'authMiddleware', status, data: options?.data });
+};
+
 export const authMiddleware: Middleware = (req, ctx) => {
   const authorization = req.headers.get('authorization');
-  if (!authorization) {
-    throw new MiddlewareError({
-      message: '没有凭证',
-      func: 'authJwtDecode',
-      status: 400,
-    });
-  }
+  if (!authorization) throw fail('没有凭证');
 
-  const regexpToken = /^Bearer (.+)$/.exec(authorization);
-  const token = regexpToken?.[1];
-  if (!token) {
-    throw new MiddlewareError({
-      message: '凭证无效',
-      func: 'authJwtDecode',
-      status: 400,
-      data: {
-        authorization,
-      },
-    });
-  }
-
-  let jwtDecode;
-  try {
-    jwtDecode = jwt.decode(authorization);
-  } catch (error) {
-    throw new MiddlewareError({
-      message: '凭证解析失败',
-      func: 'authJwtDecode',
-      status: 400,
-      data: {
-        authorization,
-      },
-    });
-  }
+  const token = /^Bearer (.+)$/.exec(authorization)?.[1];
+  if (!token) throw fail('凭证无效', { data: { authorization } });
 
   try {
     const detoken = jwt.verify(token, process.env.AUTH_SECRET) as JwtPayload;
+    // jwt payload 里携带的参数可在此设置到上下文
     ctx.userId = detoken.userId;
-
-    // todo 参数设置上下文
-    // jwtDecode.admin
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      throw new MiddlewareError({
-        message: '凭证已过期，请重新登录',
-        func: 'authJwtDecode',
+    if (error instanceof jwt.TokenExpiredError)
+      throw fail('凭证已过期，请重新登录', {
         status: 401,
-        data: {
-          jwtError: 'jwt.TokenExpiredError',
-          authorization,
-          jwtDecode,
-        },
+        data: { jwtError: 'TokenExpiredError', authorization },
       });
-    } else if (error instanceof jwt.JsonWebTokenError) {
-      throw new MiddlewareError({
-        message: '凭证解析异常',
-        reason: '凭证解析异常（一般用于测试）',
-        func: 'authJwtDecode',
-        status: 400,
-        data: {
-          jwtError: 'jwt.JsonWebTokenError',
-          authorization,
-          jwtDecode,
-        },
-      });
-    }
 
-    const msg = error instanceof Error ? error.message : error;
-    throw new MiddlewareError({
-      message: '凭证解析异常',
+    if (error instanceof jwt.JsonWebTokenError)
+      throw fail('凭证解析异常', {
+        reason: '凭证解析异常（一般用于测试）',
+        data: { jwtError: 'jwt.JsonWebTokenError', authorization },
+      });
+
+    throw fail('凭证解析异常', {
       reason: '意外情况',
-      func: 'authJwtDecode',
-      status: 400,
       data: {
         isInstanceofError: error instanceof Error,
-        msg,
+        msg: error instanceof Error ? error.message : error,
         authorization,
-        jwtDecode,
       },
     });
   }
