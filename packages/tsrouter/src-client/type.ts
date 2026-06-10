@@ -19,6 +19,7 @@ export type MethodOptions = {
   /** 用于 Controller 中断 */
   signal?: AbortSignal;
   timeout?: number;
+  skipRefreshToken?: boolean;
 };
 
 export type XhrMethodOptions = MethodOptions & {

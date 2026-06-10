@@ -57,6 +57,6 @@ type BaseFetchParam = {
   method: Uppercase<RestApiMethod>;
   path: string[];
   query?: Query;
-  body?: any;
+  body?: BodyInit;
   options?: MethodOptions;
 };

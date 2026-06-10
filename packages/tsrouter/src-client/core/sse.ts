@@ -30,15 +30,8 @@ export const createSseMethod =
     options.headers ??= {};
     Object.assign(options.headers, { accept: 'text/event-stream' });
 
-    const response = await warpperRefreshTokenCatch(tsRouter, () =>
-      baseFetch(tsRouter, {
-        method: 'POST',
-        path,
-        body,
-        options,
-      }),
-    );
-
+    const fn = () => baseFetch(tsRouter, { method: 'POST', path, body, options });
+    const response = options.skipRefreshToken ? await fn() : await warpperRefreshTokenCatch(tsRouter, fn);
     if (!response.body) throw new Error('no body');
     return sseMessageCallback(response.body);
   };

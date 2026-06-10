@@ -13,12 +13,14 @@ export const logger = new Logger({
   },
 });
 
+// 权限路由
 const mainAuthRouterTree = {
   user: {
     getUserInfo: procedure.get(getUserInfo),
   },
 };
 
+// 白名单路由
 const mainWhiteListRouterTree = {
   auth: authRouter,
 

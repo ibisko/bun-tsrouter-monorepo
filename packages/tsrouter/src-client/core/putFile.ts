@@ -4,11 +4,13 @@ import { baseFetch } from './baseFetch';
 import { baseXMLHttpRequest } from './baseXMLHttpRequest';
 
 export const createPutFileXhr = (tsRouter: TsRouterClass) => async (path: string[], file: XMLHttpRequestBodyInit, options?: XhrMethodOptions) => {
-  return warpperRefreshTokenCatch(tsRouter, () => baseXMLHttpRequest(tsRouter, { path, method: 'PUT', body: file, options }));
+  const fn = () => baseXMLHttpRequest(tsRouter, { path, method: 'PUT', body: file, options });
+  return options?.skipRefreshToken ? await fn() : await warpperRefreshTokenCatch(tsRouter, fn);
 };
 
 export const createPutFile = (tsRouter: TsRouterClass) => async (path: string[], file: BodyInit, options?: XhrMethodOptions) => {
-  const response = await warpperRefreshTokenCatch(tsRouter, () => baseFetch(tsRouter, { method: 'PUT', path, body: file, options }));
+  const fn = () => baseFetch(tsRouter, { method: 'PUT', path, body: file, options });
+  const response = options?.skipRefreshToken ? await fn() : await warpperRefreshTokenCatch(tsRouter, fn);
   const text = await response.text();
   return safeJsonParse(text);
 };
