@@ -1,5 +1,6 @@
 import { cn } from '@/utils/cn';
 import type { Columns } from './type';
+import { camelCase, upperFirst } from 'lodash-es';
 
 type TableProps<T extends Record<string, any>> = {
   className?: string;
@@ -33,7 +34,7 @@ export const Table = <T extends Record<string, any> = any>({
                 }}
                 key={column.dataIndex as string}>
                 <div className={cn('p-2 text-nowrap', thClassName)} style={{ width: column.width !== undefined ? `${column.width}px` : 'auto' }}>
-                  {column.tilte}
+                  {column.tilte || upperFirst(camelCase(column.dataIndex as string | undefined))}
                 </div>
               </th>
             ))}

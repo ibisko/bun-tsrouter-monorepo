@@ -1,5 +1,5 @@
-export type Columns<T> = {
-  tilte: string;
+export type Columns<T extends Record<string, any>> = {
+  tilte?: string;
   dataIndex: keyof T;
   width?: number;
   fixed?: 'left' | 'right';
