@@ -11,5 +11,6 @@ export * from './components/Dialog';
 export * from './components/Tooltip';
 export * from './components/Popover';
 export * from './components/Reveal';
+export * from './components/Switch';
 
 export * from './utils/cn';
