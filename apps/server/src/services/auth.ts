@@ -12,24 +12,25 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
-  ctx.logger.info({ msg: '用户登录', data: param });
-  const passwordMd5 = hashString(process.env.AUTH_SECRET + param.password);
+const login = async ({ account, password }: z.output<typeof loginSchema>, ctx: Context) => {
+  ctx.logger.info({ msg: '用户登录', data: { account, password } });
+  password = hashString(process.env.AUTH_SECRET + password);
+
   const count = await prisma.users.count();
   let userInfo;
   if (count === 0) {
     // 对首次登录的账号进行注册
     userInfo = await prisma.users.create({
       data: {
-        account: param.account,
-        password: passwordMd5,
+        account: account,
+        password: password,
         role: UserRole.ROOT,
       },
     });
   } else {
     userInfo = await prisma.users.findFirst({
       where: {
-        account: param.account,
+        account: account,
         deleted_at: null,
       },
     });
@@ -39,7 +40,7 @@ const login = async (param: z.output<typeof loginSchema>, ctx: Context) => {
         reason: '用户不存在',
       });
     }
-    if (userInfo.password !== passwordMd5) {
+    if (userInfo.password !== password) {
       throw new ServiceError({
         message: '用户不存在或密码错误',
         reason: '密码错误',

@@ -6,7 +6,7 @@ type RequestParam = {
   headers?: Headers;
   baseUrl: string;
   query?: Record<string, string> | null;
-  body?: BodyInit;
+  body?: BodyInit | Record<string, any>;
   signal?: AbortSignal;
   /** 首字节超时：等待服务器响应的超时时间，收到响应后不再计时 */
   timeout?: number;
