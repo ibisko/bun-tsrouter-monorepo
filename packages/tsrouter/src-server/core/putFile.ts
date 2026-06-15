@@ -11,6 +11,8 @@ class PutFileServiceClass implements ServiceClass {
   set(service: PutFileService) {
     return trycatchAndMiddlewaresHandle(this.method, service.name, async (request, ctx) => {
       if (!request.body) throw new ServiceError({ message: 'no body' });
+      // 注意，强制告诉 Client 断开连接，避免复用以产生脏连接
+      ctx.resHeaders.set('Connection', 'close');
       const response = await service(request.body, ctx);
       return new Response(responseToString(response), { headers: ctx.resHeaders });
     });
