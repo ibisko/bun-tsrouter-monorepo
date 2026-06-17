@@ -1,25 +1,4 @@
-import { kebabCase } from 'lodash-es';
-import type { RestApiParam, TsRouterClass, TsRouterOptions } from './type';
-
-interface ParseUrlParam extends Pick<RestApiParam, 'path' | 'query'>, Pick<TsRouterOptions, 'baseUrl' | 'prefix'> {}
-
-export const parseUrl = ({ baseUrl, path, query, prefix }: ParseUrlParam) => {
-  if (typeof path === 'string') {
-    if (prefix) {
-      path = path.startsWith('/') ? `${prefix}${path}` : `${prefix}/${path}`;
-    }
-  } else {
-    if (prefix) {
-      path = [prefix, ...path];
-    }
-    path = path.map(kebabCase).join('/');
-  }
-  const url = new URL(path, baseUrl);
-  if (query) {
-    Object.entries(query).map(([key, value]) => url.searchParams.append(key, value));
-  }
-  return url.href;
-};
+import type { TsRouterClass } from './type';
 
 export class RefreshSuccess extends Error {
   constructor(message?: string, options?: ErrorOptions) {

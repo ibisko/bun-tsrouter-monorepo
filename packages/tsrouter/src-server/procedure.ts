@@ -39,8 +39,9 @@ export const createRouter = ({ prefix = '/', router, logger, middlewares, option
 
   const parseRouter = (router: any, prefix: string) => {
     for (const [key, func] of Object.entries(router)) {
-      const regexp = /^\$(.*)/.exec(key);
-      const _prefix = `${prefix}/${regexp ? `:${kebabCase(regexp[1])}` : kebabCase(key)}`;
+      const segment = key === '*' ? key : key.startsWith('$') ? `:${kebabCase(key.slice(1))}` : kebabCase(key);
+      const _prefix = `${prefix}/${segment}`;
+
       if (typeof func === 'function') {
         // 此处定义 Bun.serve routes 的路径路由
         routes[_prefix] = func(logger, middlewares, optionsService);

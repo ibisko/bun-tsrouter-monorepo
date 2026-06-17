@@ -26,14 +26,6 @@ export type XhrMethodOptions = MethodOptions & {
   onPercent?: (percent: number) => void;
 };
 
-export type RestApiParam = {
-  method: RestApiMethod;
-  path: string | string[];
-  query?: Record<string, string> | null;
-  body?: any;
-  options?: MethodOptions;
-};
-
 export abstract class TsRouterClass {
   abstract baseUrl: string;
   abstract isRefreshing: boolean;
@@ -52,6 +44,7 @@ export abstract class TsRouterClass {
 export type ReplaceSpecificLeaf<T> = NonNullable<
   // prettier-ignore
   // $作为前一个路径的函数参数
+  keyof T extends "*"             ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
   keyof T extends `$${string}`    ? Record<string, ReplaceSpecificLeaf<T[keyof T]>> :
   T extends ProcedureDef<infer M> ? { [K in M]: T["_func"] } :
   IsPlainObject<T> extends true   ? { [K in keyof T]: ReplaceSpecificLeaf<T[K]> } :

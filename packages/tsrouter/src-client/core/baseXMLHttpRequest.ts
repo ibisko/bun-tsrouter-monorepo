@@ -1,16 +1,19 @@
 import { RestApiMethod } from '@packages/utils';
 import { ResponseError } from '../error';
 import type { TsRouterClass, XhrMethodOptions } from '../type';
-import { parseUrl, safeJsonParse } from '../utils';
+import { safeJsonParse } from '../utils';
+import { kebabCase } from 'lodash-es';
 
 export const baseXMLHttpRequest = (tsRouter: TsRouterClass, { path, method, body, options = {} }: BaseXMLHttpRequestParam) =>
   new Promise(async (resolve, reject) => {
-    const url = parseUrl({
-      baseUrl: tsRouter.baseUrl,
-      prefix: tsRouter.prefix,
-      path,
-      query: options.query,
-    });
+    if (tsRouter.prefix) path = [tsRouter.prefix, ...path];
+    const pathname = path.map(item => (item.includes('/') ? item.slice(1) : kebabCase(item))).join('/');
+    const url = new URL(pathname, tsRouter.baseUrl);
+    if (options.query) {
+      Object.entries(options.query).forEach(([key, val]) => {
+        url.searchParams.append(key, val);
+      });
+    }
 
     const xhr = new XMLHttpRequest();
     xhr.open(method, url, true);

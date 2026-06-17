@@ -9,11 +9,13 @@ export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, 
   if (tsRouter.setHeaders) await tsRouter.setHeaders(headers);
   if (options.headers) Object.entries(options.headers).map(([key, val]) => headers.set(key, val));
 
-  const url = `${kebabCase(tsRouter.prefix)}/${path.map(item => kebabCase(item)).join('/')}`;
+  if (tsRouter.prefix) path = [tsRouter.prefix, ...path];
+  const pathname = path.map(item => (item.includes('/') ? item.slice(1) : kebabCase(item))).join('/');
+
   const response = await jsonRequest({
     method,
     baseUrl: tsRouter.baseUrl,
-    url,
+    url: pathname,
     headers,
     body,
     query,
