@@ -9,6 +9,7 @@ type FormInputProps<T extends Record<string, any>> = {
   placeholder?: string;
   type?: 'text' | 'password';
   autoComplete?: 'on' | 'off';
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 export const FormInput = <T extends Record<string, any>>({
   defaultValue,
@@ -18,6 +19,7 @@ export const FormInput = <T extends Record<string, any>>({
   type = 'text',
   autoComplete = 'off',
   rules,
+  onKeyDown,
 }: FormInputProps<T>) => {
   return (
     <Controller
@@ -31,6 +33,7 @@ export const FormInput = <T extends Record<string, any>>({
             autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
             placeholder={placeholder}
             defaultValue={defaultValue}
+            onKeyDown={onKeyDown}
             {...field}
           />
           <div>{fieldState.error?.message}</div>
