@@ -30,3 +30,16 @@ export const spawnBun = async (cmd: string[], options?: SpawnBunParam) => {
     throw error;
   }
 };
+
+export const spawnText = async (cmd: string[], cwd?: string) => {
+  let stdoutText = '';
+  await spawnBun(cmd, {
+    cwd,
+    stdout: async stream => {
+      for await (const data of stream.pipeThrough(new TextDecoderStream())) {
+        stdoutText += data;
+      }
+    },
+  });
+  return stdoutText;
+};
