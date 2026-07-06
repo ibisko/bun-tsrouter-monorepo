@@ -1,4 +1,3 @@
-import { kebabCase } from 'lodash-es';
 import { ResponseError } from '../error';
 import { MethodOptions, TsRouterClass } from '../type';
 import { jsonRequest, RestApiMethod } from '@packages/utils';
@@ -10,7 +9,7 @@ export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, 
   if (options.headers) Object.entries(options.headers).map(([key, val]) => headers.set(key, val));
 
   if (tsRouter.prefix) path = [tsRouter.prefix, ...path];
-  const pathname = path.map(item => (item.includes('/') ? item.slice(1) : kebabCase(item))).join('/');
+  const pathname = path.join('/');
 
   const response = await jsonRequest({
     method,
@@ -55,7 +54,7 @@ export async function baseFetch(tsRouter: TsRouterClass, { method, path, query, 
 
 export type Query = Record<string, string> | null;
 
-type BaseFetchParam = {
+export type BaseFetchParam = {
   method: Uppercase<RestApiMethod>;
   path: string[];
   query?: Query;

@@ -1,9 +1,11 @@
 import { createRecursiveProxy, retryHandle } from '@packages/utils';
-import { RefreshFailed, RefreshSuccess } from './utils';
+import { RefreshFailed, RefreshSuccess, warpperRefreshTokenCatch } from './utils';
 import type { TsRouterClass, TsRouterOptions } from './type';
 import { createGetMethod, createStandardMethod, createPostFormData, createDownloadMethod } from './core/restApi';
 import { createSseMethod } from './core/sse';
 import { createPutFile, createPutFileXhr } from './core/putFile';
+import { baseFetch, BaseFetchParam } from './core/baseFetch';
+import { kebabCase } from 'lodash-es';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -43,18 +45,26 @@ export class TsRouter implements TsRouterClass {
       throw new RefreshFailed();
     }
   }
+
+  async restApi({ method, path, body, query, options }: BaseFetchParam) {
+    const fn = () => baseFetch(this, { method, path, query, body, options });
+    return options?.skipRefreshToken ? await fn() : await warpperRefreshTokenCatch(this, fn);
+  }
 }
 
 export const createAppRouter = <T>(tsRouter: TsRouter) =>
-  createRecursiveProxy<T>({
-    get: createGetMethod(tsRouter),
-    post: createStandardMethod(tsRouter, 'POST'),
-    patch: createStandardMethod(tsRouter, 'PATCH'),
-    put: createStandardMethod(tsRouter, 'PUT'),
-    delete: createStandardMethod(tsRouter, 'DELETE'),
-    sse: createSseMethod(tsRouter),
-    postFormData: createPostFormData(tsRouter),
-    putFile: createPutFile(tsRouter),
-    putFileXhr: createPutFileXhr(tsRouter),
-    download: createDownloadMethod(tsRouter),
-  });
+  createRecursiveProxy<T>(
+    {
+      get: createGetMethod(tsRouter),
+      post: createStandardMethod(tsRouter, 'POST'),
+      patch: createStandardMethod(tsRouter, 'PATCH'),
+      put: createStandardMethod(tsRouter, 'PUT'),
+      delete: createStandardMethod(tsRouter, 'DELETE'),
+      sse: createSseMethod(tsRouter),
+      postFormData: createPostFormData(tsRouter),
+      putFile: createPutFile(tsRouter),
+      putFileXhr: createPutFileXhr(tsRouter),
+      download: createDownloadMethod(tsRouter),
+    },
+    path => path.map(kebabCase),
+  );
