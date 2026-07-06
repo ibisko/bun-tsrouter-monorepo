@@ -20,7 +20,7 @@ export const parseZodSchema = async (request: Bun.BunRequest, zodSchema: z.ZodOb
 };
 
 export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: string, callback: Middleware): RouterSetup => {
-  return (logger, middlewares, optionsService) => {
+  return (routePath, logger, middlewares, optionsService) => {
     logger = logger.child({ func: serviceFuncName });
 
     const methodService: BunServeHandler = async (request: Bun.BunRequest, server: Bun.Server<undefined>) => {
@@ -40,9 +40,13 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
       const resHeaders = new Headers();
       resHeaders.set('Content-Type', 'application/json');
 
+      const pattern = new URLPattern({ pathname: routePath });
+      const match = pattern.exec(request.url);
+      const params = match!.pathname.groups;
+
       const ctx: Context = {
         url: request.url,
-        params: request.params,
+        params: params,
         ip: server.requestIP(request),
         headers: request.headers,
         resHeaders,
@@ -98,15 +102,15 @@ export const trycatchAndMiddlewaresHandle = (method: string, serviceFuncName: st
       }
     };
 
-    const res: Record<string, BunServeHandler> = {
+    const route: Record<string, BunServeHandler> = {
       [method.toUpperCase()]: methodService,
     };
 
     if (optionsService) {
-      res['OPTIONS'] = optionsService;
+      route['OPTIONS'] = optionsService;
     }
 
-    return res;
+    return route;
   };
 };
 

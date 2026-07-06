@@ -7,14 +7,14 @@ export interface Context {
   ip: Bun.SocketAddress | null;
   headers: Headers;
   resHeaders: Headers;
-  params: Record<string, string>;
+  params: Record<string, string | undefined>;
   body: Bun.BunRequest['body'];
   /** 日志 */
   logger: Logger;
 }
 
 /** 在 createRouter 中设置上下文 */
-export type RouterSetup = (logger: Logger, middlewares: Middleware[], optionsService: BunServeHandler) => void;
+export type RouterSetup = (path: string, logger: Logger, middlewares: Middleware[], optionsService: BunServeHandler) => void;
 
 export type BunServeHandler = Bun.Serve.Handler<Bun.BunRequest, Bun.Server<undefined>, unknown>;
 
