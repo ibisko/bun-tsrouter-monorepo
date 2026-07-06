@@ -46,13 +46,14 @@ export async function jsonRequest({
   };
 
   if (_method !== 'GET' && body) {
-    if (body instanceof FormData || body instanceof Blob) {
-      reqInit.body = body;
-    } else {
+    const isJsonObject = typeof body === 'object' && (body.constructor === Object || Array.isArray(body));
+    if (isJsonObject) {
       reqInit.body = JSON.stringify(body);
       if (!headers.has('Content-Type')) {
         headers.set('Content-Type', 'application/json');
       }
+    } else {
+      reqInit.body = body as BodyInit;
     }
   }
 
