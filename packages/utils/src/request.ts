@@ -4,7 +4,7 @@ type RequestParam = {
   method: RestApiMethod | Uppercase<RestApiMethod>;
   url: string;
   headers?: Headers;
-  baseUrl: string;
+  baseUrl?: string;
   query?: Record<string, string> | null;
   body?: BodyInit | Record<string, any>;
   signal?: AbortSignal;
