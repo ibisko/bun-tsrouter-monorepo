@@ -7,17 +7,13 @@ type WaterfallGalleryProps<T> = {
   className?: string;
   data: T[];
   render: (param: T, updateNodeHeight: (height: number) => void) => React.ReactNode;
-
-  keyCode: keyof T;
-  cols: {
-    sm?: number; // 640
-    md?: number; // 768
-    lg?: number; // 1024
-    xl?: number; // 1280
-    '2xl'?: number; // 1536
-  };
+  keyField: keyof T;
 };
-export const WaterfallGallery = <T = any,>({ className, keyCode, data, render, cols }: WaterfallGalleryProps<T>) => {
+/**
+ * - 间距调整 `gap-4`
+ * - 每行个数调整 `grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5`
+ */
+export const WaterfallGallery = <T = any,>({ className, keyField, data, render }: WaterfallGalleryProps<T>) => {
   const wrapperDomRef = useRef<HTMLDivElement>(null);
   const [positions, setPositions] = useState<Record<number, WaterfallGalleryPosition>>({});
 
@@ -56,8 +52,8 @@ export const WaterfallGallery = <T = any,>({ className, keyCode, data, render, c
     const rowGap = pxToNum(wrapperStyle.rowGap, 0);
     const colGap = pxToNum(wrapperStyle.columnGap, 0);
     const wrapperWidth = wrapperDomRef.current.getBoundingClientRect().width;
-    const presetSize = matchWidthToPresetSize();
-    const count = presetSize ? cols[presetSize] || 1 : 1;
+    const matchRepeat = /^repeat\((\d+),/.exec(wrapperStyle.gridTemplateColumns);
+    const count = matchRepeat ? +matchRepeat[1] : 1;
     const boxWidth = ~~((wrapperWidth - (count - 1) * rowGap) / count);
 
     setPositions(val => {
@@ -88,13 +84,11 @@ export const WaterfallGallery = <T = any,>({ className, keyCode, data, render, c
 
   return (
     <div className={cn('relative flex flex-wrap', className)} ref={wrapperDomRef}>
-      {data.map((item, index) => {
-        return (
-          <BoxItem pos={positions[index]} indexKey={index} key={item[keyCode] as string}>
-            {render(item, height => updateNodeHeight(index, height))}
-          </BoxItem>
-        );
-      })}
+      {data.map((item, index) => (
+        <BoxItem pos={positions[index]} indexKey={index} key={item[keyField] as string}>
+          {render(item, height => updateNodeHeight(index, height))}
+        </BoxItem>
+      ))}
     </div>
   );
 };
@@ -129,15 +123,6 @@ const pxToNum = (data: string, defaultValue: number) => {
   const match = /^(\d+)px$/.exec(data);
   if (!match) return defaultValue;
   return +match[1];
-};
-
-const matchWidthToPresetSize = () => {
-  const len = document.body.offsetWidth;
-  if (len >= 1536) return '2xl';
-  if (len >= 1280) return 'xl';
-  if (len >= 1024) return 'lg';
-  if (len >= 768) return 'md';
-  if (len >= 640) return 'sm';
 };
 
 type PosFieldValueParam = { pos?: WaterfallGalleryPosition; field: keyof WaterfallGalleryPosition; defaultValue: string };
