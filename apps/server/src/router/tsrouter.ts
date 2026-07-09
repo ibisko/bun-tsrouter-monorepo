@@ -36,7 +36,7 @@ const mainWhiteListRouterTree = {
 export const mainAuthRouter = createRouter({
   prefix: '/api',
   logger,
-  middlewares: [trigger, authMiddleware, corsMiddleware],
+  middlewares: [trigger, corsMiddleware, authMiddleware],
   router: mainAuthRouterTree,
   optionsService,
 });
