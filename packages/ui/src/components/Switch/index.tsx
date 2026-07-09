@@ -14,19 +14,12 @@ export function Switch({
       data-slot="switch"
       data-size={size}
       className={cn(
-        // base
         'peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent transition-all outline-none',
-        // hit area
         'after:absolute after:-inset-x-3 after:-inset-y-2',
-        // focus
         'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
-        // invalid
         'aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40',
-        // size
         'data-[size=default]:h-[18.4px] data-[size=default]:w-8 data-[size=sm]:h-3.5 data-[size=sm]:w-6',
-        // checked / unchecked
         'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80',
-        // disabled
         'data-disabled:cursor-not-allowed data-disabled:opacity-50',
         className,
       )}
@@ -34,15 +27,10 @@ export function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          // base
           'pointer-events-none block rounded-full bg-background ring-0',
-          // transition
           'translate-x-0 transition-transform duration-200 ease-in-out',
-          // position by state
           'data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0',
-          // size
           'group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3',
-          // color
           'dark:data-[state=checked]:bg-primary-foreground dark:data-[state=unchecked]:bg-foreground',
         )}
       />

@@ -52,7 +52,13 @@ export const Table = <T extends Record<string, any> = any>({
                       [column.fixed || 'left']: column.fixed ? `${column.stickyOffset}px` : 'auto',
                     }}
                     key={column.dataIndex as string}>
-                    <div className={cn('p-2', tdClassName)}>{column.render ? column.render(item) : item[column.dataIndex]}</div>
+                    <div
+                      className={cn('p-2 truncate', tdClassName)}
+                      style={{
+                        width: column.width !== undefined ? `${column.width}px` : 'auto',
+                      }}>
+                      {column.render ? column.render(item) : item[column.dataIndex]}
+                    </div>
                   </td>
                 );
               })}
