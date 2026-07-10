@@ -1,6 +1,6 @@
 import { cn } from '@/main';
 
-type RevealProps = {
+type CollapseProps = {
   children: React.ReactNode;
   className?: string;
   open?: boolean;
@@ -15,7 +15,7 @@ type RevealProps = {
  * - delay-0 group-hover:delay-1000
  */
 
-export const Reveal = ({ children, className, open, innerClassName, onClick }: RevealProps) => (
+export const Collapse = ({ children, className, open, innerClassName, onClick }: CollapseProps) => (
   <div
     className={cn(
       'grid overflow-hidden opacity-0 grid-rows-[0fr] transition-[opacity,grid-template-rows] w-full',

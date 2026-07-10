@@ -1,4 +1,4 @@
-import { cn, Reveal } from '@packages/ui';
+import { cn, Collapse } from '@packages/ui';
 import { useMemo } from 'react';
 
 type BaseMessageProps = {
@@ -15,7 +15,7 @@ export const BaseMessage = ({ className, created, children, footer, side }: Base
   return (
     <div className={cn('relative flex flex-col justify-end px-1.5 py-1 group hover:bg-foreground/5')}>
       {created && (
-        <Reveal
+        <Collapse
           className={cn(
             'text-nowrap  text-xs text-foreground/80',
             'group-hover:opacity-100 group-hover:grid-rows-[1fr]',
@@ -24,7 +24,7 @@ export const BaseMessage = ({ className, created, children, footer, side }: Base
           )}
           innerClassName={cn()}>
           {dateString}
-        </Reveal>
+        </Collapse>
       )}
 
       <div
@@ -38,7 +38,7 @@ export const BaseMessage = ({ className, created, children, footer, side }: Base
         {children}
       </div>
 
-      <Reveal
+      <Collapse
         className={cn(
           'text-nowrap text-xs text-foreground/80',
           'group-hover:opacity-100 group-hover:grid-rows-[1fr]',
@@ -48,7 +48,7 @@ export const BaseMessage = ({ className, created, children, footer, side }: Base
         )}
         innerClassName="flex gap-2 pt-1">
         {footer}
-      </Reveal>
+      </Collapse>
       {/* todo tools */}
     </div>
   );
