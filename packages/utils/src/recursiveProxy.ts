@@ -9,10 +9,7 @@ const createFlatProxy = (obj: object, callback: (path: string) => any): any =>
     },
   });
 
-export const createRecursiveProxy = <T = any, R = string[]>(
-  handles: RecursiveProxyHandles<R> | Handle<R>,
-  transform?: Transform<R>,
-): T => {
+export const createRecursiveProxy = <T = any, R = string[]>(handles: RecursiveProxyHandles<R> | Handle<R>, transform?: Transform<R>): T => {
   const build = (path: string[] = [], obj = {}) =>
     createFlatProxy(obj, action => {
       const nextPrefix = path.concat(action);
@@ -26,6 +23,12 @@ export const createRecursiveProxy = <T = any, R = string[]>(
             throw new Error(`method "${action}" is undefined for "${path}"`);
           });
         }
+
+        /**
+         * radix-ui 组件卸载时候 flushSync 会对 Props 的深度遍历与类型转换，引发问题:
+         * Uncaught TypeError: Cannot convert undefined or null to object
+         */
+        if (action === 'valueOf') return;
         return build(nextPrefix, (...args: any[]) => callback(currentPath, ...args));
       }
     });
