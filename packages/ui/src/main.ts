@@ -24,5 +24,6 @@ export * from './hooks/useDebounce';
 export * from './hooks/useInitial';
 export * from './hooks/useLocalStorageState';
 export * from './hooks/useResizeObserver';
+export * from './hooks/useThrottle';
 
 export * from './utils/cn';

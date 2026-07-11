@@ -7,6 +7,7 @@ interface UseIntersectionObserverOptions {
   rootMargin?: string;
   /** 默认 true，触发一次后自动断开观察 */
   once?: boolean;
+  callback?: (visible: boolean) => void;
 }
 
 /**
@@ -24,10 +25,8 @@ interface UseIntersectionObserverOptions {
  * return <div ref={ref}>{isIntersecting ? '可见' : '不可见'}</div>;
  * ```
  */
-export const useIntersectionObserver = <T extends HTMLElement = HTMLDivElement>(
-  options: UseIntersectionObserverOptions = {},
-) => {
-  const { threshold = 0, rootMargin, once = true } = options;
+export const useIntersectionObserver = <T extends HTMLElement = HTMLDivElement>(options: UseIntersectionObserverOptions = {}) => {
+  const { threshold = 0, rootMargin, once = true, callback } = options;
 
   const ref = useRef<T>(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -40,7 +39,7 @@ export const useIntersectionObserver = <T extends HTMLElement = HTMLDivElement>(
       ([entry]) => {
         const visible = entry.isIntersecting;
         setIsIntersecting(visible);
-
+        callback?.(visible);
         if (visible && once) observer.disconnect();
       },
       { threshold, rootMargin },
