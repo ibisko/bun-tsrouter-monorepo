@@ -2,16 +2,19 @@ import { cn, inputClass } from '@/main';
 import type { MaybePromise } from 'bun';
 import { useRef, useCallback, useEffect, type TextareaHTMLAttributes, useState } from 'react';
 
-type TextareaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value'> & {
+type TextareaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'defaultValue'> & {
   maxRows?: number;
-  defaultValue?: string;
+  value?: string | null;
   onTextChange?: (text: string) => MaybePromise<string | void>;
 };
 
-export function Textarea({ className, rows = 3, maxRows = 8, defaultValue, onTextChange, ...props }: TextareaProps) {
+export function Textarea({ className, rows = 3, maxRows = 8, value, onTextChange, ...props }: TextareaProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
-  const [val, setVal] = useState(defaultValue ?? '');
+  const [val, setVal] = useState(value ?? '');
+  useEffect(() => {
+    setVal(value ?? '');
+  }, [value]);
 
   const adjustHeight = useCallback(() => {
     const el = ref.current;
@@ -32,7 +35,6 @@ export function Textarea({ className, rows = 3, maxRows = 8, defaultValue, onTex
       ref={ref}
       className={cn(inputClass, 'h-auto resize-none', className)}
       rows={rows}
-      defaultValue={defaultValue}
       value={val}
       onInput={async e => {
         const target = e.target as HTMLTextAreaElement;

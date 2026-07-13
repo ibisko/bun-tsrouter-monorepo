@@ -21,9 +21,9 @@ export * from './hooks/useDelayedHover';
 export * from './hooks/useIntersectionObserver';
 export * from './hooks/useRaf';
 export * from './hooks/useDebounce';
+export * from './hooks/useThrottle';
 export * from './hooks/useInitial';
 export * from './hooks/useLocalStorageState';
 export * from './hooks/useResizeObserver';
-export * from './hooks/useThrottle';
 
 export * from './utils/cn';

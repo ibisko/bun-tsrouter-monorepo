@@ -12,7 +12,6 @@ type FormInputProps<T extends Record<string, any>> = {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 export const FormInput = <T extends Record<string, any>>({
-  defaultValue,
   name,
   control,
   placeholder,
@@ -32,9 +31,9 @@ export const FormInput = <T extends Record<string, any>>({
             type={type}
             autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
             placeholder={placeholder}
-            defaultValue={defaultValue}
             onKeyDown={onKeyDown}
             {...field}
+            value={field.value ?? ''}
           />
           <div>{fieldState.error?.message}</div>
         </>
