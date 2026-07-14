@@ -6,7 +6,11 @@ export const createAppRoute = (rootRoute: RootRoute) => {
     getParentRoute: () => rootRoute,
     path: '/app',
     async beforeLoad(ctx) {
-      await userActions.initUserInfo();
+      try {
+        await userActions.initUserInfo();
+      } catch (error) {
+        throw redirect({ to: '/', replace: true });
+      }
       // 重定向
       if (/^\/app\/?$/.test(ctx.location.pathname)) {
         throw redirect({ to: '/app/ts-router', replace: true });

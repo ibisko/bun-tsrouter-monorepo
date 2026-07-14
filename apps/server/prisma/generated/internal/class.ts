@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.7.0",
-  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
+  "clientVersion": "7.8.0",
+  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "sqlite",
   "inlineSchema": "enum UserRole {\n  ROOT\n  USER\n}\n\nmodel Users {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  account  String   @unique\n  password String\n  role     UserRole // 角色权限\n}\n\nmodel BlackList {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  ip     String  @unique\n  remark String?\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n}\n",
   "runtimeDataModel": {
@@ -180,7 +180,7 @@ export interface PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
 

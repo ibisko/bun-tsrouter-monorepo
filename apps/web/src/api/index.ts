@@ -1,7 +1,6 @@
 import { userStore } from '@/stores/user';
 import type { AppRouter } from '@apps/server/client';
 import { createAppRouter, RefreshFailed, ResponseError, TsRouter } from '@packages/tsrouter/client';
-import { redirect } from '@tanstack/react-router';
 
 const ins = new TsRouter({
   baseUrl: import.meta.env.VITE_BASE_URL!,
@@ -25,12 +24,6 @@ const ins = new TsRouter({
         if (error.status === 403) return abort();
       }
       throw new RefreshFailed();
-    }
-  },
-  onResponseError(error) {
-    if (error instanceof RefreshFailed) {
-      console.log('刷新失败');
-      throw redirect({ to: '/', replace: true });
     }
   },
 });
