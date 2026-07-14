@@ -35,10 +35,5 @@
   },
   "type": "module",
   "private": true,
-  "workspaces": [
-    "agent/**/*",
-    "apps/**/*",
-    "packages/*",
-    "scripts/*"
-  ]
+  "packageManager": "pnpm@11.13.0"
 }

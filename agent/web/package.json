@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@iconify/utils": "^3.1.0",
-    "@packages/gpt": "workspace:^",
-    "@packages/icons": "workspace:^",
-    "@packages/tsrouter": "workspace:^",
-    "@packages/ui": "workspace:^",
-    "@packages/utils": "workspace:^",
+    "@packages/gpt": "workspace:*",
+    "@packages/icons": "workspace:*",
+    "@packages/tsrouter": "workspace:*",
+    "@packages/ui": "workspace:*",
+    "@packages/utils": "workspace:*",
     "@tanstack/react-router": "^1.163.3",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.2",
@@ -31,7 +31,7 @@
     "valtio": "^2.3.0"
   },
   "devDependencies": {
-    "@apps/agent-server": "workspace:^",
+    "@apps/agent-server": "workspace:*",
     "@eslint/js": "^9.39.3",
     "@tailwindcss/vite": "^4.2.1",
     "@types/react": "^19.2.14",

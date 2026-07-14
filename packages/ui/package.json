@@ -17,8 +17,8 @@
     "@types/react-dom": "^19.2.3"
   },
   "dependencies": {
-    "@packages/icons": "workspace:^",
-    "@packages/utils": "workspace:^",
+    "@packages/icons": "workspace:*",
+    "@packages/utils": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",

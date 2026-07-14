@@ -1,0 +1,11 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@swc/core': true
+  esbuild: true
+  prisma: true
+
+packages:
+  - 'agent/**/*'
+  - 'apps/**/*'
+  - 'packages/**/*'
