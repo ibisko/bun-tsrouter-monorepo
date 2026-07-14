@@ -16,10 +16,10 @@ const AccessControlAllowHeaders = [
 
 export const optionsService: BunServeHandler | undefined = true
   ? () => {
-      const headers = new Headers();
-      headers.set('Access-Control-Allow-Origin', '*');
-      headers.set('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
-      headers.set('Access-Control-Allow-Headers', AccessControlAllowHeaders);
-      return new Response(null, { status: 204, headers });
-    }
+    const headers = new Headers();
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    headers.set('Access-Control-Allow-Headers', AccessControlAllowHeaders);
+    return new Response(null, { status: 204, headers });
+  }
   : undefined;
