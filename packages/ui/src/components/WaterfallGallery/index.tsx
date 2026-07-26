@@ -1,4 +1,4 @@
-import { cn } from '@packages/ui';
+import { cn } from '@/utils/cn';
 import { useRef } from 'react';
 import { BoxItem } from './BoxItem';
 import { useReachBottom } from './useReachBottom';

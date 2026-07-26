@@ -6,7 +6,7 @@ import { WatchDog } from '@packages/utils';
 import { ServiceError } from '../error';
 import { AwaitedReturn, Func } from '@packages/utils/types';
 import { RestApiMethod } from '@packages/utils';
-import { MaybePromise } from 'bun';
+import type { MaybePromise } from 'bun';
 
 class SseServiceClass implements ServiceClass {
   method: RestApiMethod = 'post';

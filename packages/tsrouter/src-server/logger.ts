@@ -1,7 +1,7 @@
 import { cloneDeep, merge } from 'lodash-es';
 import fastJson from 'fast-json-stringify';
 import { parseToFastJsonStringify } from './utils';
-import { MaybePromise } from 'bun';
+import type { MaybePromise } from 'bun';
 
 const properties = parseToFastJsonStringify({
   lv: 'string',

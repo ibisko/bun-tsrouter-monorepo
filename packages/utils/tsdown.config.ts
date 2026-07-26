@@ -1,28 +1,28 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig(options => [
   {
     ...options,
-    entryPoints: ['./src/index.ts'],
+    entry: './src/index.ts',
     outDir: './dist/src',
     format: ['esm'],
     dts: true,
-    silent: true,
+    deps: { neverBundle: true },
   },
   {
     ...options,
-    entryPoints: ['./src-server/index.ts'],
+    entry: './src-server/index.ts',
     outDir: './dist/server',
     format: ['esm'],
     dts: true,
-    silent: true,
+    deps: { neverBundle: true },
   },
   {
     ...options,
-    entryPoints: ['./src-web/index.ts'],
+    entry: './src-web/index.ts',
     outDir: './dist/web',
     format: ['esm'],
     dts: true,
-    silent: true,
+    deps: { neverBundle: true },
   },
 ]);

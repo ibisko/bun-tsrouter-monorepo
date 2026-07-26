@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 // import path from 'path';
 
 export default defineConfig(options => [
@@ -8,7 +8,7 @@ export default defineConfig(options => [
     outDir: './dist/server',
     format: ['esm'],
     dts: true,
-    silent: true,
+    deps: { neverBundle: true },
   },
   {
     ...options,
@@ -16,6 +16,6 @@ export default defineConfig(options => [
     outDir: './dist/client',
     format: ['esm'],
     dts: true,
-    silent: true,
+    deps: { neverBundle: true },
   },
 ]);

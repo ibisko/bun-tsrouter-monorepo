@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { BunServeHandler, Middleware } from './type';
 import { createSseMethod } from './core/sse';
 import { createPostFormData } from './core/postFormData';
-import { MaybePromise } from 'bun';
+import type { MaybePromise } from 'bun';
 import { kebabCase } from 'lodash-es';
 import { createPutFile, createPutFileXhr } from './core/putFile';
 

@@ -1,14 +1,20 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
         "strict": true,
         "outDir": "dist",
         "skipLibCheck": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "./*"
+            ],
+        }
     },
     "include": [
         "src"

@@ -2,14 +2,24 @@
   "name": "@packages/utils",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./types": "./types/main.ts",
-    "./server": "./src-server/index.ts",
-    "./web": "./src-web/index.ts"
+    ".": {
+      "import": "./dist/src/index.mjs",
+      "types": "./dist/src/index.d.mts"
+    },
+    "./server": {
+      "import": "./dist/server/index.mjs",
+      "types": "./dist/server/index.d.mts"
+    },
+    "./web": {
+      "import": "./dist/web/index.mjs",
+      "types": "./dist/web/index.d.mts"
+    },
+    "./types": "./types/main.ts"
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsdown"
   },
   "dependencies": {
     "nanoid": "^5.1.6"

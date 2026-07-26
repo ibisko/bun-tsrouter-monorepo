@@ -11,6 +11,10 @@
   curl -fsSL https://bun.sh/install | bash
   ```
 
+- PNPM 运行环境
+  用于 monorepo 管理
+  减少磁盘空间占用
+
 - Node.js v22
   用于 prisma 的 preinstall
   用于 vite 运行
@@ -19,6 +23,7 @@
   https://facebook.github.io/watchman/docs/install
 
   ```sh
+  # macos
   brew install watchman
   ```
 

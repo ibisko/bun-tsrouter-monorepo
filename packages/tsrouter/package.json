@@ -5,16 +5,16 @@
   "type": "module",
   "exports": {
     "./client": {
-      "types": "./dist/client/main.d.ts",
-      "import": "./src-client/main.ts"
+      "types": "./dist/client/main.d.mts",
+      "import": "./dist/client/main.mjs"
     },
     "./server": {
-      "types": "./dist/server/main.d.ts",
-      "import": "./src-server/main.ts"
+      "types": "./dist/server/main.d.mts",
+      "import": "./dist/server/main.mjs"
     }
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsdown"
   },
   "keywords": [],
   "author": "",

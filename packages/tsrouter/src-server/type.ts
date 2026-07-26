@@ -1,5 +1,5 @@
 import type { Logger } from './logger';
-import { MaybePromise } from 'bun';
+import type { MaybePromise } from 'bun';
 import { RestApiMethod } from '@packages/utils';
 
 export interface Context {

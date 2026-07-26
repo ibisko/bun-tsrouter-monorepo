@@ -1,6 +1,7 @@
 {
   "name": "@packages/icons",
   "version": "1.0.0",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./src/main.ts",
@@ -8,7 +9,7 @@
     }
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsdown"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.2.1",

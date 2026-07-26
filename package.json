@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "bun run ./scripts/watchman/index.ts",
     "agent": "bun run ./scripts/watchman/index.ts --config .watchman.agent.config.ts",
-    "init": "bun i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts",
+    "init-app": "pnpm i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts",
     "app": "bun ./scripts/createApp.ts"
   },
   "keywords": [],
@@ -18,7 +18,7 @@
     "@types/node": "^24.12.0",
     "chalk": "^5.6.2",
     "fb-watchman": "^2.0.2",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.14",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },

@@ -7,12 +7,12 @@ const configs: WatchmanConfigInfo = [
       {
         cwd: 'packages/utils',
         watch: ['src', 'src-server', 'src-web', 'types'],
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
       {
         cwd: 'packages/icons',
         watch: ['src'],
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
     ],
   },
@@ -22,22 +22,22 @@ const configs: WatchmanConfigInfo = [
       {
         cwd: 'packages/ui',
         watch: 'src',
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
       {
         cwd: 'packages/tsrouter',
         watch: ['src-client', 'src-server'],
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
       {
         cwd: 'apps/server',
         watch: 'src',
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
       {
         cwd: 'packages/gpt',
         watch: 'src',
-        script: 'bun tsup',
+        script: 'bun tsdown',
       },
     ],
   },

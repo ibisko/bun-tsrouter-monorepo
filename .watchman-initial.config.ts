@@ -6,12 +6,12 @@ const configs: WatchmanConfigInfo = [
     scripts: [
       {
         cwd: 'packages/utils',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
       {
         cwd: 'packages/icons',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
     ],
@@ -21,22 +21,22 @@ const configs: WatchmanConfigInfo = [
     scripts: [
       {
         cwd: 'packages/ui',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
       {
         cwd: 'packages/tsrouter',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
       {
         cwd: 'apps/server',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
       {
         cwd: 'packages/gpt',
-        script: 'bun tsup',
+        script: 'bun tsdown',
         isAwait: true,
       },
     ],

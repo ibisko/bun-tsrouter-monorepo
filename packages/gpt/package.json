@@ -2,6 +2,7 @@
   "name": "@packages/gpt",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -10,7 +11,7 @@
   },
   "scripts": {
     "dev": "bun run ./src/index.ts",
-    "build": "tsup"
+    "build": "tsdown"
   },
   "dependencies": {
     "@packages/utils": "workspace:*",
