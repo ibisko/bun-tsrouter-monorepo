@@ -1,25 +1,36 @@
 import { cn } from '@/utils/cn';
-import { posFieldValue, type WaterfallGalleryPosition } from './utils';
 
 type BoxItemProps = {
   className?: string;
-  pos?: WaterfallGalleryPosition;
   indexKey: number;
   children: React.ReactNode;
+
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
+  opacity?: number;
 };
-export const BoxItem = ({ className, pos, indexKey, children }: BoxItemProps) => {
+export const BoxItem = ({ className, indexKey, children, top, left, width, height, opacity }: BoxItemProps) => {
   return (
     <div
       className={cn('absolute transition-all duration', className)}
       style={{
-        top: posFieldValue({ pos, field: 'top', defaultValue: 'auto' }),
-        left: posFieldValue({ pos, field: 'left', defaultValue: 'auto' }),
-        width: posFieldValue({ pos, field: 'width', defaultValue: 'auto' }),
-        height: posFieldValue({ pos, field: 'height', defaultValue: 'auto' }),
-        opacity: pos?.opacity ? `${pos.opacity}` : '0',
+        top: fieldValue(top, 'auto'),
+        left: fieldValue(left, 'auto'),
+        width: fieldValue(width, 'auto'),
+        height: fieldValue(height, 'auto'),
+        opacity: opacity ? `${opacity}` : '0',
       }}
       key={indexKey as number}>
       {children}
     </div>
   );
+};
+
+const fieldValue = (val?: number, defaultValue?: string) => {
+  if (val || val === 0) {
+    return `${val}px`;
+  }
+  return defaultValue;
 };

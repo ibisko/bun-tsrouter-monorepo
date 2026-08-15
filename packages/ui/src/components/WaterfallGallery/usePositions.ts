@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { pxToNum, WaterfallGalleryPosition } from './utils';
-import { useDebounce, useResizeObserver, useThrottle } from '@/main';
+import { useDebounce, useResizeObserver } from '@/main';
 import { cloneDeep } from 'lodash-es';
 
-export const usePositions = (data: any, wrapperDomRef: React.RefObject<HTMLDivElement | null>) => {
+export const usePositions = (data: any[], wrapperDomRef: React.RefObject<HTMLDivElement | null>) => {
   const [contentHeight, setContentHeight] = useState(0);
   const wrapperHeightRef = useRef(0);
   const [positions, setPositions] = useState<Record<number, WaterfallGalleryPosition>>({});
@@ -58,7 +57,7 @@ export const usePositions = (data: any, wrapperDomRef: React.RefObject<HTMLDivEl
         if (item.height) {
           item.top = cacheTop[colIndex];
           cacheTop[colIndex] += item.height + colGap;
-          wrapperHeightRef.current = Math.max(...cacheTop);
+          wrapperHeightRef.current = Math.max(...cacheTop) - colGap;
         }
         item.left = colIndex * (boxWidth + rowGap);
         item.width = boxWidth;
@@ -84,4 +83,19 @@ export const usePositions = (data: any, wrapperDomRef: React.RefObject<HTMLDivEl
     wrapperDomRef,
     updateNodeHeight,
   };
+};
+
+const pxToNum = (data: string, defaultValue: number) => {
+  const match = /^(\d+)px$/.exec(data);
+  if (!match) return defaultValue;
+  return +match[1];
+};
+
+type WaterfallGalleryPosition = {
+  index: number;
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
+  opacity?: number;
 };

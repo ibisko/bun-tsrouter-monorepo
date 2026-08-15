@@ -14,8 +14,8 @@ type WaterfallGalleryProps<T> = {
   onReachBottom?: () => void;
 };
 /**
- * - 间距调整 `gap-4`
  * - 每行个数调整 `grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5`
+ * - 间距调整 `gap-4`
  */
 export const WaterfallGallery = <T = any,>({ className, keyField = 'id', data, render, total, onReachBottom }: WaterfallGalleryProps<T>) => {
   const wrapperDomRef = useRef<HTMLDivElement>(null);
@@ -37,18 +37,27 @@ export const WaterfallGallery = <T = any,>({ className, keyField = 'id', data, r
       {data.map((item, index) => {
         const pos = positions[index];
         // 不在可视区域就不挂载
+        if (!pos) return;
         if (pos) {
           if (pos.top! + pos.height! < scrollTop) return;
           if (pos.top! > scrollTop + wrapperHeight) return;
         }
         return (
-          <BoxItem pos={pos} indexKey={index} key={item[keyField as keyof typeof item] as number}>
+          <BoxItem
+            top={pos.top}
+            left={pos.left}
+            width={pos.width}
+            height={pos.height}
+            opacity={pos.opacity}
+            indexKey={index}
+            key={item[keyField as keyof typeof item] as number}>
             {render(item, height => updateNodeHeight(index, height))}
           </BoxItem>
         );
       })}
       <div style={{ height: `${contentHeight}px` }}></div>
-      <div className="h-8" ref={reachBottomRef}></div>
+      {/* <div className="h-8" ref={reachBottomRef}></div> */}
+      <div className="" ref={reachBottomRef}></div>
     </div>
   );
 };
