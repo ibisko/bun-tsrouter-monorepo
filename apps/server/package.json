@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     "./client": {
-      "types": "./dist/main.d.ts"
+      "types": "./dist/main.d.mts"
     }
   },
   "scripts": {

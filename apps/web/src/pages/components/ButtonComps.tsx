@@ -2,6 +2,7 @@ import { Button, Card, Dialog } from '@packages/ui';
 import { useState } from 'react';
 
 export const ButtonComps = () => {
+  const [visible, setVisible] = useState(false);
   return (
     <Card>
       <div>{'<Button/>'}</div>
@@ -12,20 +13,11 @@ export const ButtonComps = () => {
         <Button variant="ghost">ghost</Button>
         <Button variant="link">link</Button>
       </div>
-      <div>{'<Dialog/>'}</div>
-      <DialogButton />
-    </Card>
-  );
-};
 
-const DialogButton = () => {
-  const [visible, setVisible] = useState(false);
-  return (
-    <>
-      <Button onClick={() => setVisible(true)}>DialogButton</Button>
-      <Dialog open={visible} cancel={() => setVisible(false)}>
+      <div>{'<Dialog/>'}</div>
+      <Dialog title="Dialog Title" trigger={<Button>DialogButton</Button>} open={visible} onChange={setVisible}>
         <div>Dialog Content.</div>
       </Dialog>
-    </>
+    </Card>
   );
 };

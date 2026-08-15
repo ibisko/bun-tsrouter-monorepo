@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.7.0",
-  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
+  "clientVersion": "7.8.0",
+  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "sqlite",
   "inlineSchema": "model UserMessages {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  pid     Int?\n  content String\n  sources Json?\n\n  session      Sessions?\n  agentMessage AgentMessages[]\n}\n\nmodel AgentMessages {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  pid      Int?\n  role     String\n  content  Json // 单行消息，注意不是整组\n  metadata Json?\n\n  agent_type String? // 该消息来源于哪个 agent 直接生成的，用于复盘 sub-agent\n\n  umid        Int\n  userMessage UserMessages @relation(fields: [umid], references: [id])\n}\n\n// 用户会话新建、分支新建的 session\nmodel Sessions {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  title           String // 简单的理解小标题，只是给用户看的\n  summary         String? // 内容过长，就需要总结摘要\n  summary_to_umid Int? // 摘要到哪个 umid 为止\n\n  latest_umid Int          @unique // 最后一条 UserMessage 消息 id\n  userMessage UserMessages @relation(fields: [latest_umid], references: [id])\n}\n\n// agent 自动归档分类的 session\n// todo 对 session 的关键提取，有目标来指定，不要让 agent 来自己指定吧？\n// pid         Int? // 从哪个 session 之下分化细分的，考虑下最大层级数（根据实际体验吧，后续加入）\n// description String // 描述 session 是干嘛的，用与匹配\n\nmodel BlackList {\n  id         Int       @id @default(autoincrement())\n  created_at DateTime  @default(now())\n  updated_at DateTime  @updatedAt\n  deleted_at DateTime?\n\n  ip     String  @unique\n  remark String?\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated\"\n}\n",
   "runtimeDataModel": {
@@ -180,7 +180,7 @@ export interface PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
 

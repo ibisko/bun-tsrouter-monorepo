@@ -4,8 +4,7 @@
   "scripts": {
     "dev": "bun run ./scripts/watchman/index.ts",
     "agent": "bun run ./scripts/watchman/index.ts --config .watchman.agent.config.ts",
-    "init-app": "pnpm i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts",
-    "app": "bun ./scripts/createApp.ts"
+    "init-app": "pnpm i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +33,5 @@
     "zod": "^4.3.6"
   },
   "type": "module",
-  "private": true,
-  "packageManager": "pnpm@11.13.0"
+  "private": true
 }

@@ -10,7 +10,7 @@ type FormPasswordInputProps<T extends Record<string, any>> = {
   placeholder?: string;
   type?: 'text' | 'password';
   autoComplete?: 'on' | 'off';
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 export const FormPasswordInput = <T extends Record<string, any>>({
   name,
@@ -19,7 +19,7 @@ export const FormPasswordInput = <T extends Record<string, any>>({
   type = 'text',
   autoComplete = 'off',
   rules,
-  onKeyDown,
+  onEnter,
 }: FormPasswordInputProps<T>) => {
   return (
     <Controller
@@ -29,7 +29,7 @@ export const FormPasswordInput = <T extends Record<string, any>>({
       render={({ field, fieldState }) => (
         <>
           <PasswordInput
-            onKeyDown={onKeyDown}
+            onEnter={onEnter}
             autoComplete={autoComplete === 'off' && type === 'password' ? 'new-password' : autoComplete}
             placeholder={placeholder}
             {...field}

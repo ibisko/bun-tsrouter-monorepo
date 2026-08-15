@@ -1,25 +1,36 @@
-import { cn } from '@/main';
-import { Popover as BasePopover, PopoverContent, PopoverTrigger } from './base';
-import { Popover as RadixUiPopver } from 'radix-ui';
+import { cn } from '@/utils/cn';
+import { PopoverContent } from './popverContent';
+import { usePopover } from './usePopover';
+import { Slot } from '@radix-ui/react-slot';
 
 type PopoverProps = {
   className?: string;
   trigger: React.ReactNode;
-  open: boolean;
+  side?: 'bottom' | 'top' | 'right' | 'left';
+  align?: 'center' | 'start' | 'end';
+  offset?: number;
+  /** 箭头 icon */
+  showArrow?: boolean;
   children: React.ReactNode;
-  onOpenChange?: (status: boolean) => void;
-  side?: RadixUiPopver.PopoverContentProps['side'];
-  sideOffset?: number;
-  align?: RadixUiPopver.PopoverContentProps['align'];
 };
 
-export const Popover = ({ className, trigger, open, children, side, sideOffset, align, onOpenChange }: PopoverProps) => {
+// todo 提供 open, onChange 为非 trigger 情况
+export const Popover = ({ className, trigger, side, align, offset, children }: PopoverProps) => {
+  const { triggerRef, visible, onTrigger, ...props } = usePopover({ side, align, offset });
+
   return (
-    <BasePopover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent className={cn(className)} side={side} align={align} sideOffset={sideOffset}>
-        {children}
-      </PopoverContent>
-    </BasePopover>
+    <>
+      <Slot ref={triggerRef} onClick={onTrigger}>
+        {trigger}
+      </Slot>
+
+      {visible && (
+        <PopoverContent
+          className={cn('bg-popover/95 backdrop-blur-[2px] text-popover-foreground rounded-md shadow-md overflow-hidden p-1', className)}
+          {...props}>
+          {children}
+        </PopoverContent>
+      )}
+    </>
   );
 };

@@ -13,12 +13,20 @@ export const inputClass = cn(
   'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
 );
 
-export type InputProps = React.ComponentProps<'input'>;
-export function Input({ className, type, ...props }: InputProps) {
+export type InputProps = React.ComponentProps<'input'> & {
+  onEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+};
+export function Input({ className, type, onEnter, ...props }: InputProps) {
   return (
     <input
       type={type}
       className={cn(inputClass, className)}
+      onKeyDown={e => {
+        if (!onEnter) return;
+        if (e.code === 'Enter') {
+          onEnter(e);
+        }
+      }}
       {...props}
       // data-slot="input"
     />
@@ -29,7 +37,7 @@ type InputGroupProps = InputProps & {
   prefixSlot?: React.ReactNode;
   suffixSlot?: React.ReactNode;
 };
-export function InputGroup({ className, prefixSlot, suffixSlot, ...props }: InputGroupProps) {
+export function InputGroup({ className, prefixSlot, suffixSlot, onEnter, ...props }: InputGroupProps) {
   return (
     <div
       className={cn(
@@ -43,6 +51,12 @@ export function InputGroup({ className, prefixSlot, suffixSlot, ...props }: Inpu
       {prefixSlot}
       <input
         className={cn('flex-1 h-full outline-none autofill:bg-transparent! autofill:text-red-500!')}
+        onKeyDown={e => {
+          if (!onEnter) return;
+          if (e.code === 'Enter') {
+            onEnter(e);
+          }
+        }}
         {...props}
         data-slot="input-group-control"
       />

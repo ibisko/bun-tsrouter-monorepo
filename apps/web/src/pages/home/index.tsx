@@ -53,6 +53,9 @@ const HomePage = () => {
             autoComplete="on"
             control={control}
             rules={{ required: '请输入密码，密码不可为空' }}
+            onEnter={() => {
+              handleSubmit(onSubmit)();
+            }}
           />
 
           <Button className="mt-4 py-3 rounded-xl" onClick={handleSubmit(onSubmit)}>

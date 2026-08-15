@@ -16,7 +16,7 @@ export const FromComps = () => {
   };
 
   return (
-    <Card>
+    <Card className="">
       <div className="font-bold">Form Data</div>
 
       <div>{'<Form.Input/>'}</div>
