@@ -29,7 +29,12 @@ class RestApiServiceClass implements ServiceClass {
         const _service = service as NonParamService;
         response = await _service(ctx);
       }
-      if (response instanceof Response) return response;
+      if (response instanceof Response) {
+        for (const [k, v] of ctx.resHeaders) {
+          response.headers.set(k, v);
+        }
+        return response;
+      }
       return new Response(responseToString(response), { headers: ctx.resHeaders });
     });
   }

@@ -4,7 +4,7 @@ import { BunServeHandler, Middleware } from './type';
 import { createSseMethod } from './core/sse';
 import { createPostFormData } from './core/postFormData';
 import type { MaybePromise } from 'bun';
-import { kebabCase } from 'lodash-es';
+import { toKebabCase } from '@/utils/kebabCase';
 import { createPutFile, createPutFileXhr } from './core/putFile';
 
 export const procedure = {
@@ -39,7 +39,7 @@ export const createRouter = ({ prefix = '/', router, logger, middlewares, option
 
   const parseRouter = (router: any, prefix: string) => {
     for (const [key, func] of Object.entries(router)) {
-      const segment = key === '*' ? key : key.startsWith('$') ? `:${kebabCase(key.slice(1))}` : kebabCase(key);
+      const segment = key === '*' ? key : key.startsWith('$') ? `:${toKebabCase(key.slice(1))}` : toKebabCase(key);
       const routePath = `${prefix}/${segment}`;
 
       if (typeof func === 'function') {

@@ -5,7 +5,7 @@ import { createGetMethod, createStandardMethod, createPostFormData, createDownlo
 import { createSseMethod } from './core/sse';
 import { createPutFile, createPutFileXhr } from './core/putFile';
 import { baseFetch, BaseFetchParam } from './core/baseFetch';
-import { kebabCase } from 'lodash-es';
+import { toKebabCase } from '@/utils/kebabCase';
 
 // todo formData xhr 流式上传
 // todo post 提交form表单资源，流式上传
@@ -66,5 +66,5 @@ export const createAppRouter = <T>(tsRouter: TsRouter) =>
       putFileXhr: createPutFileXhr(tsRouter),
       download: createDownloadMethod(tsRouter),
     },
-    path => path.map(kebabCase),
+    path => path.map(toKebabCase),
   );
