@@ -1,27 +1,13 @@
 import path from 'path';
-import fs, { rm } from 'fs';
+import { promises as fs } from 'fs';
 
 /** 确保指定的目录存在 */
 export const fsEnsureMkdir = async (...paths: string[]) => {
   const dirPath = path.join(...paths);
-  if (fs.existsSync(dirPath)) return;
-  await new Promise((resolve, reject) =>
-    fs.mkdir(dirPath, { recursive: true }, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(null);
-      }
-    }),
-  );
+  if (await fs.exists(dirPath)) return dirPath;
+  await fs.mkdir(dirPath, { recursive: true });
+  return dirPath;
 };
-
-export const fsRemove = (dir: string) =>
-  new Promise<void>((resolve, reject) => {
-    rm(dir, { recursive: true }, err => {
-      err ? reject(err) : resolve();
-    });
-  });
 
 export const hashFile = async (
   file: Bun.BunFile | string | Uint8Array<ArrayBufferLike> | ArrayBufferLike | File,
