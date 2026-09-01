@@ -5,9 +5,7 @@
         "moduleResolution": "bundler",
         "esModuleInterop": true,
         "strict": true,
-        "outDir": "dist",
         "skipLibCheck": true,
-        "baseUrl": "./",
         "paths": {
             "@/*": [
                 "./*"
@@ -16,6 +14,8 @@
     },
     "include": [
         "src-client",
-        "src-server"
+        "src-server",
+        "types",
+        "utils",
     ]
 }

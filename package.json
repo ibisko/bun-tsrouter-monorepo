@@ -2,14 +2,15 @@
   "name": "template-monorepo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run ./scripts/watchman/index.ts",
-    "agent": "bun run ./scripts/watchman/index.ts --config .watchman.agent.config.ts",
-    "init-app": "pnpm i && bun run ./scripts/watchman/index.ts --config .watchman-initial.config.ts"
+    "init-app": "pnpm i && bun run ./packages/tools/watchman/main.ts --init",
+    "dev": "bun run ./packages/tools/watchman/main.ts --dev",
+    "agent": "bun run ./packages/tools/watchman/main.ts --agent"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@packages/tools": "workspace:*",
     "@swc/core": "^1.15.21",
     "@types/bun": "latest",
     "@types/fb-watchman": "^2.0.6",
@@ -19,7 +20,7 @@
     "fb-watchman": "^2.0.2",
     "tsdown": "^0.22.14",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^7.6.0",

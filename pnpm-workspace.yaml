@@ -6,6 +6,6 @@ allowBuilds:
   prisma: true
 
 packages:
-  - 'agent/**/*'
-  - 'apps/**/*'
-  - 'packages/**/*'
+  - 'agent/*'
+  - 'apps/*'
+  - 'packages/*'

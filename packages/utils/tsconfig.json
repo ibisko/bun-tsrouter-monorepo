@@ -5,11 +5,9 @@
         "moduleResolution": "bundler",
         "esModuleInterop": true,
         "strict": true,
-        "outDir": "dist",
         "skipLibCheck": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "baseUrl": "./",
         "paths": {
             "@/*": [
                 "./*"
@@ -17,6 +15,9 @@
         }
     },
     "include": [
-        "src"
+        "src",
+        "src-server",
+        "src-web",
+        "types"
     ]
 }

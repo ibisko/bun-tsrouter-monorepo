@@ -91,3 +91,14 @@ bun run ./scripts/fontmin.ts
 
 - vite还是在nodejs上跑的
 - bun的monorepo引入packages可以源码.ts文件引入
+
+```sh
+# 有时候遇到 watchman 的警告，这样就好了
+watchman watch-del '/Users/xxxx/bun-tsrouter-monorepo'
+
+# 移除当前目录的 watchman 项目根记录
+watchman watch-del .
+
+# 接着直接重启即可，因为脚本里已经有 watch-project 了
+# 因为用了 watch-project 命令，向上找到 .watchmanconfig 为止来作为根目录，就别删这个文件了
+```

@@ -1,0 +1,14 @@
+{
+    "name": "@packages/tools",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./build": "./watchman/main.ts"
+    },
+    "dependencies": {
+        "@packages/utils": "workspace:*",
+        "p-limit": "^7.3.1"
+    },
+    "devDependencies": {}
+}

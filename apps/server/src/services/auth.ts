@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '@/database/prisma';
 import { merge } from 'lodash-es';
 import { JwtPayload } from '@/types/jwt';
-import { UserRole } from 'prisma/generated/enums';
+import { UserRole } from '@prisma/generated/enums';
 import { hashString } from '@packages/utils/server';
 
 const loginSchema = z.object({

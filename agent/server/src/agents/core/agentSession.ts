@@ -1,7 +1,7 @@
 import prisma from '@/database/prisma';
 import { GPT } from '@packages/gpt';
 import { ServiceError } from '@packages/tsrouter/server';
-import { type Prisma } from 'prisma/generated/client';
+import { type Prisma } from '@prisma/generated/client';
 
 /**
  * 仅负责状态

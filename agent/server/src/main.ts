@@ -2,7 +2,7 @@ import { merge } from 'lodash-es';
 import { mainWhiteListRouter } from './router/tsrouter';
 import { initLimitRate } from './middlewares/limitRate';
 export type { AppRouter } from './router/tsrouter';
-export * from 'prisma/generated/enums';
+export * from '@prisma/generated/enums';
 
 async function createServer() {
   // 403 黑名单

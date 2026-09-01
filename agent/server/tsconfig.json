@@ -5,13 +5,14 @@
         "moduleResolution": "bundler",
         "esModuleInterop": true,
         "strict": true,
-        "outDir": "dist",
         "skipLibCheck": true,
-        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./src/*"
-            ]
+            ],
+            "@prisma/*": [
+                "./prisma/*"
+            ],
         }
     },
     "include": [

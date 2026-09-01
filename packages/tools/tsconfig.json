@@ -6,15 +6,11 @@
         "esModuleInterop": true,
         "strict": true,
         "skipLibCheck": true,
+        "types": ["bun"],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-        }
+        "emitDecoratorMetadata": true
     },
     "include": [
-        "src"
+        "watchman",
     ]
 }
