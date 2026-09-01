@@ -1,7 +1,21 @@
 import type { MaybePromise } from 'bun';
 
 /** 延迟 */
-export const sleep = (duration: number) => new Promise<void>(r => setTimeout(r, duration));
+export const sleep = (duration: number, signal?: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      return reject(signal.reason);
+    }
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal!.reason);
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, duration);
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
 
 /** 看门狗 */
 export class WatchDog {
