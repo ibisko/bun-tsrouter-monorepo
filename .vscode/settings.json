@@ -1,4 +1,7 @@
 {
-    "js/ts.tsdk.path": "node_modules/typescript/lib",
-    "css.lint.unknownAtRules": "ignore"
+    // for tailwind css
+    "css.lint.unknownAtRules": "ignore",
+    // typescript v7.0
+    "js/ts.experimental.useTsgo": true,
+    "js/ts.tsdk.path": "./node_modules/typescript"
 }
