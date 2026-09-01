@@ -6,11 +6,14 @@
         "esModuleInterop": true,
         "strict": true,
         "skipLibCheck": true,
-        "types": ["bun"],
+        "types": [
+            "bun"
+        ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
     "include": [
         "watchman",
+        "fontmin",
     ]
 }
