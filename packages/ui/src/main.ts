@@ -15,6 +15,11 @@ export * from './components/Collapse';
 export * from './components/Switch';
 export * from './components/Pagination';
 export * from './components/WaterfallGallery';
+export * from './components/WaterfallGallery/useReachBottom';
+export * from './components/WaterfallGallery/TableFetchWaterfallGallery';
+export * from './components/HR';
+export * from './components/Switch/SwitchSlider';
+export * from './components/ContextMenu';
 
 export * from './hooks/useContainerFullScreen';
 export * from './hooks/useDelayedHover';
@@ -25,5 +30,6 @@ export * from './hooks/useThrottle';
 export * from './hooks/useInitial';
 export * from './hooks/useLocalStorageState';
 export * from './hooks/useResizeObserver';
+export * from './hooks/useMergedRefs';
 
 export * from './utils/cn';

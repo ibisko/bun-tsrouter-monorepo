@@ -20,7 +20,7 @@ export const FromSelect = <T extends Record<string, any> = {}>({ name, control, 
             value={field.value ?? ''}
             placeholder={placeholder}
             options={options}
-            onValueChange={val => {
+            onChange={val => {
               field.onChange(val);
             }}
           />

@@ -1,7 +1,8 @@
 import { cn } from '@/utils/cn';
+import { useId } from 'react';
 
 export const inputClass = cn(
-  'h-9 w-full min-w-0 px-3 py-1 rounded-md shadow-xs transition-[color,box-shadow] outline-none',
+  'h-8 w-full min-w-0 px-3 py-1 rounded-md shadow-xs transition-[color,box-shadow] outline-none',
   'bg-transparent dark:bg-input/30',
   'text-base md:text-sm',
   'border border-input',
@@ -16,10 +17,11 @@ export const inputClass = cn(
 export type InputProps = React.ComponentProps<'input'> & {
   onEnter?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
-export function Input({ className, type, onEnter, ...props }: InputProps) {
+export function Input({ className, onEnter, ...props }: InputProps) {
+  const id = useId();
   return (
     <input
-      type={type}
+      id={id}
       className={cn(inputClass, className)}
       onKeyDown={e => {
         if (!onEnter) return;
@@ -28,7 +30,6 @@ export function Input({ className, type, onEnter, ...props }: InputProps) {
         }
       }}
       {...props}
-      // data-slot="input"
     />
   );
 }
@@ -38,18 +39,12 @@ type InputGroupProps = InputProps & {
   suffixSlot?: React.ReactNode;
 };
 export function InputGroup({ className, prefixSlot, suffixSlot, onEnter, ...props }: InputGroupProps) {
+  const id = useId();
   return (
-    <div
-      className={cn(
-        inputClass,
-        'flex items-center gap-2',
-        'has-[[data-slot=input-group-control]:focus-visible]:border-ring',
-        'has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50',
-        'has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
-        className,
-      )}>
+    <div className={cn(inputClass, 'flex items-center gap-2', className)}>
       {prefixSlot}
       <input
+        id={id}
         className={cn('flex-1 h-full outline-none autofill:bg-transparent! autofill:text-red-500!')}
         onKeyDown={e => {
           if (!onEnter) return;
@@ -58,7 +53,6 @@ export function InputGroup({ className, prefixSlot, suffixSlot, onEnter, ...prop
           }
         }}
         {...props}
-        data-slot="input-group-control"
       />
       {suffixSlot}
     </div>
