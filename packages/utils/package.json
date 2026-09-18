@@ -16,7 +16,7 @@
       "import": "./dist/web/index.mjs",
       "types": "./dist/web/index.d.mts"
     },
-    "./types": "./types/main.ts"
+    "./types": "./types/index.ts"
   },
   "dependencies": {
     "nanoid": "^5.1.6"
