@@ -1,26 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { getPosition } from './usePopoverContent';
 
 type UsePopoverParam = {
   side?: 'bottom' | 'top' | 'right' | 'left';
   align?: 'center' | 'start' | 'end';
   offset?: number;
 };
-export const usePopover = ({ side, align, offset }: UsePopoverParam) => {
+export const usePopover = <T extends HTMLElement = HTMLElement>({ side, align, offset }: UsePopoverParam) => {
   const [visible, setVisible] = useState(false);
-  const [top, setTop] = useState(0);
-  const [left, setLeft] = useState(0);
   const [triggerRect, setTriggerRect] = useState<DOMRect>(new DOMRect());
-  const triggerRef = useRef(null);
+  const triggerRef = useRef<T>(null);
 
   const onTrigger = () => {
     if (!triggerRef.current) return;
-    const dom = triggerRef.current as HTMLElement;
-    const rect = dom.getBoundingClientRect();
-    const pos = getPosition({ triggerRect: rect, side, align, offset });
-    setTop(pos.top);
-    setLeft(pos.left);
-    setTriggerRect(rect);
+    setTriggerRect(triggerRef.current.getBoundingClientRect());
     setVisible(true);
   };
 
@@ -56,8 +48,6 @@ export const usePopover = ({ side, align, offset }: UsePopoverParam) => {
     align,
     side,
     offset,
-    top,
-    left,
     triggerRect,
     onClose,
     setVisible,

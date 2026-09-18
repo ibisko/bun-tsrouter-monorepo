@@ -1,20 +1,38 @@
 import { cn } from '@/utils/cn';
-import { Tooltip as BaseTooltip, TooltipContent, TooltipTrigger } from './base';
 import { Tooltip as RadixUiTooltip } from 'radix-ui';
-export { TooltipProvider } from './base';
+import { usePopover } from '../Popover/usePopover';
+import { Slot } from '@radix-ui/react-slot';
+import { PopoverContent } from '../Popover/popverContent';
+import { useMergedRefs } from '@/hooks/useMergedRefs';
 
-export const Tooltip = ({ className, title, side = 'top', children }: TooltipProps) => {
+export const Tooltip = ({ className, title, children, ref, ...tooltipProps }: TooltipProps) => {
+  const { triggerRef, visible, onTrigger, onClose, ...props } = usePopover({});
+  const slotRef = useMergedRefs(ref, triggerRef);
+
   return (
-    <BaseTooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent side={side} className={cn(className)}>
-        {title}
-      </TooltipContent>
-    </BaseTooltip>
+    <>
+      <Slot onMouseEnter={onTrigger} onMouseLeave={onClose} {...tooltipProps} ref={slotRef}>
+        {children}
+      </Slot>
+
+      {visible && (
+        <PopoverContent
+          className={cn(
+            'z-50 bg-foreground backdrop-blur-[2px] text-background text-sm rounded-sm shadow-md px-2 py-0.5 overflow-visible',
+            className,
+          )}
+          onClose={onClose}
+          closeOnOutsideClick={false}
+          showArrow
+          {...props}>
+          {title}
+        </PopoverContent>
+      )}
+    </>
   );
 };
 
-type TooltipProps = {
+type TooltipProps = React.ComponentProps<'div'> & {
   className?: string;
   children: React.ReactElement;
   title?: React.ReactNode;

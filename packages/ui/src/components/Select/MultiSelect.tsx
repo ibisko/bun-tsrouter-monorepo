@@ -34,7 +34,7 @@ export const MultiSelect = <T = any,>({
   clearable = true,
   onChange,
 }: MultiSelectProps<T>) => {
-  const { triggerRef, visible, onTrigger, setVisible, ...props } = usePopover({ side, align, offset });
+  const { triggerRef, visible, onTrigger, setVisible, ...props } = usePopover<HTMLDivElement>({ side, align, offset });
 
   // 把 options 拍平成 value -> label 的映射，用于渲染已选标签和判断选中态
   const labelMap = useMemo(() => {
@@ -58,8 +58,8 @@ export const MultiSelect = <T = any,>({
     <>
       <div
         className={cn(
-          'flex text-sm font-normal rounded-md border text-nowrap min-h-8',
-          'ring-0 transition ring-ring/50 ',
+          'flex justify-between text-sm font-normal rounded-md border dark:border-input text-nowrap min-h-8',
+          'ring-0 transition ring-ring/50',
           visible && 'ring-[3px] border-ring',
           className,
         )}
@@ -100,7 +100,8 @@ export const MultiSelect = <T = any,>({
       {visible && (
         <PopoverContent
           className={cn(
-            'flex flex-col gap-0.5 p-1 overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-md',
+            'z-40',
+            'flex flex-col gap-0.5 p-1 overflow-y-auto rounded-md ring-1 ring-foreground/10 shadow-md',
             'bg-popover/95 backdrop-blur-[2px] text-popover-foreground',
           )}
           {...props}>

@@ -36,7 +36,7 @@ export const Select = <T extends Value>({
   offset = 8,
   onChange,
 }: SelectProps<T>) => {
-  const { triggerRef, visible, onTrigger, setVisible, ...props } = usePopover({ side, align, offset });
+  const { triggerRef, visible, onTrigger, setVisible, ...props } = usePopover<HTMLDivElement>({ side, align, offset });
 
   const triggerValue = useMemo(() => {
     if (!options) return;
@@ -48,8 +48,8 @@ export const Select = <T extends Value>({
     <>
       <div
         className={cn(
-          'flex items-center text-sm font-normal rounded-md border text-nowrap min-h-8',
-          'ring-0 transition ring-ring/50 ',
+          'flex justify-between items-center text-sm font-normal rounded-md border dark:border-input text-nowrap min-h-8',
+          'ring-0 transition ring-ring/50',
           visible && 'ring-[3px] border-ring',
         )}
         ref={triggerRef}
@@ -77,7 +77,8 @@ export const Select = <T extends Value>({
       {visible && (
         <PopoverContent
           className={cn(
-            'flex flex-col gap-0.5 p-1 overflow-hidden rounded-md ring-1 ring-foreground/10 shadow-md',
+            'z-40',
+            'flex flex-col gap-0.5 p-1 overflow-y-auto rounded-md ring-1 ring-foreground/10 shadow-md',
             'bg-popover/95 backdrop-blur-[2px] text-popover-foreground',
             className,
           )}

@@ -15,7 +15,7 @@ type PopoverProps = {
 };
 
 // todo 提供 open, onChange 为非 trigger 情况
-export const Popover = ({ className, trigger, side, align, offset, children }: PopoverProps) => {
+export const Popover = ({ className, trigger, side, align, offset, showArrow, children }: PopoverProps) => {
   const { triggerRef, visible, onTrigger, ...props } = usePopover({ side, align, offset });
 
   return (
@@ -26,7 +26,12 @@ export const Popover = ({ className, trigger, side, align, offset, children }: P
 
       {visible && (
         <PopoverContent
-          className={cn('bg-popover/95 backdrop-blur-[2px] text-popover-foreground rounded-md shadow-md overflow-hidden p-1', className)}
+          className={cn(
+            'bg-popover/95 backdrop-blur-[2px] text-popover-foreground rounded-md shadow-md p-1',
+            // 箭头要探出浮层边缘，有箭头时不能裁剪
+            className,
+          )}
+          showArrow={showArrow}
           {...props}>
           {children}
         </PopoverContent>
