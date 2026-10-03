@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import type { TableResponse } from '../../../../utils/types';
+import type { TableResponse } from '@packages/utils/types';
 import { WaterfallGallery } from '.';
 import { useReachBottom } from './useReachBottom';
 import { EosIconsThreeDotsLoading } from '@packages/icons';

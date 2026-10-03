@@ -3,7 +3,7 @@ import { useId } from 'react';
 
 export const inputClass = cn(
   'h-8 w-full min-w-0 px-3 py-1 rounded-md shadow-xs transition-[color,box-shadow] outline-none',
-  'bg-transparent dark:bg-input/30',
+  'bg-transparent',
   'text-base md:text-sm',
   'border border-input',
   'placeholder:text-muted-foreground',
@@ -41,7 +41,7 @@ type InputGroupProps = InputProps & {
 export function InputGroup({ className, prefixSlot, suffixSlot, onEnter, ...props }: InputGroupProps) {
   const id = useId();
   return (
-    <div className={cn(inputClass, 'flex items-center gap-2', className)}>
+    <div className={cn(inputClass, 'flex items-center', className)}>
       {prefixSlot}
       <input
         id={id}

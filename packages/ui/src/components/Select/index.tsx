@@ -51,6 +51,7 @@ export const Select = <T extends Value>({
           'flex justify-between items-center text-sm font-normal rounded-md border dark:border-input text-nowrap min-h-8',
           'ring-0 transition ring-ring/50',
           visible && 'ring-[3px] border-ring',
+          className,
         )}
         ref={triggerRef}
         onClick={onTrigger}>
@@ -80,7 +81,6 @@ export const Select = <T extends Value>({
             'z-40',
             'flex flex-col gap-0.5 p-1 overflow-y-auto rounded-md ring-1 ring-foreground/10 shadow-md',
             'bg-popover/95 backdrop-blur-[2px] text-popover-foreground',
-            className,
           )}
           {...props}>
           {options?.map(item => (
