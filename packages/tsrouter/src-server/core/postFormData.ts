@@ -1,7 +1,7 @@
 import type { ServiceClass, PostFormDataService } from '../type';
 import type { ProcedureDef } from '@/src-client/type';
 import { responseToString, trycatchAndMiddlewaresHandle } from '../utils';
-import { AwaitedReturn, Func } from '@packages/utils/types';
+import type { AwaitedReturn, Func } from '@packages/utils/types';
 import { RestApiMethod } from '@packages/utils';
 
 class PostFormDataServiceClass implements ServiceClass {

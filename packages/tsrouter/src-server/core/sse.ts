@@ -4,7 +4,7 @@ import type { ServiceClass, Context } from '../type';
 import type { ProcedureDef } from '@/src-client/type';
 import { WatchDog } from '@packages/utils';
 import { ServiceError } from '../error';
-import { AwaitedReturn, Func } from '@packages/utils/types';
+import type { AwaitedReturn, Func } from '@packages/utils/types';
 import { RestApiMethod } from '@packages/utils';
 import type { MaybePromise } from 'bun';
 
