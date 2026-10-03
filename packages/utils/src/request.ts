@@ -73,5 +73,9 @@ export async function jsonRequest({
     throw new Error(`${response.status} ${msg}`);
   }
 
+  if (!response.body) {
+    throw new Error(`no response.body`);
+  }
+
   return response;
 }
