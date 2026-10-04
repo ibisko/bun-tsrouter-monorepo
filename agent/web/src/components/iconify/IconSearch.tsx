@@ -1,26 +1,77 @@
-import { Button, Input } from '@packages/ui';
-import { IconSubList } from './IconList';
-import { useSearch } from './useSearch';
-import { MaterialSymbolsSearchRounded } from '@packages/icons';
+import { IconifyApi } from './api';
+import { Icon } from './Icon';
+import { iconifyAction } from './action';
+import { BubblesAddOutline } from '@packages/icons';
+import { cn, ContextMenu, TableFetchWaterfallGallery } from '@packages/ui';
+import { camelCase } from 'lodash-es';
+import { toast } from 'sonner';
 
-export const IconSearch = () => {
-  const { iconListKey, svgs, setSearchValue, search } = useSearch();
+type IconSearchProps = {
+  className?: string;
+  searchKw: string;
+  palette?: boolean;
+  currentCategoryId?: number | null;
+  currentTags: number[];
+  currentIconSetIds: number[];
+};
+
+export const IconSearch = ({ className, searchKw, palette, currentCategoryId, currentTags, currentIconSetIds, ...props }: IconSearchProps) => {
   return (
-    <div className="flex flex-col">
-      <div className="p-1.5 font-black">Search icons</div>
+    <TableFetchWaterfallGallery<TableItem>
+      {...props}
+      key={searchKw}
+      take={100}
+      className={cn('gap-6 grid-cols-6', className)}
+      api={({ skip, take }) =>
+        IconifyApi.icon.list.post({
+          skip,
+          take,
+          kw: searchKw,
+          palette: palette,
+          categoryId: currentCategoryId,
+          tags: currentTags,
+          iconSets: currentIconSetIds,
+        })
+      }
+      render={data => <SearchItem data={data} />}
+    />
+  );
+};
 
-      <div className="sticky -top-px -bottom-px flex gap-2 p-1.5 border-t border-b bg-popover">
-        <Input onChange={e => setSearchValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && search()} placeholder="Search icons..." />
-        <Button onClick={search}>
-          <MaterialSymbolsSearchRounded className="size-5" />
-        </Button>
-      </div>
+type TableItem = Awaited<ReturnType<typeof IconifyApi.icon.list.post>>['data'][number];
 
-      <div className="grid grid-cols-7 mx-auto" key={iconListKey}>
-        {svgs.map(item => (
-          <IconSubList className="" iconsData={item.icons} key={item.key} />
-        ))}
-      </div>
-    </div>
+type SearchItemProps = {
+  data: TableItem;
+};
+
+const SearchItem = ({ data }: SearchItemProps) => {
+  const appendIcon = async () => {
+    const res = await iconifyAction.getIconInfo({ id: data.id });
+    if (!res) return;
+    await IconifyApi.iconifyLocal.appendIcon.post({
+      sign: `${res.prefix}:${res.name}`,
+      body: res.body,
+      top: data.top,
+      left: data.left,
+      width: data.width,
+      height: data.height,
+    });
+    const camel = camelCase(res.name);
+    const fileName = camel.slice(0, 1).toUpperCase() + camel.slice(1);
+    toast.success(`添加图标成功 ${fileName}.tsx`);
+  };
+
+  return (
+    <ContextMenu
+      menus={[
+        {
+          key: 1,
+          title: 'Add',
+          suffix: <BubblesAddOutline />,
+          onClick: appendIcon,
+        },
+      ]}>
+      <Icon id={data.id} />
+    </ContextMenu>
   );
 };

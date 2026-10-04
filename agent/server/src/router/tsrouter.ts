@@ -2,9 +2,9 @@ import { createRouter, Logger, procedure, ReplaceSpecificLeaf } from '@packages/
 import { trigger } from '@/middlewares/limitRate';
 import { corsMiddleware, optionsService } from '@/middlewares/cors';
 import { chatRouter } from '@/services/chat';
-import { iconifyRouter } from '@/services/iconify/router';
 import { toolsRouter } from '@/tools';
 import { llmRouter } from '@/services/llm';
+import { iconifyRouter } from '@/services/iconify/local';
 
 export const logger = new Logger();
 
@@ -12,7 +12,7 @@ const mainWhiteListRouterTree = {
   chat: chatRouter,
   llm: llmRouter,
 
-  iconify: iconifyRouter,
+  iconifyLocal: iconifyRouter,
   tools: toolsRouter,
 };
 

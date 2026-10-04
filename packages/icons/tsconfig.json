@@ -24,14 +24,10 @@
         "target": "ES6",
         "jsx": "react-jsx",
         "noEmit": true,
-        "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-        }
     },
     "include": [
-        "src"
+        "src",
+        "src-server"
     ],
     "exclude": [
         "node_modules",

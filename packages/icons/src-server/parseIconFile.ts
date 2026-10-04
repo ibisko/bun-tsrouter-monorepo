@@ -1,6 +1,7 @@
 import path from 'path';
 import ts from 'typescript';
-import prettier from 'prettier';
+import { checkSvgIsAnimation, IconsComponentsDir } from './utils';
+import { toSvgContent } from './toSvgContent';
 
 const findNode = <T = ts.Node>(node: any, cb: (node: T) => boolean): T => {
   let result: T | undefined = undefined;
@@ -13,22 +14,23 @@ const findNode = <T = ts.Node>(node: any, cb: (node: T) => boolean): T => {
 
 const isExport = (node: ts.FunctionDeclaration) => !!(ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export);
 
-const getCommentKey = (text: string, pos: number) => {
+const getCommentKey = (sourceFile: ts.SourceFile, pos: number) => {
+  const text = sourceFile.text;
   /** 从 pos 开始往前扫描，找到紧邻该节点的注释 */
   const commentRanges = ts.getLeadingCommentRanges(text, pos);
-  if (!commentRanges) throw new Error('no commentRanges');
+  if (!commentRanges) return { prefix: 'CUSTOM', name: sourceFile.fileName };
 
   const comment = commentRanges
     .filter(item => item.kind === ts.SyntaxKind.MultiLineCommentTrivia)
     .map(r => text.slice(r.pos, r.end))
     .at(-1);
-  if (!comment) throw new Error('no comment');
+  if (!comment) return { prefix: 'CUSTOM', name: sourceFile.fileName };
 
-  const regexpComment = /^\/\*+\s*((\S+)\:\S+)\s*\*+\/$/.exec(comment.trim());
-  if (!regexpComment) throw new Error('no match prefix and key');
-  const key = regexpComment[1];
-  const prefix = regexpComment[2];
-  return { prefix, key };
+  const regexpComment = /^\/\*+\s*(\S+)\:(\S+)\s*\*+\/$/.exec(comment.trim());
+  if (!regexpComment) return { prefix: 'CUSTOM', name: sourceFile.fileName };
+  const prefix = regexpComment[1];
+  const name = regexpComment[2];
+  return { prefix, name };
 };
 
 const getViewBox = (viewBoxAttribute: ts.JsxAttribute) => {
@@ -46,8 +48,8 @@ const parseContnet = (sourceFile: ts.SourceFile) => {
   const exportFunctionNode = findNode<ts.FunctionDeclaration>(sourceFile, node => ts.isFunctionDeclaration(node) && isExport(node));
   if (!exportFunctionNode) throw new Error('no exportFunctionNode');
 
-  // key prefix
-  const { key, prefix } = getCommentKey(sourceFile.text, exportFunctionNode.pos);
+  // name prefix
+  const { prefix, name } = getCommentKey(sourceFile, exportFunctionNode.pos);
 
   // return
   const returnNode = findNode<ts.ReturnStatement>(exportFunctionNode.body, node => ts.isReturnStatement(node));
@@ -63,30 +65,28 @@ const parseContnet = (sourceFile: ts.SourceFile) => {
     node => ts.isJsxAttribute(node) && node.name.getText() === 'viewBox',
   );
   if (!viewBoxAttribute) throw new Error('no viewBoxAttribute');
-
   // viewBox left,top,width,height
   const viewBox = getViewBox(viewBoxAttribute);
 
-  // svg children content
-  const rawSvgContent = jsxNode.children
-    .filter(node => node.kind !== ts.SyntaxKind.JsxText || node.getText().trim())
-    .map(node => node.getText().trim())
-    .join('\n');
+  // svg 里面的<path>部分重新拿出来，转为 svg 格式
+  let svgContent = ''; // jsxNode.children.map(toSvgContent);
+  for (const item of jsxNode.children) {
+    const content = toSvgContent(item);
+    if (!content) continue;
+    svgContent += content;
+  }
 
-  const isAnimate = rawSvgContent.includes('<animate');
+  const isAnimate = checkSvgIsAnimation(svgContent);
 
-  return { viewBox, prefix, key, rawSvgContent, isAnimate };
+  return { viewBox, prefix, name, isAnimate, svgContent };
 };
 
-export const parseIconFile = async (filePath: string) => {
+export const parseIconFile = async (fileName: string) => {
+  const filePath = path.join(IconsComponentsDir, fileName);
   const file = Bun.file(filePath);
   const filename = path.basename(filePath);
   const raw = await file.text();
   const sourceFile = ts.createSourceFile(filename, raw, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-
-  const { viewBox, prefix, key, rawSvgContent, isAnimate } = parseContnet(sourceFile);
-
-  const body = await prettier.format(rawSvgContent, { parser: 'html' });
-
-  return { viewBox, raw, body, prefix, key, isAnimate };
+  const info = parseContnet(sourceFile);
+  return { raw, filePath, ...info };
 };

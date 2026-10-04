@@ -1,94 +1,90 @@
-/**
- * 仅适合 icons/src/components 里面只有一级文件，不支持有多层文件夹
- */
-
-import path from 'path';
-import { parseIconFile } from './parseIconFile';
-import { reactCompoment } from './reactCompoment';
-import { Context, procedure, ServiceError } from '@packages/tsrouter/server';
-import { IconsComponentsDir } from '@/common/path';
-import { iconIncoSchema, IconInfo } from '@packages/icons';
 import z from 'zod';
+import { procedure } from '@packages/tsrouter/server';
+import { parseIconFile, reactCompoment, scanLocalIconFile, writeIcon } from '@packages/icons/server';
+import { skipTaskTableSchema } from '@packages/utils/server';
+import { prettierFormat } from '@/utils/prettier';
 
-// todo 灵活的相对路径匹配
+/** 列举本地icon */
+const listLocalIcon = procedure.post(skipTaskTableSchema, async ({ skip, take }) => {
+  const fileNames = await scanLocalIconFile();
+  const total = fileNames.length;
+  const icons = [];
 
-class LocalIconsComponents {
-  async scanTsxFiles() {
-    const icons: ScanLocalIconInfo[] = [];
-
-    await this.scanTsxFile(async filePath => {
-      const { viewBox, body, prefix, key, isAnimate } = await parseIconFile(filePath);
-      icons.push({
-        top: viewBox.top,
-        left: viewBox.left,
-        width: viewBox.width,
-        height: viewBox.height,
-        prefix,
-        key,
-        body,
-        isAnimate,
-        filePath,
-      });
+  for (let i = 0; i < fileNames.length; i++) {
+    if (i < skip) continue;
+    const fileName = fileNames[i];
+    const { viewBox, prefix, name, isAnimate, filePath } = await parseIconFile(fileName);
+    // 自定义图标就没有 prefix 和 key，那怎么办
+    icons.push({
+      ...viewBox,
+      name,
+      prefix,
+      sign: `${prefix}:${name}`,
+      fileName,
+      filePath,
+      animate: isAnimate,
     });
-
-    return icons;
+    if (icons.length === take) break;
   }
 
-  private async scanTsxFile(cb: (filePath: string, fileName: string) => Promise<void>) {
-    const tsxFiles = new Bun.Glob('*.tsx').scan({ cwd: IconsComponentsDir });
-    for await (const fileName of tsxFiles) {
-      const filePath = path.join(IconsComponentsDir, fileName);
-      await cb(filePath, fileName);
-    }
-  }
-
-  private async rewriteExports() {
-    const exportComponents: string[] = [];
-    await this.scanTsxFile(async (_, fileName) => {
-      console.log(fileName);
-      const regexp = /(.*)\.tsx/.exec(fileName);
-      if (!regexp) return;
-      const keyName = regexp[1];
-      console.log(keyName);
-      exportComponents.push(`export * from './${keyName}'`);
-    });
-    const code = exportComponents.join('\n');
-    const indexTsFilePath = path.join(IconsComponentsDir, 'index.ts');
-    await Bun.file(indexTsFilePath).write(code);
-  }
-
-  async appendIcon(icon: IconInfo) {
-    const { code, fileName } = await reactCompoment(icon);
-    const filePath = path.join(IconsComponentsDir, fileName);
-    await Bun.file(filePath).write(code);
-    await this.rewriteExports();
-    return filePath;
-  }
-}
-
-const localIconsComponents = new LocalIconsComponents();
-
-export const listLocalIconRouter = procedure.get(async () => {
-  return await localIconsComponents.scanTsxFiles();
+  return {
+    skip,
+    take,
+    total,
+    data: icons,
+  };
 });
 
-export const appendIconRouter = procedure.post(iconIncoSchema, async (param, ctx: Context) => {
-  const filePath = await localIconsComponents.appendIcon(param);
+/** 查看本地icon代码 */
+const listLocalIconInfo = procedure.post(
+  z.object({
+    filePaths: z.array(z.string()),
+  }),
+  async ({ filePaths }) => {
+    const res = [];
+    for (const item of filePaths) {
+      const { raw, svgContent, viewBox, prefix, name, isAnimate, filePath } = await parseIconFile(item);
+      res.push({
+        content: raw,
+        body: svgContent,
+        ...viewBox,
+        id: name,
+        filePath,
+        prefix,
+        name,
+        animate: isAnimate,
+      });
+    }
+    return res;
+  },
+);
+
+const reactCompomentSchema = z.object({
+  sign: z.string(),
+  body: z.string(),
+  top: z.number(),
+  left: z.number(),
+  width: z.number(),
+  height: z.number(),
+});
+
+/** icon 转成 react 代码 */
+const reactCompomentRouter = procedure.post(reactCompomentSchema, async param => {
+  console.log('reactCompomentRouter:', param);
+  const { code, componentName, filePath } = await reactCompoment(param, code => prettierFormat(code, 'typescript'));
+  return { componentName, filePath, code };
+});
+
+/** 添加新的icon */
+const appendIcon = procedure.post(reactCompomentSchema, async param => {
+  const { code, componentName } = await reactCompoment(param, code => prettierFormat(code, 'typescript'));
+  const filePath = await writeIcon(componentName, code);
   return { filePath };
 });
 
-const viewIconFileSchema = z.object({
-  filePath: z.string(),
-});
-export const viewIconFileRouter = procedure.get(viewIconFileSchema, async (param, ctx) => {
-  const file = Bun.file(param.filePath);
-  const exists = await file.exists();
-  if (!exists) throw new ServiceError({ message: 'file no exists' });
-  const code = await file.text();
-  const fileName = path.basename(param.filePath);
-  return { code, fileName };
-});
-
-type ScanLocalIconInfo = IconInfo & {
-  filePath: string;
+export const iconifyRouter = {
+  listIcon: listLocalIcon,
+  appendIcon: appendIcon,
+  reactCompoment: reactCompomentRouter,
+  listLocalIconInfo: listLocalIconInfo,
 };

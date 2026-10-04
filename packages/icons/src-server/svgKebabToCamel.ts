@@ -1,35 +1,14 @@
 import ts from 'typescript';
 import { camelCase } from 'lodash-es';
 
-/**
- * 将 SVG 内容中所有标签的 kebab-case 属性转换为 camelCase
- */
-export function svgKebabToCamel(svgContent: string): string {
-  const wrapped = `<svg>${svgContent}</svg>`;
-  const sourceFile = ts.createSourceFile('svg.tsx', wrapped, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-
-  const transformer: ts.TransformerFactory<ts.Node> = _context => node => transformJsxNode(node);
-  const result = ts.transform(sourceFile, [transformer]);
-  const transformed = result.transformed[0] as ts.SourceFile;
-
-  const printer = ts.createPrinter();
-  const output = extractChildrenSource(transformed, printer);
-
-  result.dispose();
-  return output;
-}
-
-/** 判断属性名是否为 kebab-case */
-function isKebabCase(name: string) {
-  return name.includes('-');
-}
-
 /** 遍历属性列表，将 kebab-case 属性名转为 camelCase */
 function transformAttributes(attributes: ts.NodeArray<ts.JsxAttributeLike>): ts.JsxAttributeLike[] {
   return attributes.map(attr => {
     if (!ts.isJsxAttribute(attr)) return attr;
     const name = attr.name.getText();
-    if (!isKebabCase(name)) return attr;
+    /** 判断属性名是否为 kebab-case */
+    const isKebabCase = name.includes('-');
+    if (!isKebabCase) return attr;
 
     return ts.factory.createJsxAttribute(
       ts.factory.createIdentifier(camelCase(name)),
@@ -75,4 +54,20 @@ function extractChildrenSource(root: ts.SourceFile, printer: ts.Printer): string
     .map(child => printer.printNode(ts.EmitHint.Unspecified, child, root))
     .join('\n')
     .trim();
+}
+
+/** 将 SVG 内容中所有标签的 kebab-case 属性转换为 camelCase */
+export function svgKebabToCamel(svgContent: string): string {
+  const wrapped = `<svg>${svgContent}</svg>`;
+  const sourceFile = ts.createSourceFile('svg.tsx', wrapped, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+
+  const transformer: ts.TransformerFactory<ts.Node> = _context => node => transformJsxNode(node);
+  const result = ts.transform(sourceFile, [transformer]);
+  const transformed = result.transformed[0] as ts.SourceFile;
+
+  const printer = ts.createPrinter();
+  const output = extractChildrenSource(transformed, printer);
+
+  result.dispose();
+  return output;
 }
