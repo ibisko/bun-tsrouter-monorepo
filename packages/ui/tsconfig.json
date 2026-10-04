@@ -21,7 +21,7 @@
             "DOM"
         ],
         "module": "ESNext",
-        "target": "ES6",
+        "target": "ES2023",
         "jsx": "react-jsx",
         "noEmit": true,
         "paths": {

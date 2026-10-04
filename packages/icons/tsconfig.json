@@ -21,13 +21,13 @@
             "DOM"
         ],
         "module": "ESNext",
-        "target": "ES6",
+        "target": "ES2023",
         "jsx": "react-jsx",
         "noEmit": true,
     },
     "include": [
         "src",
-        "src-server"
+        "src-server",
     ],
     "exclude": [
         "node_modules",
