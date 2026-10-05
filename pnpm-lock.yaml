@@ -222,6 +222,55 @@ importers:
         specifier: ^7.3.1
         version: 7.3.6(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.1)(yaml@2.9.1)
 
+  apps/iconify-server:
+    dependencies:
+      '@iconify/types':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@packages/icons':
+        specifier: workspace:*
+        version: link:../../packages/icons
+      '@packages/tsrouter':
+        specifier: workspace:*
+        version: link:../../packages/tsrouter
+      '@packages/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      croner:
+        specifier: ^10.0.1
+        version: 10.0.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.4.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.4.2
+      got:
+        specifier: ^14.6.6
+        version: 14.6.6
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
+      keyv:
+        specifier: ^5.6.0
+        version: 5.6.0
+      p-limit:
+        specifier: ^7.3.1
+        version: 7.3.1
+      prettier:
+        specifier: ^3.9.5
+        version: 3.9.9
+      yaml:
+        specifier: ^2.8.2
+        version: 2.9.1
+    devDependencies:
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
+
   apps/server:
     dependencies:
       '@packages/tsrouter':
@@ -2858,6 +2907,10 @@ packages:
 
   cookie-es@3.1.1:
     resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
+
+  croner@10.0.1:
+    resolution: {integrity: sha512-ixNtAJndqh173VQ4KodSdJEI6nuioBWI0V1ITNKhZZsO0pEMoDxz539T4FTTbSZ/xIOSuDnzxLVRqBVSvPNE2g==}
+    engines: {node: '>=18.0'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -6566,6 +6619,8 @@ snapshots:
   confbox@0.2.4: {}
 
   cookie-es@3.1.1: {}
+
+  croner@10.0.1: {}
 
   cross-spawn@7.0.6:
     dependencies:

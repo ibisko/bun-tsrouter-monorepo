@@ -42,6 +42,13 @@ bun run init
 bun dev
 ```
 
+# apps/iconify-server
+
+- [x] 每日同步 [iconify](https://github.com/iconify/icon-sets) 仓库的最新图标
+- [x] Server 接口服务
+- [x] ui组件提供
+- [ ] 文档
+
 # Feature Todo
 
 - [ ] 单元测试、集成测试

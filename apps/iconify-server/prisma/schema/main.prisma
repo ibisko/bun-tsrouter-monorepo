@@ -1,0 +1,75 @@
+model IconSet {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    filename String
+    sha      String
+
+    prefix String @unique
+
+    samples Json
+    palette Boolean // 调色板
+
+    // info 数据
+    last_modified DateTime?
+    hidden        Boolean?
+    name          String
+    version       String?
+
+    icons             Icon[]
+    tag_relationships IconSetTagRelationship[]
+}
+
+model Icon {
+    id         Int       @id @default(autoincrement())
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    name String
+    body String?
+    pid  Int? // 采用aliase时候，拿的源icon的body，这样能有效避免重复
+
+    top    Int?
+    left   Int?
+    width  Int?
+    height Int?
+
+    h_flip  Boolean?
+    v_flip  Boolean?
+    animate Boolean?
+
+    icon_set_id Int
+    icon_set    IconSet @relation(fields: [icon_set_id], references: [id])
+
+    @@unique([icon_set_id, name])
+    @@index([name])
+}
+
+model IconSetTag {
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    name String
+    type String // category, tags
+
+    tag_relationships IconSetTagRelationship[]
+
+    @@unique([name, type])
+}
+
+model IconSetTagRelationship {
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+
+    icon_set_id     Int
+    icon_set_tag_id Int
+
+    icon_set     IconSet    @relation(fields: [icon_set_id], references: [id])
+    icon_set_tag IconSetTag @relation(fields: [icon_set_tag_id], references: [id])
+
+    @@unique([icon_set_id, icon_set_tag_id])
+}
