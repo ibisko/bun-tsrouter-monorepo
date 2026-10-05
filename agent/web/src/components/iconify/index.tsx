@@ -8,9 +8,9 @@ type IconifyProps = {
 export const Iconify = ({ className }: IconifyProps) => {
   return (
     <Popover
-      className={cn('w-80 h-135 backdrop-blur-md border rounded-xl shadow-xl', className)}
+      className={cn('w-80 h-135 backdrop-blur-md border rounded-xl shadow-xl')}
       trigger={
-        <Button size="icon-sm">
+        <Button className={className} size="icon-sm">
           <LineMdIconify2StaticTwotone className="size-5" />
         </Button>
       }

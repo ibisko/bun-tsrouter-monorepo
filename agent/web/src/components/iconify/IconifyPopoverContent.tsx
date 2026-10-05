@@ -155,13 +155,13 @@ export const IconifyPopoverContent = ({ className }: IconifyPopoverContentProps)
         </div>
 
         <HR className="my-6" title="Local Icon" />
-        <LocalIcon className="max-h-full px-4 pt-1" />
+        <LocalIcon className="max-h-full py-1 px-4" />
 
         {visibleIconSearch && (
           <>
             <HR className="my-6" title="Icon Search" />
             <IconSearch
-              className={cn('max-h-full px-4 pb-8')}
+              className={cn('max-h-full pt-1 pb-4 px-4')}
               searchKw={searchKw}
               currentCategoryId={currentCategoryId}
               currentTags={currentTags}
@@ -189,7 +189,7 @@ export const IconifyPopoverContent = ({ className }: IconifyPopoverContentProps)
           }}>
           {currentIconSetIds.map(item => (
             <div
-              className="relative flex gap-2 p-1 px-2 rounded bg-primary/80 backdrop-blur-xs text-background dark:text-foreground group"
+              className="relative flex gap-2 p-1 px-2 rounded bg-primary/80 backdrop-blur-sm text-background dark:text-foreground group"
               key={item.id}>
               {item.name}
               <LucideX
@@ -207,14 +207,14 @@ export const IconifyPopoverContent = ({ className }: IconifyPopoverContentProps)
 
       <div className="absolute bottom-0 left-full flex flex-col gap-2 w-auto text-xs mx-2 transition rounded-sm text-nowrap">
         <BoxiconsArrowToTopStrokeFilled
-          className="p-1 size-7 rounded-lg bg-primary/80 backdrop-blur-xs text-background dark:text-foreground hover:bg-primary cursor-pointer"
+          className="p-1 size-7 rounded-lg bg-primary/80 backdrop-blur-sm text-background dark:text-foreground hover:bg-primary cursor-pointer"
           onClick={() => {
             if (!wrapperDomRef.current) return;
             wrapperDomRef.current.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         />
         <BoxiconsArrowToTopStrokeFilled
-          className="p-1 size-7 rounded-lg bg-primary/80 backdrop-blur-xs text-background dark:text-foreground hover:bg-primary cursor-pointer rotate-180"
+          className="p-1 size-7 rounded-lg bg-primary/80 backdrop-blur-sm text-background dark:text-foreground hover:bg-primary cursor-pointer rotate-180"
           onClick={() => {
             if (!wrapperDomRef.current) return;
             wrapperDomRef.current.scrollTo({ top: wrapperDomRef.current.scrollHeight, behavior: 'smooth' });
