@@ -8,7 +8,7 @@ type TableProps<T extends Record<string, any>> = {
   tdClassName?: string;
   /** 默认是id */
   primaryKey?: string;
-  data?: T[];
+  data?: T[] | readonly T[];
   columns: Columns<T>[];
   onRowClick?: (data: any) => void;
 };

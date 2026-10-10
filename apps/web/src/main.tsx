@@ -1,8 +1,7 @@
-import '@packages/ui/styles.css';
-
+import ReactDOM from 'react-dom/client';
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router/rootRoute.tsx';
-import ReactDOM from 'react-dom/client';
+import '@packages/ui/styles.css';
 
 declare module '@tanstack/react-router' {
   interface Register {

@@ -5,7 +5,7 @@ const inputSelfClass = cn(
   'min-w-0 outline-none',
   // 表单验证错误时
   'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-  'text-sm md:text-sm placeholder:text-xs',
+  'text-sm md:text-sm placeholder:text-sm',
   'autofill:bg-transparent! autofill:text-red-500!',
   'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
   'selection:bg-primary selection:text-primary-foreground',

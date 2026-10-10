@@ -4,7 +4,7 @@ export const TableComps = () => {
   return (
     <Card>
       <div>{'<Table/>'}</div>
-      <Table<TableItemInfo & { optional?: any }>
+      <Table<TableItemInfo>
         columns={[
           { tilte: 'Name', dataIndex: 'name' },
           { tilte: 'Age', dataIndex: 'age' },
