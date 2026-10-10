@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { IconSvg } from './IconSvg';
 import { IconifyApi } from './api';
 import { ElShoppingCartSign } from '@packages/icons';
-import { MonacoEditor } from '@/components/editor';
+import { CodemirrorEditor } from '@/components/editor';
 import { toast } from 'sonner';
 import { camelCase } from 'lodash-es';
 import { Api } from '@/api';
@@ -59,12 +59,7 @@ export const IconEditor = ({ name, body, top, left, width, height, sign, animate
           </div>
         </div>
 
-        <MonacoEditor
-          className="flex-1 xl:w-[60vw] not-xl:w-[80vw] min-h-80 shadow"
-          value={code}
-          language="typescript"
-          options={{ readOnly: true }}
-        />
+        <CodemirrorEditor className="flex-1 xl:w-[60vw] not-xl:w-[80vw] min-h-80 max-h-120 shadow" value={code} readOnly />
       </div>
 
       <div className="flex justify-end gap-2 mt-4">

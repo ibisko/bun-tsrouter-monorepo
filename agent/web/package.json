@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.5",
     "@iconify/utils": "^3.1.0",
     "@packages/gpt": "workspace:*",
     "@packages/icons": "workspace:*",
@@ -17,10 +18,10 @@
     "@packages/ui": "workspace:*",
     "@packages/utils": "workspace:*",
     "@tanstack/react-router": "^1.163.3",
+    "@uiw/react-codemirror": "^4.25.12",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.2",
     "marked-highlight": "^2.2.4",
-    "monaco-editor": "^0.55.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.2",
