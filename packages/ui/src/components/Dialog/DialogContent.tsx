@@ -9,11 +9,12 @@ export type DialogContentProps = {
   unuseDefaultWrapper?: boolean;
   title?: string;
   children: React.ReactNode;
-  onChange?: (open: boolean) => void;
 };
 
 type DialogContentInternalProps = DialogContentProps & {
-  setUncontrolledOpen: (open: boolean) => void;
+  closeBeforeAnimate: boolean;
+  setCloseBeforeAnimate: (status: boolean) => void;
+  onExited: () => void;
 };
 
 export const DialogContent = ({
@@ -22,11 +23,10 @@ export const DialogContent = ({
   unuseDefaultWrapper,
   title,
   children,
-  onChange,
-  setUncontrolledOpen,
+  closeBeforeAnimate,
+  setCloseBeforeAnimate,
+  onExited,
 }: DialogContentInternalProps) => {
-  const [closeBeforeAnimate, setCloseBeforeAnimate] = useState(false);
-
   // 注册到浮层层栈：更早打开的浮层（如触发本 Dialog 的 Popover）不把本 Dialog 内的点击当作 outside
   const { ref: overlayRef } = useLayer();
 
@@ -47,6 +47,12 @@ export const DialogContent = ({
         if (e.target === e.currentTarget) {
           setCloseBeforeAnimate(true);
         }
+      }}
+      onAnimationEnd={e => {
+        if (e.target !== e.currentTarget) return;
+        if (closeBeforeAnimate) {
+          onExited();
+        }
       }}>
       {unuseDefaultWrapper ? (
         children
@@ -59,15 +65,7 @@ export const DialogContent = ({
             'animate-in zoom-in-95',
             closeBeforeAnimate && 'animate-out zoom-out-95',
             defaultWrapperClassName,
-          )}
-          onAnimationEnd={e => {
-            if (e.target !== e.currentTarget) return;
-            if (closeBeforeAnimate) {
-              setCloseBeforeAnimate(false);
-              setUncontrolledOpen(false);
-              onChange?.(false);
-            }
-          }}>
+          )}>
           {title && <div className="text-xl font-black">{title}</div>}
           {children}
         </div>
