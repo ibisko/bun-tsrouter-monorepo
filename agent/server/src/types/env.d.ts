@@ -5,7 +5,6 @@ export declare global {
       REDIS_URL: string;
       DATABASE_URL: string;
       ROOT_DIR: string;
-      ICONS_COMPONENTS_DIR: string;
       PRETTIERRC_JSONFILE: string;
       PROMPTS_DIR: string;
 

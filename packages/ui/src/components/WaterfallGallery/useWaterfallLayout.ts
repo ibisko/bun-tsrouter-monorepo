@@ -10,7 +10,7 @@ type Content<T> = {
   index: number;
 };
 
-export const useWaterfallLayout = <T>(data: T[], keyField: string, pageScroll?: boolean) => {
+export const useWaterfallLayout = <T>(data: T[] | readonly T[], keyField: string, pageScroll?: boolean) => {
   const wrapperDomRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
   const [content, setContent] = useState<Content<T>[]>([]);

@@ -26,7 +26,6 @@ export const writeIcon = async (componentName: string, code: string) => {
     const regexp = /(.*)\.tsx/.exec(fileName);
     if (!regexp) continue;
     const keyName = regexp[1];
-    console.log(keyName);
     exportComponents.push(`export * from './${keyName}'`);
   }
 

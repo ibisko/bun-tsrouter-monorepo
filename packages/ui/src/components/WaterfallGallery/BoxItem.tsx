@@ -18,10 +18,10 @@ type BoxItemProps<T> = {
 export const BoxItem = <T,>({ className, subscribe, getSnapshot, item, index, render, onNodeHeight }: BoxItemProps<T>) => {
   const position = useSyncExternalStore<WaterfallGalleryPosition>(subscribe, getSnapshot);
   const domRef = useRef<HTMLDivElement>(null);
-  useResizeObserver(domRef, () => {
+  useResizeObserver(domRef, entries => {
     if (!domRef.current) return;
-    const height = domRef.current.getBoundingClientRect().height;
-    if (!height) return; // 0 别上报:内容藏起来时会把布局压塌
+    const height = entries[0].contentRect.height;
+    if (!height) return;
     onNodeHeight(index, height);
   });
 

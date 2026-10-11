@@ -4,7 +4,7 @@ import { useWaterfallLayout } from './useWaterfallLayout';
 import { useMergedRefs } from '@/hooks/useMergedRefs';
 
 type WaterfallGalleryProps<T> = Omit<React.ComponentProps<'div'>, 'onScroll'> & {
-  data: T[];
+  data: T[] | readonly T[];
   keyField?: string;
   render: (param: T) => React.ReactNode;
   /** 页面级滚动:挂 body/window 上滚;false(默认)组件自己是 overflow-auto 滚动容器 */
