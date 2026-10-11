@@ -9,6 +9,7 @@ export * from './components/Input';
 export * from './components/Table';
 export * from './components/Descriptions';
 export * from './components/Dialog';
+export * from './components/Dialog/ConfirmDialog';
 export * from './components/Tooltip';
 export * from './components/Popover';
 export * from './components/Collapse';
