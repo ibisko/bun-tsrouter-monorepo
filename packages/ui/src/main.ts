@@ -12,13 +12,14 @@ export * from './components/Dialog';
 export * from './components/Tooltip';
 export * from './components/Popover';
 export * from './components/Collapse';
-export * from './components/Switch';
 export * from './components/Pagination';
 export * from './components/WaterfallGallery';
 export * from './components/WaterfallGallery/useReachBottom';
 export * from './components/WaterfallGallery/TableFetchWaterfallGallery';
 export * from './components/HR';
+export * from './components/Switch';
 export * from './components/Switch/SwitchSlider';
+export * from './components/Switch/AsyncSwitch';
 export * from './components/ContextMenu';
 
 export * from './hooks/useContainerFullScreen';
